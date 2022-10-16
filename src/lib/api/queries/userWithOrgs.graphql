@@ -1,0 +1,9 @@
+query userWithOrgs {
+  me {
+    organizations {
+      id
+      name
+      slug
+    }
+  }
+}

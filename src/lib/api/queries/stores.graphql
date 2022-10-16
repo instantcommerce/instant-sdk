@@ -1,0 +1,11 @@
+query stores {
+  stores {
+    edges {
+      node {
+        id
+        name
+        slug
+      }
+    }
+  }
+}

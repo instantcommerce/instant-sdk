@@ -1,0 +1,16 @@
+{
+  "files.watcherExclude": {
+    "**/dist": true
+  },
+  "search.exclude": {
+    "**/dist": true
+  },
+  "files.exclude": {
+    "**/.DS_Store": true,
+    "**/node_modules": true
+  },
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
+}
