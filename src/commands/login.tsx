@@ -74,7 +74,7 @@ export const Login = () => {
   );
 };
 
-export const cmdLogin: CommandModule = {
+export const login: CommandModule = {
   command: "login",
   describe: "Login to your account",
   handler: () => {

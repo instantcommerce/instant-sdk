@@ -28,7 +28,7 @@ export const Me = () => {
   return <Text>Logged in as "{meData?.email}".</Text>;
 };
 
-export const cmdMe: CommandModule = {
+export const me: CommandModule = {
   command: "me",
   describe: "Check current login status",
   handler: () => {

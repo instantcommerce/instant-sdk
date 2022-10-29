@@ -48,7 +48,7 @@ export const Refresh = () => {
   );
 };
 
-export const cmdRefresh: CommandModule = {
+export const refresh: CommandModule = {
   command: "refresh",
   describe: "Refresh your access token",
   handler: () => {

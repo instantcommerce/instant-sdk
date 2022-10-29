@@ -80,9 +80,9 @@ export const Switch = () => {
   );
 };
 
-export const cmdSwitch: CommandModule = {
-  command: "switch",
-  describe: "Switch organization and store",
+export const select: CommandModule = {
+  command: "select",
+  describe: "Select organization and store",
   handler: () => {
     render(<Switch />);
   },

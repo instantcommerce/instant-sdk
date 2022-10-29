@@ -12,7 +12,7 @@ export const Logout = () => {
   return <Text>Successfully logged out.</Text>;
 };
 
-export const cmdLogout: CommandModule = {
+export const logout: CommandModule = {
   command: "logout",
   describe: "Logout of current account",
   handler: () => {
