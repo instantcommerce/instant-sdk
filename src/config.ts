@@ -8,6 +8,7 @@ interface ConfigData {
 }
 
 export const config = new Conf<ConfigData>({
+  projectName: "instant-cli",
   schema: {
     accessToken: { type: "string" },
     refreshToken: { type: "string" },

@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { GraphQLClient } from "graphql-request";
-
-import { getSdk } from "./sdk";
 import { config } from "~/config";
+import { getSdk } from "./sdk";
+import { API_URL } from "./api.constants";
 
 export const useApiSdk = () => {
   const accessToken = config.get("accessToken");
@@ -10,7 +10,7 @@ export const useApiSdk = () => {
   const storeId = config.get("storeId");
 
   const sdk = useMemo(() => {
-    const graphqlClient = new GraphQLClient(`${process.env["API_URL"]}/graphql`, {
+    const graphqlClient = new GraphQLClient(`${API_URL}/graphql`, {
       headers: {
         ...(accessToken ? { "x-instant-access-token": accessToken } : {}),
         ...(organization ? { "x-instant-organization": organization } : {}),
