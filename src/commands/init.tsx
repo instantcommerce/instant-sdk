@@ -1,7 +1,9 @@
 import React, { FC, useEffect, useState } from "react";
-import { existsSync, mkdirSync } from "fs";
+import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { render, Text } from "ink";
 import { CommandModule } from "yargs";
+import { instantConfigTemplate } from "~/templates";
+import { config } from "~/config";
 
 export const Init: FC<{ name: string }> = ({ name }) => {
   const [success, setSuccess] = useState<boolean>(false);
@@ -12,9 +14,13 @@ export const Init: FC<{ name: string }> = ({ name }) => {
 
     if (!existsSync(dir)) {
       mkdirSync(dir);
+      writeFileSync(
+        `${dir}/instant.config.js`,
+        instantConfigTemplate(config.get("organization"), config.get("storeId"))
+      );
       setSuccess(true);
     } else {
-      setError(`The directory "${name}" already exists.`);
+      setError(`The directory "${name}" already exists`);
     }
   }, []);
 
@@ -26,7 +32,7 @@ export const Init: FC<{ name: string }> = ({ name }) => {
     <Text>Initializig project...</Text>;
   }
 
-  return <Text>Initialized new project "{name}".</Text>;
+  return <Text>Initialized new project "{name}"</Text>;
 };
 
 export const init: CommandModule = {

@@ -1,1 +1,1 @@
-export const API_URL = process.env["API_URL"] || "https://api.instantcommerce.app";
+export const API_URL = process.env["API_URL"] ?? "https://api.instantcommerce.app";
