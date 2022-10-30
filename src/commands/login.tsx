@@ -57,9 +57,11 @@ export const Login = () => {
   if ("access_token" in deviceCodeResult) {
     /** Persist tokens */
     config.set("accessToken", deviceCodeResult.access_token);
-    if (deviceCodeResult.refresh_token) {
-      config.set("refreshToken", deviceCodeResult.refresh_token);
-    }
+    config.set("refreshToken", deviceCodeResult.refresh_token);
+
+    /** Unset organization and store in case switched accounts */
+    config.delete("organization");
+    config.delete("storeId");
 
     /** END: Successfully logged in */
     return <Text>Successfully logged in to your account</Text>;

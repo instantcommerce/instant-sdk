@@ -13,6 +13,7 @@ export const getDeviceCode = async (): Promise<Auth0DeviceCodeResponse> => {
     {
       client_id: AUTH0_CLIENT_ID,
       audience: `https://${AUTH0_DOMAIN}/api/v2/`,
+      scope: "offline_access",
     },
     {
       headers: { "content-type": "application/x-www-form-urlencoded" },
