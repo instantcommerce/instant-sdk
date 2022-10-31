@@ -1,10 +1,9 @@
 #!/usr/bin/env node
-import * as dotenv from "dotenv";
 import yargs from "yargs";
 import { hideBin } from "yargs/helpers";
-import * as commands from "./commands";
 
-dotenv.config();
+import "./env";
+import * as commands from "./commands";
 
 yargs(hideBin(process.argv))
   .command(commands.login)

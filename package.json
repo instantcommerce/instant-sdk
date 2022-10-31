@@ -9,9 +9,10 @@
     "node": ">=16.13.0"
   },
   "scripts": {
-    "build": "tsc && tsc-alias && chmod +x dist/cli.js",
+    "build": "rm -rf dist && tsc && tsc-alias && chmod +x dist/cli.js",
+    "build:dev": "yarn build && cp .env dist/.env",
     "start": "npm run build && dist/cli.js",
-    "pretest": "npm run build",
+    "pretest": "yarn build",
     "test": "xo && ava",
     "codegen": "graphql-codegen -r dotenv/config"
   },
