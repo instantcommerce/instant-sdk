@@ -1,3 +1,4 @@
+export * from "./generate";
 export * from "./init";
 export * from "./login";
 export * from "./logout";

@@ -12,5 +12,8 @@ yargs(hideBin(process.argv))
   .command(commands.refresh)
   .command(commands.select)
   .command(commands.init)
-  .demandCommand(1)
-  .help().argv;
+  .command(commands.generate)
+  .showHelpOnFail(true)
+  .demandCommand()
+  .recommendCommands()
+  .strict().argv;

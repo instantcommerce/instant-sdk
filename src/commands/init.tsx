@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 import { existsSync, mkdirSync, writeFileSync } from "fs";
 import { render, Text } from "ink";
 import { CommandModule } from "yargs";
-import { instantConfigTemplate } from "~/templates";
+import { blockTemplate, instantConfigTemplate } from "~/templates";
 import { config } from "~/config";
 
 export const Init: FC<{ name: string }> = ({ name }) => {
@@ -12,15 +12,16 @@ export const Init: FC<{ name: string }> = ({ name }) => {
   useEffect(() => {
     const dir = `./${name}`;
 
-    if (!existsSync(dir)) {
-      mkdirSync(dir);
+    if (existsSync(dir)) {
+      setError(`The directory "${name}" already exists`);
+    } else {
+      mkdirSync(`${dir}/blocks`, { recursive: true });
       writeFileSync(
         `${dir}/instant.config.js`,
         instantConfigTemplate(config.get("organization"), config.get("storeId"))
       );
+      writeFileSync(`${dir}/blocks/Hero.tsx`, blockTemplate("Hero"));
       setSuccess(true);
-    } else {
-      setError(`The directory "${name}" already exists`);
     }
   }, []);
 
