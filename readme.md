@@ -15,12 +15,13 @@ $ instant-cli --help
     $ instant-cli <command>
 
   Commands:
-    instant-cli login        Login to your account
-    instant-cli logout       Logout of current account
-    instant-cli me           Check current login status
-    instant-cli refresh      Refresh your access token
-    instant-cli select       Select organization and store
-    instant-cli init <name>  Initialize a new Instant project
+    instant-cli login                        Login to your account
+    instant-cli logout                       Logout of current account
+    instant-cli me                           Check current login status
+    instant-cli refresh                      Refresh your access token
+    instant-cli select                       Select organization and store
+    instant-cli init <name>                  Initialize a new Instant project
+    instant-cli generate <schematic> <name>  Generate new Instant element
 
   Options:
     --version  Show version number
