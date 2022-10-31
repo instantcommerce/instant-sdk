@@ -17,7 +17,7 @@ export const Generate: FC<{ schematic: string; name: string }> = ({ schematic, n
         break;
 
       default:
-        setError(`Invalid schematic "${schematic}", use one of the folowing values: "block"`);
+        setError(`Invalid schematic "${schematic}", use one of the following values: "block"`);
         return;
     }
 
