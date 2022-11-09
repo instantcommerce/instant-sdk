@@ -4,7 +4,7 @@
     "baseUrl": ".",
     "strict": true,
     "module": "ESNext",
-    "target": "es2019",
+    "target": "ESNext",
     "lib": ["ESNext"],
     "moduleResolution": "node",
     "jsx": "react",
@@ -19,9 +19,6 @@
     "paths": {
       "~/*": ["src/*"]
     }
-  },
-  "tsc-alias": {
-    "resolveFullPaths": true
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["dist", "node_modules"]
