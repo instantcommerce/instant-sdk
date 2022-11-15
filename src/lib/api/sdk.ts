@@ -351,8 +351,8 @@ export type BlockVersion = {
   contentSchema: ContentSchema;
   contentSchemaHash: Scalars['String'];
   createdAt: Scalars['DateTime'];
-  customSchema: Scalars['String'];
-  customSchemaHash: Scalars['String'];
+  customizerSchema: CustomizerSchema;
+  customizerSchemaHash: Scalars['String'];
   id: Scalars['UUID'];
   tag: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
@@ -1134,6 +1134,35 @@ export type CustomerPortalSessionPayload = {
   url: Scalars['String'];
 };
 
+export type CustomizerSchema = {
+  __typename?: 'CustomizerSchema';
+  fields: Array<CustomizerSchemaField>;
+};
+
+export type CustomizerSchemaField = CustomizerSchemaSelectField | CustomizerSchemaTextField;
+
+export type CustomizerSchemaInput = {
+  fields: Array<Scalars['Object']>;
+};
+
+export type CustomizerSchemaSelectField = {
+  __typename?: 'CustomizerSchemaSelectField';
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  options: Array<KeyValue>;
+};
+
+export type CustomizerSchemaTextField = {
+  __typename?: 'CustomizerSchemaTextField';
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  maxLength?: Maybe<Scalars['Float']>;
+  name: Scalars['String'];
+};
+
 export type DateFieldComparison = {
   between?: InputMaybe<DateFieldComparisonBetween>;
   eq?: InputMaybe<Scalars['DateTime']>;
@@ -1482,6 +1511,18 @@ export enum FaqItemSize {
   Medium = 'MEDIUM',
   Small = 'SMALL'
 }
+
+export type FasletMetadata = {
+  __typename?: 'FasletMetadata';
+  shopId?: Maybe<Scalars['String']>;
+  sizeOptionName?: Maybe<Scalars['String']>;
+};
+
+export type FasletPublicMetadata = {
+  __typename?: 'FasletPublicMetadata';
+  shopId?: Maybe<Scalars['String']>;
+  sizeOptionName?: Maybe<Scalars['String']>;
+};
 
 export type File = {
   __typename?: 'File';
@@ -2041,7 +2082,7 @@ export type IntegrationMaxAggregate = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
-export type IntegrationMetadata = AlgoliaMetadata | AppmateMetadata | CookiebotMetadata | GoogleTagManagerMetadata | GorgiasMetadata | GrowaveMetadata | JudgeMeMetadata | KiwiSizingMetadata | KlaviyoMetadata | MailchimpMetadata | ShopifyMetadata | StampedMetadata | StoremapperMetadata | StoryblokMetadata | TrustpilotMetadata | YotpoMetadata;
+export type IntegrationMetadata = AlgoliaMetadata | AppmateMetadata | CookiebotMetadata | FasletMetadata | GoogleTagManagerMetadata | GorgiasMetadata | GrowaveMetadata | JudgeMeMetadata | KiwiSizingMetadata | KlaviyoMetadata | MailchimpMetadata | ShopifyMetadata | StampedMetadata | StoremapperMetadata | StoryblokMetadata | TrustpilotMetadata | YotpoMetadata;
 
 export type IntegrationMinAggregate = {
   __typename?: 'IntegrationMinAggregate';
@@ -2068,6 +2109,7 @@ export enum IntegrationType {
   Algolia = 'ALGOLIA',
   Appmate = 'APPMATE',
   Cookiebot = 'COOKIEBOT',
+  Faslet = 'FASLET',
   GoogleTagManager = 'GOOGLE_TAG_MANAGER',
   Gorgias = 'GORGIAS',
   Growave = 'GROWAVE',
@@ -3647,6 +3689,7 @@ export type PublicIntegrationMetadata = {
   __typename?: 'PublicIntegrationMetadata';
   algolia?: Maybe<AlgoliaPublicMetadata>;
   cookieBanner?: Maybe<PublicCookieBannerIntegrationMetadata>;
+  faslet?: Maybe<FasletPublicMetadata>;
   googleTagManager?: Maybe<GoogleTagManagerPublicMetadata>;
   gorgias?: Maybe<GorgiasPublicMetadata>;
   kiwiSizing?: Maybe<KiwiSizingPublicMetadata>;
@@ -5201,7 +5244,7 @@ export type UpdateBlockInput = {
 export type UpdateBlockVersionInput = {
   code: FileInput;
   contentSchema: ContentSchemaInput;
-  customSchema: Scalars['String'];
+  customizerSchema: CustomizerSchemaInput;
   /** ID of the block */
   id: Scalars['String'];
 };
