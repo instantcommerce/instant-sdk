@@ -7,4 +7,4 @@ export * from "./me";
 export * from "./publish";
 export * from "./refresh";
 export * from "./select";
-export * from "./setup";
+export * from "./add";

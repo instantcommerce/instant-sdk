@@ -186,7 +186,7 @@ export const Publish = ({
 
       if (!config.current!.get(`blocks.${blockName}`)) {
         setError(
-          `Block not setup: "${blockName}", please run the setup command first`
+          `Block not added: "${blockName}", please run the add command first`
         );
         return false;
       }
@@ -258,7 +258,8 @@ export const Publish = ({
 
 export const publish: CommandModule = {
   command: "publish [blocknames..]",
-  describe: "Publish block(s), comma-separated list of blocknames to limit",
+  describe:
+    "Publish new version of block(s), comma-separated list of blocknames to limit",
   handler: (argv) => {
     render(<Publish blockNames={argv["blocknames"] as string[]} />);
   },

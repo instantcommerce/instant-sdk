@@ -46,7 +46,7 @@ const AskDeploy = ({
   );
 };
 
-export const Setup = ({
+export const Add = ({
   blockNames: providedBlockNames,
 }: {
   blockNames?: string[];
@@ -65,7 +65,7 @@ export const Setup = ({
 
   const config = useRef<ReturnType<typeof getProjectConfig>>();
 
-  const setupBlocks = async () => {
+  const addBlocks = async () => {
     if (!blocks) {
       exit();
       return;
@@ -98,7 +98,7 @@ export const Setup = ({
 
   useEffect(() => {
     if (doDeploy) {
-      setupBlocks();
+      addBlocks();
     }
   }, [doDeploy]);
 
@@ -118,7 +118,7 @@ export const Setup = ({
       }
 
       if (config.current!.get(`blocks.${blockName}`)) {
-        write(`Skipping block "${blockName}", already set up\n`);
+        write(`Skipping block "${blockName}", already added\n`);
         return false;
       }
 
@@ -147,7 +147,7 @@ export const Setup = ({
     }
 
     if (!blocks.length) {
-      return <Text>No blocks found to set up</Text>;
+      return <Text>No blocks found to add</Text>;
     }
 
     return (
@@ -186,16 +186,17 @@ export const Setup = ({
 
   return (
     <Text color="green">
-      {createdBlocks.length} block{createdBlocks.length === 1 ? "" : "s"} set up
+      {createdBlocks.length} block{createdBlocks.length === 1 ? "" : "s"} added
       successfully
     </Text>
   );
 };
 
-export const setup: CommandModule = {
-  command: "setup [blocknames..]",
-  describe: "Setup block(s), comma-separated list of blocknames to limit",
+export const add: CommandModule = {
+  command: "add [blocknames..]",
+  describe:
+    "Add block(s) to the platform, comma-separated list of blocknames to limit",
   handler: (argv) => {
-    render(<Setup blockNames={argv["blocknames"] as string[]} />);
+    render(<Add blockNames={argv["blocknames"] as string[]} />);
   },
 };
