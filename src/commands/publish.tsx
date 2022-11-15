@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { render, Text, useApp, useInput } from "ink";
+import { Box, render, Static, Text, useApp, useInput } from "ink";
 import { CommandModule } from "yargs";
 import { fileURLToPath } from "url";
 import { build } from "vite";
@@ -9,6 +9,7 @@ import { escapePath } from "dot-prop";
 import glob from "glob";
 import { useApiSdk } from "~/lib/api";
 import { getProjectConfig } from "~/lib/getProjectConfig";
+import { BlockFragmentFragment } from "~/lib/api/sdk";
 
 const resolvePath = (path: string) =>
   fileURLToPath(new URL(path, import.meta.url));
@@ -42,7 +43,9 @@ export const Publish = () => {
   const [isDone, setDone] = useState<boolean>(false);
   const [buildSuccess, setBuildSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string>();
-  const [uploadingBlock, setUploadingBlock] = useState<string>();
+  const [uploadedBlocks, setUploadedBlocks] = useState<
+    Array<BlockFragmentFragment>
+  >([]);
 
   const config = useRef<ReturnType<typeof getProjectConfig>>();
 
@@ -74,6 +77,8 @@ export const Publish = () => {
       return;
     }
 
+    let manifest;
+
     try {
       const manifestRaw = buildOutput.find(
         ({ fileName }) => fileName === "manifest.json"
@@ -83,18 +88,21 @@ export const Publish = () => {
         throw new Error("No manifest found");
       }
 
-      const manifest = JSON.parse(
+      manifest = JSON.parse(
         // @ts-ignore
         manifestRaw.source
       );
+    } catch (err: any) {
+      setError(err?.toString?.());
+      return;
+    }
 
-      for (const [_, entry] of Object.entries(manifest) as any) {
-        if (entry.isEntry) {
-          const blockDir = path.dirname(entry.file);
-          const blockName = blockDir.split(path.sep).pop()!;
+    for (const [_, entry] of Object.entries(manifest) as any) {
+      if (entry.isEntry) {
+        const blockDir = path.dirname(entry.file);
+        const blockName = blockDir.split(path.sep).pop()!;
 
-          setUploadingBlock(blockName);
-
+        try {
           const customizerSchema = buildOutput.find(
             ({ fileName }) =>
               fileName === path.join(blockDir, "customizerSchema.json")
@@ -141,11 +149,18 @@ export const Publish = () => {
               customizerSchema,
             },
           });
+
+          setUploadedBlocks((previous) => [
+            ...previous,
+            updatedBlock.updateBlockVersion,
+          ]);
+        } catch (err: any) {
+          setError(
+            `Error publishing block "${blockName}" (${err?.toString?.()})`
+          );
+          return;
         }
       }
-    } catch (err: any) {
-      setError(err?.toString?.());
-      return;
     }
 
     setDone(true);
@@ -212,15 +227,32 @@ export const Publish = () => {
     );
   }
 
-  if (uploadingBlock) {
-    return <Text>Uploading block {uploadingBlock}</Text>;
-  }
-
-  if (!buildSuccess || !isDone) {
+  if (!buildSuccess) {
     return <Text>Building...</Text>;
   }
 
-  return <Text>Build successful.</Text>;
+  if (!isDone) {
+    return (
+      <>
+        <Static items={uploadedBlocks}>
+          {(uploadedBlock) => (
+            <Box key={uploadedBlock.id}>
+              <Text color="green">✔ {uploadedBlock.name}</Text>
+            </Box>
+          )}
+        </Static>
+
+        <Box marginTop={1}>
+          <Text>
+            Publishing...
+            {blocks ? `(${uploadedBlocks.length}/${blocks.length})` : ""}
+          </Text>
+        </Box>
+      </>
+    );
+  }
+
+  return <Text>Publish successful</Text>;
 };
 
 export const publish: CommandModule = {
