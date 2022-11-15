@@ -1,0 +1,7 @@
+fragment BlockFragment on Block {
+  id
+  name
+  version {
+    tag
+  }
+}

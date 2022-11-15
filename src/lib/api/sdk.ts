@@ -24,6 +24,12 @@ export type AddOneDomainInput = {
   hostname: Scalars['String'];
 };
 
+/** Add to cart button behavior */
+export enum AddToCartBehavior {
+  Modal = 'MODAL',
+  Sidebar = 'SIDEBAR'
+}
+
 export type AddToWishlistInput = {
   /** Required in Appmate integration. */
   listId?: InputMaybe<Scalars['String']>;
@@ -246,6 +252,89 @@ export type BillingDetails = {
   subscription?: Maybe<SubscriptionDetails>;
 };
 
+export type Block = {
+  __typename?: 'Block';
+  createdAt: Scalars['DateTime'];
+  description?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  version?: Maybe<BlockVersion>;
+  versions: Array<BlockVersion>;
+};
+
+
+export type BlockVersionArgs = {
+  tag?: InputMaybe<Scalars['Float']>;
+};
+
+export type BlockAggregateGroupBy = {
+  __typename?: 'BlockAggregateGroupBy';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type BlockConnection = {
+  __typename?: 'BlockConnection';
+  /** Array of edges. */
+  edges: Array<BlockEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+};
+
+export type BlockCountAggregate = {
+  __typename?: 'BlockCountAggregate';
+  createdAt?: Maybe<Scalars['Int']>;
+  updatedAt?: Maybe<Scalars['Int']>;
+};
+
+export type BlockDeleteResponse = {
+  __typename?: 'BlockDeleteResponse';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  description?: Maybe<Scalars['String']>;
+  id?: Maybe<Scalars['UUID']>;
+  name?: Maybe<Scalars['String']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type BlockEdge = {
+  __typename?: 'BlockEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the Block */
+  node: Block;
+};
+
+export type BlockFilter = {
+  and?: InputMaybe<Array<BlockFilter>>;
+  createdAt?: InputMaybe<DateFieldComparison>;
+  or?: InputMaybe<Array<BlockFilter>>;
+  updatedAt?: InputMaybe<DateFieldComparison>;
+};
+
+export type BlockMaxAggregate = {
+  __typename?: 'BlockMaxAggregate';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type BlockMinAggregate = {
+  __typename?: 'BlockMinAggregate';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type BlockSort = {
+  direction: SortDirection;
+  field: BlockSortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum BlockSortFields {
+  CreatedAt = 'createdAt',
+  UpdatedAt = 'updatedAt'
+}
+
 /** Block theme settings. */
 export enum BlockTheme {
   Dark = 'DARK',
@@ -254,6 +343,20 @@ export enum BlockTheme {
   Primary = 'PRIMARY',
   PrimaryLight = 'PRIMARY_LIGHT'
 }
+
+export type BlockVersion = {
+  __typename?: 'BlockVersion';
+  codeHash: Scalars['String'];
+  codeUrl: Scalars['String'];
+  contentSchema: Scalars['String'];
+  contentSchemaHash: Scalars['String'];
+  createdAt: Scalars['DateTime'];
+  customizerSchema: CustomizerSchema;
+  customizerSchemaHash: Scalars['String'];
+  id: Scalars['UUID'];
+  tag: Scalars['Float'];
+  updatedAt: Scalars['DateTime'];
+};
 
 export type BlockquoteBlock = {
   __typename?: 'BlockquoteBlock';
@@ -477,6 +580,31 @@ export type CardBlock = {
   theme: BlockTheme;
   /** @deprecated Should use `headerTitleColor` instead. */
   titleColor?: Maybe<Scalars['String']>;
+};
+
+/** Nav cart button behavior */
+export enum CartButtonBehavior {
+  Page = 'PAGE',
+  Sidebar = 'SIDEBAR'
+}
+
+export type CartPage = {
+  __typename?: 'CartPage';
+  addToCartBehavior: AddToCartBehavior;
+  cartButtonBehavior: CartButtonBehavior;
+  hasPaymentIconsPage: Scalars['Boolean'];
+  hasPaymentIconsSidebar: Scalars['Boolean'];
+  hasProductSuggestionsModal: Scalars['Boolean'];
+  hasProductSuggestionsSidebar: Scalars['Boolean'];
+};
+
+export type CartPageInput = {
+  addToCartBehavior?: InputMaybe<AddToCartBehavior>;
+  cartButtonBehavior?: InputMaybe<CartButtonBehavior>;
+  hasPaymentIconsPage?: InputMaybe<Scalars['Boolean']>;
+  hasPaymentIconsSidebar?: InputMaybe<Scalars['Boolean']>;
+  hasProductSuggestionsModal?: InputMaybe<Scalars['Boolean']>;
+  hasProductSuggestionsSidebar?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type CategoryBlock = {
@@ -755,6 +883,11 @@ export enum CookieBannerLayout {
   FullWidth = 'FULL_WIDTH'
 }
 
+export type CookiebotMetadata = {
+  __typename?: 'CookiebotMetadata';
+  domainGroupId?: Maybe<Scalars['String']>;
+};
+
 export type CreateAssetInput = {
   file: Scalars['Upload'];
 };
@@ -763,6 +896,11 @@ export type CreateAuth0UserInput = {
   email: Scalars['String'];
   /** Auth0 role ids. */
   roles: Array<Scalars['String']>;
+};
+
+export type CreateBlockInput = {
+  description?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
 };
 
 export type CreateIntegrationInput = {
@@ -779,6 +917,11 @@ export type CreateLanguageInput = {
 export type CreateManyIntegrationsInput = {
   /** Array of records to create */
   integrations: Array<CreateIntegrationInput>;
+};
+
+export type CreateOneBlockInput = {
+  /** The record to create */
+  block: CreateBlockInput;
 };
 
 export type CreateOneDomainInput = {
@@ -846,6 +989,7 @@ export type CreateRedirectInput = {
 };
 
 export type CreateSnippetInput = {
+  bypassCookieIntegration?: InputMaybe<Scalars['Boolean']>;
   code: Scalars['String'];
   isPrioritized?: InputMaybe<Scalars['Boolean']>;
   name: Scalars['String'];
@@ -905,6 +1049,28 @@ export type CustomerPortalSessionPayload = {
   url: Scalars['String'];
 };
 
+export type CustomizerSchema = {
+  __typename?: 'CustomizerSchema';
+  properties: Array<CustomizerSchemaProperty>;
+  purpose: Array<Scalars['String']>;
+  required: Array<Scalars['String']>;
+  type: Scalars['String'];
+};
+
+export type CustomizerSchemaEnumProperty = {
+  __typename?: 'CustomizerSchemaEnumProperty';
+  default?: Maybe<Scalars['String']>;
+  enum: Array<Scalars['String']>;
+  label?: Maybe<Scalars['String']>;
+  type: Scalars['String'];
+};
+
+export type CustomizerSchemaInput = {
+  properties: Array<Scalars['Object']>;
+};
+
+export type CustomizerSchemaProperty = CustomizerSchemaEnumProperty;
+
 export type DateFieldComparison = {
   between?: InputMaybe<DateFieldComparisonBetween>;
   eq?: InputMaybe<Scalars['DateTime']>;
@@ -942,6 +1108,11 @@ export type DeleteManyResponse = {
 };
 
 export type DeleteOneAssetInput = {
+  /** The id of the record to delete. */
+  id: Scalars['ID'];
+};
+
+export type DeleteOneBlockInput = {
   /** The id of the record to delete. */
   id: Scalars['ID'];
 };
@@ -1807,7 +1978,7 @@ export type IntegrationMaxAggregate = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
-export type IntegrationMetadata = AlgoliaMetadata | AppmateMetadata | GoogleTagManagerMetadata | GorgiasMetadata | GrowaveMetadata | JudgeMeMetadata | KiwiSizingMetadata | KlaviyoMetadata | MailchimpMetadata | ShopifyMetadata | StampedMetadata | StoremapperMetadata | StoryblokMetadata | TrustpilotMetadata | YotpoMetadata;
+export type IntegrationMetadata = AlgoliaMetadata | AppmateMetadata | CookiebotMetadata | GoogleTagManagerMetadata | GorgiasMetadata | GrowaveMetadata | JudgeMeMetadata | KiwiSizingMetadata | KlaviyoMetadata | MailchimpMetadata | ShopifyMetadata | StampedMetadata | StoremapperMetadata | StoryblokMetadata | TrustpilotMetadata | YotpoMetadata;
 
 export type IntegrationMinAggregate = {
   __typename?: 'IntegrationMinAggregate';
@@ -1833,6 +2004,7 @@ export enum IntegrationSortFields {
 export enum IntegrationType {
   Algolia = 'ALGOLIA',
   Appmate = 'APPMATE',
+  Cookiebot = 'COOKIEBOT',
   GoogleTagManager = 'GOOGLE_TAG_MANAGER',
   Gorgias = 'GORGIAS',
   Growave = 'GROWAVE',
@@ -2091,6 +2263,7 @@ export type Mutation = {
   /** Creates a redirect url to the Stripe customer portal. */
   createCustomerPortalRedirect: CustomerPortalSessionPayload;
   createManyIntegrations: Array<Integration>;
+  createOneBlock: Block;
   createOneDomain: Domain;
   createOneGeolocationRedirect: GeolocationRedirect;
   createOneIntegration: Integration;
@@ -2110,6 +2283,7 @@ export type Mutation = {
   deleteManyAssets: DeleteManyResponse;
   deleteManyIntegrations: DeleteManyResponse;
   deleteOneAsset: AssetDeleteResponse;
+  deleteOneBlock: BlockDeleteResponse;
   deleteOneDomain: DomainDeleteResponse;
   deleteOneGeolocationRedirect: GeolocationRedirectDeleteResponse;
   deleteOneIntegration: IntegrationDeleteResponse;
@@ -2120,7 +2294,7 @@ export type Mutation = {
   deleteOneRedirect: RedirectDeleteResponse;
   deleteOneSnippet: SnippetDeleteResponse;
   deleteOneStore: StoreDeleteResponse;
-  deleteUser: Array<Scalars['Boolean']>;
+  deleteUser: Scalars['Boolean'];
   /** Fetch product colors from shopify. */
   fetchProductColors: Scalars['Boolean'];
   importRedirects: ImportRedirectsPayload;
@@ -2141,12 +2315,15 @@ export type Mutation = {
   /** Subscribe to a newsletter. */
   subscribeToNewsletter: Scalars['Boolean'];
   undoVoteReview: Scalars['Boolean'];
+  /** Add a new version to a given block. */
+  updateBlockVersion: Block;
   updateCustomerData: CustomerData;
   /** Updates the metadata of an integration. */
   updateIntegrationMetadata: Integration;
   updateManyIntegrations: UpdateManyResponse;
   /** Updates the member roles within the current organization. */
   updateMemberRoles: Array<Role>;
+  updateOneBlock: Block;
   updateOneGeolocationRedirect: GeolocationRedirect;
   updateOneIntegration: Integration;
   updateOneLanguage: Language;
@@ -2193,6 +2370,11 @@ export type MutationCreateAssetArgs = {
 
 export type MutationCreateManyIntegrationsArgs = {
   input: CreateManyIntegrationsInput;
+};
+
+
+export type MutationCreateOneBlockArgs = {
+  input: CreateOneBlockInput;
 };
 
 
@@ -2273,6 +2455,11 @@ export type MutationDeleteManyIntegrationsArgs = {
 
 export type MutationDeleteOneAssetArgs = {
   input: DeleteOneAssetInput;
+};
+
+
+export type MutationDeleteOneBlockArgs = {
+  input: DeleteOneBlockInput;
 };
 
 
@@ -2377,6 +2564,11 @@ export type MutationUndoVoteReviewArgs = {
 };
 
 
+export type MutationUpdateBlockVersionArgs = {
+  input: UpdateBlockVersionInput;
+};
+
+
 export type MutationUpdateCustomerDataArgs = {
   input: CustomerDataInput;
 };
@@ -2394,6 +2586,11 @@ export type MutationUpdateManyIntegrationsArgs = {
 
 export type MutationUpdateMemberRolesArgs = {
   input: UpdateAuth0MemberRolesInput;
+};
+
+
+export type MutationUpdateOneBlockArgs = {
+  input: UpdateOneBlockInput;
 };
 
 
@@ -2484,6 +2681,8 @@ export type NavigationComponent = {
   countrySelect: Scalars['Boolean'];
   /** Show search, account, and cart items as text. */
   iconLabels: Scalars['Boolean'];
+  /** By making it sticky, the navigation bar stays at the top of the screen when you scroll further down the page. */
+  isSticky: Scalars['Boolean'];
   languageSelect: Scalars['Boolean'];
   mainBackgroundColor?: Maybe<Scalars['String']>;
   menuItemsSize: FontSize;
@@ -2501,6 +2700,8 @@ export type NavigationComponentInput = {
   countrySelect?: InputMaybe<Scalars['Boolean']>;
   /** Show search, account, and cart items as text. */
   iconLabels?: InputMaybe<Scalars['Boolean']>;
+  /** By making it sticky, the navigation bar stays at the top of the screen when you scroll further down the page. */
+  isSticky?: InputMaybe<Scalars['Boolean']>;
   languageSelect?: InputMaybe<Scalars['Boolean']>;
   mainBackgroundColor?: InputMaybe<Scalars['String']>;
   menuItemsSize?: InputMaybe<FontSize>;
@@ -2947,22 +3148,48 @@ export enum ProductDescription {
   None = 'NONE'
 }
 
+/** Gallery images aspect ratio. */
+export enum ProductDetailGalleryImageAspectRatio {
+  ExtraTall = 'EXTRA_TALL',
+  Landscape = 'LANDSCAPE',
+  Portrait = 'PORTRAIT',
+  Square = 'SQUARE'
+}
+
 /** Gallery layout desktop. */
 export enum ProductDetailGalleryLayoutDesktop {
   Lg1Lg1Lg1 = 'LG1_LG1_LG1',
   Lg1Md2 = 'LG1_MD2',
-  Lg1Xs4 = 'LG1_XS4',
+  Lg1Xs5Col = 'LG1_XS5_COL',
+  Lg1Xs6 = 'LG1_XS6',
   Md2Md2 = 'MD2_MD2',
   Md2Sm3 = 'MD2_SM3'
+}
+
+/** Gallery layout mobile. */
+export enum ProductDetailGalleryLayoutMobile {
+  SliderLg1 = 'SLIDER_LG1',
+  SliderLg1Xs6 = 'SLIDER_LG1_XS6'
 }
 
 export type ProductDetailPage = {
   __typename?: 'ProductDetailPage';
   additionalDetailsLayout: AdditionalDetailsLayout;
+  galleryImageAspectRatioMobile: ProductDetailGalleryImageAspectRatio;
+  galleryImageBorderRadiusDesktop: BorderRadius;
+  galleryImageBorderRadiusMobile: BorderRadius;
   galleryLayoutDesktop: ProductDetailGalleryLayoutDesktop;
+  galleryLayoutMobile: ProductDetailGalleryLayoutMobile;
+  galleryThumbnailAspectRatioDesktop: ProductDetailGalleryImageAspectRatio;
+  galleryThumbnailAspectRatioMobile: ProductDetailGalleryImageAspectRatio;
+  galleryThumbnailBorderRadiusDesktop: BorderRadius;
+  galleryThumbnailBorderRadiusMobile: BorderRadius;
   hasPaymentIcons: Scalars['Boolean'];
+  /** @deprecated Should use `hasProductSuggestionsModal` in the cart page instead. */
   hasProductRecommendationsInCartModal: Scalars['Boolean'];
   hasQuantitySelect: Scalars['Boolean'];
+  hasStickyAddToCartBarDesktop: Scalars['Boolean'];
+  hasStickyAddToCartBarMobile: Scalars['Boolean'];
   /** The color swatches size is only applicable when color swatches are enabled. */
   productColorOptionsSize: ColorOptionsSize;
   productColorOptionsStyle?: Maybe<ColorOptionsStyle>;
@@ -2970,22 +3197,36 @@ export type ProductDetailPage = {
   productRecommendationsBlockPosition?: Maybe<FixedBlockPosition>;
   /** The sections are displayed in the order they are specified. */
   sections: Array<ProductDetailSection>;
+  stickyAddToCartItemsDesktop: Array<ProductDetailStickyAddToCartItem>;
+  stickyAddToCartItemsMobile: Array<ProductDetailStickyAddToCartItem>;
   titleFontSize: FontSize;
   wishlistButtonLayout: WishlistButtonLayout;
 };
 
 export type ProductDetailPageInput = {
   additionalDetailsLayout?: InputMaybe<AdditionalDetailsLayout>;
+  galleryImageAspectRatioMobile?: InputMaybe<ProductDetailGalleryImageAspectRatio>;
+  galleryImageBorderRadiusDesktop?: InputMaybe<BorderRadius>;
+  galleryImageBorderRadiusMobile?: InputMaybe<BorderRadius>;
   galleryLayoutDesktop?: InputMaybe<ProductDetailGalleryLayoutDesktop>;
+  galleryLayoutMobile?: InputMaybe<ProductDetailGalleryLayoutMobile>;
+  galleryThumbnailAspectRatioDesktop?: InputMaybe<ProductDetailGalleryImageAspectRatio>;
+  galleryThumbnailAspectRatioMobile?: InputMaybe<ProductDetailGalleryImageAspectRatio>;
+  galleryThumbnailBorderRadiusDesktop?: InputMaybe<BorderRadius>;
+  galleryThumbnailBorderRadiusMobile?: InputMaybe<BorderRadius>;
   hasPaymentIcons?: InputMaybe<Scalars['Boolean']>;
   hasProductRecommendationsInCartModal?: InputMaybe<Scalars['Boolean']>;
   hasQuantitySelect?: InputMaybe<Scalars['Boolean']>;
+  hasStickyAddToCartBarDesktop?: InputMaybe<Scalars['Boolean']>;
+  hasStickyAddToCartBarMobile?: InputMaybe<Scalars['Boolean']>;
   /** The color swatches size is only applicable when color swatches are enabled. */
   productColorOptionsSize?: InputMaybe<ColorOptionsSize>;
   productColorOptionsStyle?: InputMaybe<ColorOptionsStyle>;
   productRecommendationsBlockPosition?: InputMaybe<FixedBlockPosition>;
   /** The sections are displayed in the order they are specified. */
   sections?: InputMaybe<Array<ProductDetailSection>>;
+  stickyAddToCartItemsDesktop?: InputMaybe<Array<ProductDetailStickyAddToCartItem>>;
+  stickyAddToCartItemsMobile?: InputMaybe<Array<ProductDetailStickyAddToCartItem>>;
   titleFontSize?: InputMaybe<FontSize>;
   wishlistButtonLayout?: InputMaybe<WishlistButtonLayout>;
 };
@@ -2995,6 +3236,14 @@ export enum ProductDetailSection {
   CustomContentBlocks = 'CUSTOM_CONTENT_BLOCKS',
   Recommendations = 'RECOMMENDATIONS',
   Reviews = 'REVIEWS'
+}
+
+/** Product detail sticky add to card item. */
+export enum ProductDetailStickyAddToCartItem {
+  Options = 'OPTIONS',
+  Price = 'PRICE',
+  Thumbnail = 'THUMBNAIL',
+  Title = 'TITLE'
 }
 
 export type ProductForm = {
@@ -3296,6 +3545,12 @@ export type PublicAsset = {
   url: Scalars['String'];
 };
 
+export type PublicCookieBannerIntegrationMetadata = {
+  __typename?: 'PublicCookieBannerIntegrationMetadata';
+  domainId: Scalars['String'];
+  provider: IntegrationType;
+};
+
 export type PublicDomain = {
   __typename?: 'PublicDomain';
   hostname: Scalars['String'];
@@ -3317,6 +3572,7 @@ export type PublicGeolocationRedirect = {
 export type PublicIntegrationMetadata = {
   __typename?: 'PublicIntegrationMetadata';
   algolia?: Maybe<AlgoliaPublicMetadata>;
+  cookieBanner?: Maybe<PublicCookieBannerIntegrationMetadata>;
   googleTagManager?: Maybe<GoogleTagManagerPublicMetadata>;
   gorgias?: Maybe<GorgiasPublicMetadata>;
   kiwiSizing?: Maybe<KiwiSizingPublicMetadata>;
@@ -3381,6 +3637,8 @@ export type PublicReviewIntegrationMetadata = {
 
 export type PublicSnippet = {
   __typename?: 'PublicSnippet';
+  /** Indicates if the script should bypass cookie integrations. Only relevant for JS snippets. */
+  bypassCookieIntegration?: Maybe<Scalars['Boolean']>;
   id: Scalars['UUID'];
   /** Whether the script should be loaded prioritized even if that has performance impacts. Only relevant for JS snippets. */
   isPrioritized?: Maybe<Scalars['Boolean']>;
@@ -3419,6 +3677,8 @@ export type Query = {
   auth0Roles: Array<Auth0Role>;
   averageRatings: Array<AverageRating>;
   billingDetails: BillingDetails;
+  block?: Maybe<Block>;
+  blocks: BlockConnection;
   /** Get current bulk operation. */
   currentBulkOperation?: Maybe<ShopifyBulkOperation>;
   /** Fetches current organization */
@@ -3491,6 +3751,18 @@ export type QueryAssetsArgs = {
 
 export type QueryAverageRatingsArgs = {
   productIds: Array<Scalars['String']>;
+};
+
+
+export type QueryBlockArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryBlocksArgs = {
+  filter?: InputMaybe<BlockFilter>;
+  paging?: InputMaybe<CursorPaging>;
+  sorting?: InputMaybe<Array<BlockSort>>;
 };
 
 
@@ -3723,6 +3995,7 @@ export type Redirect = {
   __typename?: 'Redirect';
   createdAt: Scalars['DateTime'];
   from: Scalars['String'];
+  hits: Scalars['Float'];
   id: Scalars['UUID'];
   to: Scalars['String'];
   type: RedirectType;
@@ -3946,6 +4219,12 @@ export type Role = {
   name: Scalars['String'];
 };
 
+/** Scroll direction. */
+export enum ScrollDirection {
+  Horizontal = 'HORIZONTAL',
+  Vertical = 'VERTICAL'
+}
+
 export type ShopifyBulkOperation = {
   __typename?: 'ShopifyBulkOperation';
   createdAt: Scalars['DateTime'];
@@ -4154,6 +4433,8 @@ export type ShopifyTransformInput = {
 
 export type Snippet = {
   __typename?: 'Snippet';
+  /** Indicates if the script should bypass cookie integrations. Only relevant for JS snippets. */
+  bypassCookieIntegration?: Maybe<Scalars['Boolean']>;
   code: Scalars['String'];
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
@@ -4188,6 +4469,8 @@ export type SnippetCountAggregate = {
 
 export type SnippetDeleteResponse = {
   __typename?: 'SnippetDeleteResponse';
+  /** Indicates if the script should bypass cookie integrations. Only relevant for JS snippets. */
+  bypassCookieIntegration?: Maybe<Scalars['Boolean']>;
   createdAt?: Maybe<Scalars['DateTime']>;
   id?: Maybe<Scalars['UUID']>;
   /** Whether the script should be loaded prioritized even if that has performance impacts. Only relevant for JS snippets. */
@@ -4286,6 +4569,7 @@ export type SocialProofBlock = {
   headerSubtitleColor?: Maybe<Scalars['String']>;
   headerTitleColor?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
+  mobileScrollDirection: ScrollDirection;
   name: Scalars['String'];
   theme: BlockTheme;
 };
@@ -4419,6 +4703,27 @@ export type StoreFilter = {
   updatedAt?: InputMaybe<DateFieldComparison>;
 };
 
+export type StoreLocatorBlock = {
+  __typename?: 'StoreLocatorBlock';
+  backgroundColor?: Maybe<Scalars['String']>;
+  containerWidth: ContainerWidth;
+  dividerColor?: Maybe<Scalars['String']>;
+  hasDivider: Scalars['Boolean'];
+  headerAlignment: TextAlignment;
+  headerPreTitleBackgroundColor?: Maybe<Scalars['String']>;
+  headerPretitleColor?: Maybe<Scalars['String']>;
+  headerSize: FontSize;
+  headerSubtitleColor?: Maybe<Scalars['String']>;
+  headerTitleColor?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  imageBorderRadius?: Maybe<BorderRadius>;
+  imageBoxShadow?: Maybe<BoxShadow>;
+  locationNameColor?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  paragraphColor?: Maybe<Scalars['String']>;
+  theme: BlockTheme;
+};
+
 export type StoreMaxAggregate = {
   __typename?: 'StoreMaxAggregate';
   createdAt?: Maybe<Scalars['DateTime']>;
@@ -4457,7 +4762,7 @@ export type Storefront = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type StorefrontBlock = BlockquoteBlock | BlogCardsColumnsBlock | BlogCardsDefaultBlock | BlogHeaderBlock | BlogSliderBlock | CardBlock | CategoryBlock | CategorySliderBlock | CodeEmbedBlock | ContactDetailsBlock | ContactFormBlock | ContactFormImageBlock | EmailBannerBlock | EmailBannerImageBlock | FaqBlock | HeaderBlock | HeroBlock | HeroSliderBlock | HeroVideoBlock | ImageDualBlock | ImageSingleBlock | ImageTripleBlock | ListBlock | MultiColumnRichTextBlock | ProductSliderBlock | QuoteBlock | RichTextBlock | SocialGalleryBlock | SocialProofBlock | StatisticsBlock | StoremapperBlock | TableBlock | TextImageBlock | UspsBlock | VideoBlock;
+export type StorefrontBlock = BlockquoteBlock | BlogCardsColumnsBlock | BlogCardsDefaultBlock | BlogHeaderBlock | BlogSliderBlock | CardBlock | CategoryBlock | CategorySliderBlock | CodeEmbedBlock | ContactDetailsBlock | ContactFormBlock | ContactFormImageBlock | EmailBannerBlock | EmailBannerImageBlock | FaqBlock | HeaderBlock | HeroBlock | HeroSliderBlock | HeroVideoBlock | ImageDualBlock | ImageSingleBlock | ImageTripleBlock | ListBlock | MultiColumnRichTextBlock | ProductSliderBlock | QuoteBlock | RichTextBlock | SocialGalleryBlock | SocialProofBlock | StatisticsBlock | StoreLocatorBlock | StoremapperBlock | TableBlock | TextImageBlock | UspsBlock | VideoBlock;
 
 export type StorefrontComponents = {
   __typename?: 'StorefrontComponents';
@@ -4501,6 +4806,7 @@ export type StorefrontConfig = {
 export type StorefrontPages = {
   __typename?: 'StorefrontPages';
   blogDetail: BlogDetailPage;
+  cart: CartPage;
   productDetail: ProductDetailPage;
   productListing: ProductListingPage;
   wishlist: WishlistPage;
@@ -4508,6 +4814,7 @@ export type StorefrontPages = {
 
 export type StorefrontPagesInput = {
   blogDetail?: InputMaybe<BlogDetailPageInput>;
+  cart?: InputMaybe<CartPageInput>;
   productDetail?: InputMaybe<ProductDetailPageInput>;
   productListing?: InputMaybe<ProductListingPageInput>;
   wishlist?: InputMaybe<WishlistPageInput>;
@@ -4812,6 +5119,19 @@ export type UpdateAuth0ProfileInput = {
   lastName?: InputMaybe<Scalars['String']>;
 };
 
+export type UpdateBlockInput = {
+  description?: InputMaybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
+export type UpdateBlockVersionInput = {
+  code: FileInput;
+  contentSchema: Scalars['String'];
+  customizerSchema: CustomizerSchemaInput;
+  /** ID of the block */
+  id: Scalars['String'];
+};
+
 export type UpdateIntegrationInput = {
   isActive: Scalars['Boolean'];
 };
@@ -4839,6 +5159,13 @@ export type UpdateManyResponse = {
   __typename?: 'UpdateManyResponse';
   /** The number of records updated. */
   updatedCount: Scalars['Int'];
+};
+
+export type UpdateOneBlockInput = {
+  /** The id of the record to update */
+  id: Scalars['ID'];
+  /** The update to apply. */
+  update: UpdateBlockInput;
 };
 
 export type UpdateOneGeolocationRedirectInput = {
@@ -4938,6 +5265,7 @@ export type UpdateRedirectInput = {
 };
 
 export type UpdateSnippetInput = {
+  bypassCookieIntegration?: InputMaybe<Scalars['Boolean']>;
   code?: InputMaybe<Scalars['String']>;
   isPrioritized?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
@@ -5194,6 +5522,22 @@ export type YotpoMetadata = {
   appKey?: Maybe<Scalars['String']>;
 };
 
+export type BlockFragmentFragment = { __typename?: 'Block', id: any, name: string, version?: { __typename?: 'BlockVersion', tag: number } | null };
+
+export type CreateOneBlockMutationVariables = Exact<{
+  input: CreateOneBlockInput;
+}>;
+
+
+export type CreateOneBlockMutation = { __typename?: 'Mutation', createOneBlock: { __typename?: 'Block', id: any, name: string, version?: { __typename?: 'BlockVersion', tag: number } | null } };
+
+export type UpdateBlockVersionMutationVariables = Exact<{
+  input: UpdateBlockVersionInput;
+}>;
+
+
+export type UpdateBlockVersionMutation = { __typename?: 'Mutation', updateBlockVersion: { __typename?: 'Block', id: any, name: string, version?: { __typename?: 'BlockVersion', tag: number } | null } };
+
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -5209,7 +5553,29 @@ export type UserWithOrgsQueryVariables = Exact<{ [key: string]: never; }>;
 
 export type UserWithOrgsQuery = { __typename?: 'Query', me: { __typename?: 'User', organizations: Array<{ __typename?: 'UserOrganization', id: any, name: string, slug: string }> } };
 
-
+export const BlockFragmentFragmentDoc = gql`
+    fragment BlockFragment on Block {
+  id
+  name
+  version {
+    tag
+  }
+}
+    `;
+export const CreateOneBlockDocument = gql`
+    mutation createOneBlock($input: CreateOneBlockInput!) {
+  createOneBlock(input: $input) {
+    ...BlockFragment
+  }
+}
+    ${BlockFragmentFragmentDoc}`;
+export const UpdateBlockVersionDocument = gql`
+    mutation updateBlockVersion($input: UpdateBlockVersionInput!) {
+  updateBlockVersion(input: $input) {
+    ...BlockFragment
+  }
+}
+    ${BlockFragmentFragmentDoc}`;
 export const MeDocument = gql`
     query me {
   me {
@@ -5251,6 +5617,12 @@ const defaultWrapper: SdkFunctionWrapper = (action, _operationName, _operationTy
 
 export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = defaultWrapper) {
   return {
+    createOneBlock(variables: CreateOneBlockMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateOneBlockMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<CreateOneBlockMutation>(CreateOneBlockDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createOneBlock', 'mutation');
+    },
+    updateBlockVersion(variables: UpdateBlockVersionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateBlockVersionMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<UpdateBlockVersionMutation>(UpdateBlockVersionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateBlockVersion', 'mutation');
+    },
     me(variables?: MeQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<MeQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<MeQuery>(MeDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'me', 'query');
     },

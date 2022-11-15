@@ -1,0 +1,5 @@
+mutation createOneBlock($input: CreateOneBlockInput!) {
+  createOneBlock(input: $input) {
+    ...BlockFragment
+  }
+}
