@@ -1,6 +1,6 @@
 export interface ExtractedApiError {
   message: string;
-  code?: string;
+  code?: string | number;
 }
 
 /**
@@ -20,12 +20,15 @@ export const extractApiError = (
     if (typeof (error as unknown as any).response !== "undefined") {
       if (
         Array.isArray((error as unknown as any)?.response?.errors) &&
-        typeof (error as unknown as any).response.errors[0]?.message === "string"
+        typeof (error as unknown as any).response.errors[0]?.message ===
+          "string"
       ) {
-        extracted.message = (error as unknown as any).response.errors[0]?.message;
+        extracted.message = (
+          error as unknown as any
+        ).response.errors[0]?.message;
         extracted.code =
-          (error as unknown as any).response.errors[0]?.extensions?.response?.statusCode ??
-          (error as unknown as any)?.response?.status;
+          (error as unknown as any).response.errors[0]?.extensions?.response
+            ?.statusCode ?? (error as unknown as any)?.response?.status;
       }
     }
   }

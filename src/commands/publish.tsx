@@ -5,9 +5,8 @@ import { fileURLToPath } from "url";
 import { build } from "vite";
 import path from "path";
 import { createReadStream, existsSync } from "fs";
-import { escapePath } from "dot-prop";
 import glob from "glob";
-import { useApiSdk } from "~/lib/api";
+import { extractApiError, useApiSdk } from "~/lib/api";
 import { getProjectConfig } from "~/lib/getProjectConfig";
 import { BlockFragmentFragment } from "~/lib/api/sdk";
 
@@ -19,9 +18,20 @@ const __dirname = resolvePath(
 );
 
 const getBlockFiles = () =>
-  glob.sync(path.join(__dirname, "src/blocks/**/index.tsx"));
+  glob
+    .sync(path.join(__dirname, "src/blocks/**/index.tsx"))
+    .map((file) => blockNameFromPath(file));
 
-const AskDeploy = ({ onDeploy }: { onDeploy(): void }) => {
+const blockNameFromPath = (filePath: string) =>
+  path.dirname(filePath).split(path.sep).pop()!;
+
+const AskDeploy = ({
+  blocks,
+  onDeploy,
+}: {
+  blocks?: string[];
+  onDeploy(): void;
+}) => {
   const { exit } = useApp();
 
   useInput((input) => {
@@ -32,7 +42,12 @@ const AskDeploy = ({ onDeploy }: { onDeploy(): void }) => {
     }
   });
 
-  return <Text>Set up and deploy blocks? [y/n]</Text>;
+  return (
+    <Text>
+      Set up and deploy new blocks? [y/n]
+      {!!blocks && <Text dimColor> {blocks.join(", ")}</Text>}
+    </Text>
+  );
 };
 
 export const Publish = () => {
@@ -44,7 +59,7 @@ export const Publish = () => {
   const [buildSuccess, setBuildSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string>();
   const [uploadedBlocks, setUploadedBlocks] = useState<
-    Array<BlockFragmentFragment>
+    Array<BlockFragmentFragment & { isUnchanged?: boolean }>
   >([]);
 
   const config = useRef<ReturnType<typeof getProjectConfig>>();
@@ -100,7 +115,8 @@ export const Publish = () => {
     for (const [_, entry] of Object.entries(manifest) as any) {
       if (entry.isEntry) {
         const blockDir = path.dirname(entry.file);
-        const blockName = blockDir.split(path.sep).pop()!;
+        const blockName = blockNameFromPath(entry.file);
+        let blockIdToUpdate: string;
 
         try {
           const customizerSchema = buildOutput.find(
@@ -117,12 +133,9 @@ export const Publish = () => {
             path.join(__dirname, "dist", entry.file)
           );
 
-          const entryName = escapePath(path.relative("src", entry.src));
-
-          const existingBlockConfig = config.current!.get("blocks")?.[
-            entryName
-          ] as { id: string } | undefined;
-          let blockIdToUpdate: string;
+          const existingBlockConfig = config.current!.get(
+            `blocks.${blockName}`
+          ) as { id: string } | undefined;
 
           if (existingBlockConfig) {
             blockIdToUpdate = existingBlockConfig.id;
@@ -131,11 +144,8 @@ export const Publish = () => {
               .createOneBlock({ input: { block: { name: blockName } } })
               .then((res) => res.createOneBlock.id);
 
-            config.current!.set("blocks", {
-              ...config.current!.get("blocks"),
-              [entryName]: {
-                id: blockIdToUpdate,
-              },
+            config.current!.set(`blocks.${blockName}`, {
+              id: blockIdToUpdate,
             });
           }
 
@@ -155,6 +165,19 @@ export const Publish = () => {
             updatedBlock.updateBlockVersion,
           ]);
         } catch (err: any) {
+          /** No changes to block detected */
+          if (extractApiError(err)?.code === 422) {
+            setUploadedBlocks((previous) => [
+              ...previous,
+              {
+                id: blockIdToUpdate,
+                name: blockName,
+                isUnchanged: true,
+              },
+            ]);
+            continue;
+          }
+
           setError(
             `Error publishing block "${blockName}" (${err?.toString?.()})`
           );
@@ -181,28 +204,25 @@ export const Publish = () => {
     }
 
     config.current = getProjectConfig("./");
-    const blockFiles = getBlockFiles();
+    const blockNames = getBlockFiles();
 
     if (config.current.has("blocks")) {
       let blocksInConfig = 0;
 
-      blockFiles.forEach((file) => {
-        const existingConfig =
-          config.current!.get("blocks")?.[
-            escapePath(path.relative("src", file))
-          ];
+      blockNames.forEach((blockName) => {
+        const existingConfig = config.current!.get(`blocks.${blockName}`);
 
         if (existingConfig) {
           blocksInConfig += 1;
         }
       });
 
-      if (blocksInConfig === blockFiles.length) {
+      if (blocksInConfig === blockNames.length) {
         setDoDeploy(true);
       }
     }
 
-    setBlocks(blockFiles);
+    setBlocks(blockNames);
   }, []);
 
   if (error) {
@@ -220,6 +240,7 @@ export const Publish = () => {
 
     return (
       <AskDeploy
+        blocks={blocks}
         onDeploy={() => {
           setDoDeploy(true);
         }}
@@ -237,7 +258,17 @@ export const Publish = () => {
         <Static items={uploadedBlocks}>
           {(uploadedBlock) => (
             <Box key={uploadedBlock.id}>
-              <Text color="green">✔ {uploadedBlock.name}</Text>
+              {uploadedBlock.isUnchanged ? (
+                <Text dimColor>
+                  ⏭️{"  "}
+                  {uploadedBlock.name} (unchanged)
+                </Text>
+              ) : (
+                <Text color="green">
+                  ✅{"  "}
+                  {uploadedBlock.name} (v{uploadedBlock.version?.tag})
+                </Text>
+              )}
             </Box>
           )}
         </Static>
