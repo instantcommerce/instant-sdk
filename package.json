@@ -1,9 +1,11 @@
 {
-  "name": "instant-cli",
+  "name": "@instantcommerce/cli",
   "version": "0.0.0",
   "license": "MIT",
   "author": "cli@instantcommerce.io",
-  "bin": "dist/cli.js",
+  "bin": {
+    "instant": "dist/cli.js"
+  },
   "type": "module",
   "engines": {
     "node": ">=16.13.0"
