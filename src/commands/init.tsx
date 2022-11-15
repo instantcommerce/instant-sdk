@@ -17,7 +17,7 @@ export const Init: FC<{ name: string }> = ({ name }) => {
     } else {
       mkdirSync(`${dir}/blocks`, { recursive: true });
       writeFileSync(
-        `${dir}/instant.config.js`,
+        `${dir}/instant.config.json`,
         instantConfigTemplate(config.get("organization"), config.get("storeId"))
       );
       writeFileSync(`${dir}/blocks/Hero.tsx`, blockTemplate("Hero"));

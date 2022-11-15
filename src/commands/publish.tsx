@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Box, render, Static, Text, useApp, useInput } from "ink";
+import { Box, render, Static, Text } from "ink";
 import { CommandModule } from "yargs";
 import { fileURLToPath } from "url";
 import { build } from "vite";
@@ -9,6 +9,7 @@ import glob from "glob";
 import { extractApiError, useApiSdk } from "~/lib/api";
 import { getProjectConfig } from "~/lib/getProjectConfig";
 import { BlockFragmentFragment } from "~/lib/api/sdk";
+import { getBlockNameFromPath } from "~/lib/getBlockNameFromPath";
 
 const resolvePath = (path: string) =>
   fileURLToPath(new URL(path, import.meta.url));
@@ -20,40 +21,15 @@ const __dirname = resolvePath(
 const getBlockFiles = () =>
   glob
     .sync(path.join(__dirname, "src/blocks/**/index.tsx"))
-    .map((file) => blockNameFromPath(file));
+    .map((file) => getBlockNameFromPath(file));
 
-const blockNameFromPath = (filePath: string) =>
-  path.dirname(filePath).split(path.sep).pop()!;
-
-const AskDeploy = ({
-  blocks,
-  onDeploy,
+export const Publish = ({
+  blockNames: providedBlockNames,
 }: {
-  blocks?: string[];
-  onDeploy(): void;
+  blockNames: string[];
 }) => {
-  const { exit } = useApp();
-
-  useInput((input) => {
-    if (input === "y") {
-      onDeploy();
-    } else {
-      exit();
-    }
-  });
-
-  return (
-    <Text>
-      Set up and deploy new blocks? [y/n]
-      {!!blocks && <Text dimColor> {blocks.join(", ")}</Text>}
-    </Text>
-  );
-};
-
-export const Publish = () => {
   const apiSdk = useApiSdk();
 
-  const [doDeploy, setDoDeploy] = useState(false);
   const [blocks, setBlocks] = useState<Array<string> | null>(null);
   const [isDone, setDone] = useState<boolean>(false);
   const [buildSuccess, setBuildSuccess] = useState<boolean>(false);
@@ -115,39 +91,37 @@ export const Publish = () => {
     for (const [_, entry] of Object.entries(manifest) as any) {
       if (entry.isEntry) {
         const blockDir = path.dirname(entry.file);
-        const blockName = blockNameFromPath(entry.file);
+        const blockName = getBlockNameFromPath(entry.file);
         let blockIdToUpdate: string;
 
+        if (!blocks?.includes(blockName)) {
+          continue;
+        }
+
         try {
-          const customizerSchema = buildOutput.find(
-            ({ fileName }) =>
-              fileName === path.join(blockDir, "customizerSchema.json")
-            // @ts-ignore
-          )?.source;
-          const contentSchema = buildOutput.find(
-            ({ fileName }) =>
-              fileName === path.join(blockDir, "contentSchema.json")
-            // @ts-ignore
-          )?.source;
+          const customizerSchema = JSON.parse(
+            buildOutput.find(
+              ({ fileName }) =>
+                fileName === path.join(blockDir, "customizerSchema.json")
+              // @ts-ignore
+            )?.source
+          );
+          const contentSchema = JSON.parse(
+            buildOutput.find(
+              ({ fileName }) =>
+                fileName === path.join(blockDir, "contentSchema.json")
+              // @ts-ignore
+            )?.source
+          );
           const blockFile = createReadStream(
             path.join(__dirname, "dist", entry.file)
           );
 
           const existingBlockConfig = config.current!.get(
             `blocks.${blockName}`
-          ) as { id: string } | undefined;
+          ) as { id: string };
 
-          if (existingBlockConfig) {
-            blockIdToUpdate = existingBlockConfig.id;
-          } else {
-            blockIdToUpdate = await apiSdk
-              .createOneBlock({ input: { block: { name: blockName } } })
-              .then((res) => res.createOneBlock.id);
-
-            config.current!.set(`blocks.${blockName}`, {
-              id: blockIdToUpdate,
-            });
-          }
+          blockIdToUpdate = existingBlockConfig.id;
 
           const updatedBlock = await apiSdk.updateBlockVersion({
             input: {
@@ -190,10 +164,10 @@ export const Publish = () => {
   };
 
   useEffect(() => {
-    if (doDeploy) {
+    if (blocks?.length) {
       buildAndPublish();
     }
-  }, [doDeploy]);
+  }, [blocks]);
 
   useEffect(() => {
     process.chdir(__dirname);
@@ -204,21 +178,28 @@ export const Publish = () => {
     }
 
     config.current = getProjectConfig("./");
-    const blockNames = getBlockFiles();
 
-    if (config.current.has("blocks")) {
-      let blocksInConfig = 0;
+    const blockNames = getBlockFiles().filter((blockName) => {
+      if (providedBlockNames && !providedBlockNames.includes(blockName)) {
+        return false;
+      }
 
-      blockNames.forEach((blockName) => {
-        const existingConfig = config.current!.get(`blocks.${blockName}`);
+      if (!config.current!.get(`blocks.${blockName}`)) {
+        setError(
+          `Block not setup: "${blockName}", please run the setup command first`
+        );
+        return false;
+      }
 
-        if (existingConfig) {
-          blocksInConfig += 1;
+      return true;
+    });
+
+    if (providedBlockNames) {
+      for (const providedBlockName of providedBlockNames) {
+        if (!blockNames.includes(providedBlockName)) {
+          setError(`Block not found: "${providedBlockName}"`);
+          break;
         }
-      });
-
-      if (blocksInConfig === blockNames.length) {
-        setDoDeploy(true);
       }
     }
 
@@ -229,23 +210,12 @@ export const Publish = () => {
     return <Text>An error occurred: {error}</Text>;
   }
 
-  if (!doDeploy) {
-    if (!blocks) {
-      return <Text>Loading...</Text>;
-    }
+  if (!blocks) {
+    return <Text>Loading...</Text>;
+  }
 
-    if (!blocks.length) {
-      return <Text>No blocks found</Text>;
-    }
-
-    return (
-      <AskDeploy
-        blocks={blocks}
-        onDeploy={() => {
-          setDoDeploy(true);
-        }}
-      />
-    );
+  if (!blocks.length) {
+    return <Text>No blocks found</Text>;
   }
 
   if (!buildSuccess) {
@@ -287,9 +257,9 @@ export const Publish = () => {
 };
 
 export const publish: CommandModule = {
-  command: "publish",
-  describe: "Publish blocks",
-  handler: () => {
-    render(<Publish />);
+  command: "publish [blocknames..]",
+  describe: "Publish block(s), comma-separated list of blocknames to limit",
+  handler: (argv) => {
+    render(<Publish blockNames={argv["blocknames"] as string[]} />);
   },
 };
