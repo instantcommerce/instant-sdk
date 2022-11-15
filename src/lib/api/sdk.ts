@@ -348,11 +348,11 @@ export type BlockVersion = {
   __typename?: 'BlockVersion';
   codeHash: Scalars['String'];
   codeUrl: Scalars['String'];
-  contentSchema: Scalars['String'];
+  contentSchema: ContentSchema;
   contentSchemaHash: Scalars['String'];
   createdAt: Scalars['DateTime'];
-  customizerSchema: CustomizerSchema;
-  customizerSchemaHash: Scalars['String'];
+  customSchema: Scalars['String'];
+  customSchemaHash: Scalars['String'];
   id: Scalars['UUID'];
   tag: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
@@ -846,6 +846,91 @@ export enum ContainerWidth {
   FullWidth = 'FULL_WIDTH'
 }
 
+export type ContentSchema = {
+  __typename?: 'ContentSchema';
+  displayName?: Maybe<Scalars['String']>;
+  fields: Array<ContentSchemaField>;
+  name: Scalars['String'];
+  subschemas?: Maybe<Array<ContentSubschema>>;
+};
+
+export type ContentSchemaDateField = {
+  __typename?: 'ContentSchemaDateField';
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  isTranslatable: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
+export type ContentSchemaField = ContentSchemaDateField | ContentSchemaImageField | ContentSchemaRichTextField | ContentSchemaSelectField | ContentSchemaTextField | ContentSchemaUrlField;
+
+export type ContentSchemaImageField = {
+  __typename?: 'ContentSchemaImageField';
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  isTranslatable: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
+export type ContentSchemaInput = {
+  fields: Array<Scalars['Object']>;
+  subschemas?: InputMaybe<Array<ContentSubschemaInput>>;
+};
+
+export type ContentSchemaRichTextField = {
+  __typename?: 'ContentSchemaRichTextField';
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  isTranslatable: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  toolbar: Array<Scalars['String']>;
+};
+
+export type ContentSchemaSelectField = {
+  __typename?: 'ContentSchemaSelectField';
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  isTranslatable: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  options: Array<KeyValue>;
+};
+
+export type ContentSchemaTextField = {
+  __typename?: 'ContentSchemaTextField';
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  isTranslatable: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  maxLength?: Maybe<Scalars['Float']>;
+  name: Scalars['String'];
+};
+
+export type ContentSchemaUrlField = {
+  __typename?: 'ContentSchemaUrlField';
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  isTranslatable: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
+export type ContentSubschema = {
+  __typename?: 'ContentSubschema';
+  displayName?: Maybe<Scalars['String']>;
+  fields: Array<ContentSchemaField>;
+  name: Scalars['String'];
+};
+
+export type ContentSubschemaInput = {
+  displayName?: InputMaybe<Scalars['String']>;
+  fields: Array<Scalars['Object']>;
+  name: Scalars['String'];
+};
+
 /** Cookie banner alignment. */
 export enum CookieBannerAlignment {
   Center = 'CENTER',
@@ -1048,28 +1133,6 @@ export type CustomerPortalSessionPayload = {
   __typename?: 'CustomerPortalSessionPayload';
   url: Scalars['String'];
 };
-
-export type CustomizerSchema = {
-  __typename?: 'CustomizerSchema';
-  properties: Array<CustomizerSchemaProperty>;
-  purpose: Array<Scalars['String']>;
-  required: Array<Scalars['String']>;
-  type: Scalars['String'];
-};
-
-export type CustomizerSchemaEnumProperty = {
-  __typename?: 'CustomizerSchemaEnumProperty';
-  default?: Maybe<Scalars['String']>;
-  enum: Array<Scalars['String']>;
-  label?: Maybe<Scalars['String']>;
-  type: Scalars['String'];
-};
-
-export type CustomizerSchemaInput = {
-  properties: Array<Scalars['Object']>;
-};
-
-export type CustomizerSchemaProperty = CustomizerSchemaEnumProperty;
 
 export type DateFieldComparison = {
   between?: InputMaybe<DateFieldComparisonBetween>;
@@ -2050,6 +2113,17 @@ export type JudgeMeMetadata = {
   __typename?: 'JudgeMeMetadata';
   privateToken?: Maybe<Scalars['String']>;
   publicToken?: Maybe<Scalars['String']>;
+};
+
+export type KeyValue = {
+  __typename?: 'KeyValue';
+  key: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type KeyValueInput = {
+  key: Scalars['String'];
+  value: Scalars['String'];
 };
 
 export type KiwiSizingMetadata = {
@@ -5126,8 +5200,8 @@ export type UpdateBlockInput = {
 
 export type UpdateBlockVersionInput = {
   code: FileInput;
-  contentSchema: Scalars['String'];
-  customizerSchema: CustomizerSchemaInput;
+  contentSchema: ContentSchemaInput;
+  customSchema: Scalars['String'];
   /** ID of the block */
   id: Scalars['String'];
 };
