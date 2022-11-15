@@ -4,7 +4,7 @@ import { CommandModule } from "yargs";
 import { ExtractedApiError, extractApiError, useApiSdk } from "~/lib/api";
 import { MeQuery } from "~/lib/api/sdk";
 
-export const Me = () => {
+export const WhoAmI = () => {
   const apiSdk = useApiSdk();
 
   const [meData, setMeData] = useState<MeQuery["me"]>();
@@ -28,10 +28,10 @@ export const Me = () => {
   return <Text>Logged in as "{meData?.email}".</Text>;
 };
 
-export const me: CommandModule = {
-  command: "me",
+export const whoami: CommandModule = {
+  command: "whoami",
   describe: "Check current login status",
   handler: () => {
-    render(<Me />);
+    render(<WhoAmI />);
   },
 };
