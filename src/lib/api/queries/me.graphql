@@ -3,5 +3,9 @@ query me {
     firstName
     lastName
     email
+    organizations {
+      slug
+      name
+    }
   }
 }

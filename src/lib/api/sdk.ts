@@ -2416,6 +2416,8 @@ export type Mutation = {
   importRedirects: ImportRedirectsPayload;
   logIntoOrganization: Scalars['Boolean'];
   logOutFromOrganization: Scalars['Boolean'];
+  /** Add a new version to a given block. */
+  publishBlockVersion: Block;
   /** Publishes draft storefront of the current store. */
   publishStorefront: Storefront;
   purgeCache: Scalars['Boolean'];
@@ -2431,8 +2433,6 @@ export type Mutation = {
   /** Subscribe to a newsletter. */
   subscribeToNewsletter: Scalars['Boolean'];
   undoVoteReview: Scalars['Boolean'];
-  /** Add a new version to a given block. */
-  updateBlockVersion: Block;
   updateCustomerData: CustomerData;
   /** Updates the metadata of an integration. */
   updateIntegrationMetadata: Integration;
@@ -2645,6 +2645,11 @@ export type MutationLogIntoOrganizationArgs = {
 };
 
 
+export type MutationPublishBlockVersionArgs = {
+  input: PublishBlockVersionInput;
+};
+
+
 export type MutationRemoveFromWishlistArgs = {
   input: RemoveFromWishlistInput;
 };
@@ -2677,11 +2682,6 @@ export type MutationSubscribeToNewsletterArgs = {
 
 export type MutationUndoVoteReviewArgs = {
   input: VoteReviewInput;
-};
-
-
-export type MutationUpdateBlockVersionArgs = {
-  input: UpdateBlockVersionInput;
 };
 
 
@@ -3783,6 +3783,14 @@ export type PublicStore = {
   slug: Scalars['String'];
   snippets: Array<PublicSnippet>;
   storefront: Storefront;
+};
+
+export type PublishBlockVersionInput = {
+  code: Scalars['Upload'];
+  contentSchema: ContentSchemaInput;
+  customizerSchema: CustomizerSchemaInput;
+  /** ID of the block */
+  id: Scalars['String'];
 };
 
 export type Query = {
@@ -5241,14 +5249,6 @@ export type UpdateBlockInput = {
   name: Scalars['String'];
 };
 
-export type UpdateBlockVersionInput = {
-  code: FileInput;
-  contentSchema: ContentSchemaInput;
-  customizerSchema: CustomizerSchemaInput;
-  /** ID of the block */
-  id: Scalars['String'];
-};
-
 export type UpdateIntegrationInput = {
   isActive: Scalars['Boolean'];
 };
@@ -5648,17 +5648,17 @@ export type CreateOneBlockMutationVariables = Exact<{
 
 export type CreateOneBlockMutation = { __typename?: 'Mutation', createOneBlock: { __typename?: 'Block', id: any, name: string, version?: { __typename?: 'BlockVersion', tag: number } | null } };
 
-export type UpdateBlockVersionMutationVariables = Exact<{
-  input: UpdateBlockVersionInput;
+export type PublishBlockVersionMutationVariables = Exact<{
+  input: PublishBlockVersionInput;
 }>;
 
 
-export type UpdateBlockVersionMutation = { __typename?: 'Mutation', updateBlockVersion: { __typename?: 'Block', id: any, name: string, version?: { __typename?: 'BlockVersion', tag: number } | null } };
+export type PublishBlockVersionMutation = { __typename?: 'Mutation', publishBlockVersion: { __typename?: 'Block', id: any, name: string, version?: { __typename?: 'BlockVersion', tag: number } | null } };
 
 export type MeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', firstName?: string | null, lastName?: string | null, email?: string | null } };
+export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', firstName?: string | null, lastName?: string | null, email?: string | null, organizations: Array<{ __typename?: 'UserOrganization', slug: string, name: string }> } };
 
 export type StoresQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5686,9 +5686,9 @@ export const CreateOneBlockDocument = gql`
   }
 }
     ${BlockFragmentFragmentDoc}`;
-export const UpdateBlockVersionDocument = gql`
-    mutation updateBlockVersion($input: UpdateBlockVersionInput!) {
-  updateBlockVersion(input: $input) {
+export const PublishBlockVersionDocument = gql`
+    mutation publishBlockVersion($input: PublishBlockVersionInput!) {
+  publishBlockVersion(input: $input) {
     ...BlockFragment
   }
 }
@@ -5699,6 +5699,10 @@ export const MeDocument = gql`
     firstName
     lastName
     email
+    organizations {
+      slug
+      name
+    }
   }
 }
     `;
@@ -5737,8 +5741,8 @@ export function getSdk(client: GraphQLClient, withWrapper: SdkFunctionWrapper = 
     createOneBlock(variables: CreateOneBlockMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<CreateOneBlockMutation> {
       return withWrapper((wrappedRequestHeaders) => client.request<CreateOneBlockMutation>(CreateOneBlockDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'createOneBlock', 'mutation');
     },
-    updateBlockVersion(variables: UpdateBlockVersionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<UpdateBlockVersionMutation> {
-      return withWrapper((wrappedRequestHeaders) => client.request<UpdateBlockVersionMutation>(UpdateBlockVersionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'updateBlockVersion', 'mutation');
+    publishBlockVersion(variables: PublishBlockVersionMutationVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<PublishBlockVersionMutation> {
+      return withWrapper((wrappedRequestHeaders) => client.request<PublishBlockVersionMutation>(PublishBlockVersionDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'publishBlockVersion', 'mutation');
     },
     me(variables?: MeQueryVariables, requestHeaders?: Dom.RequestInit["headers"]): Promise<MeQuery> {
       return withWrapper((wrappedRequestHeaders) => client.request<MeQuery>(MeDocument, variables, {...requestHeaders, ...wrappedRequestHeaders}), 'me', 'query');

@@ -9,11 +9,14 @@ import { SelectInput, Item } from "~/components";
 export const Switch = () => {
   const apiSdk = useApiSdk();
 
-  const [organizations, setOrganizations] = useState<UserWithOrgsQuery["me"]["organizations"]>();
+  const [organizations, setOrganizations] =
+    useState<UserWithOrgsQuery["me"]["organizations"]>();
   const [stores, setStores] = useState<StoresQuery["stores"]>();
-  const [selectedOrganization, setSelectedOrganization] = useState<Item<string>>();
+  const [selectedOrganization, setSelectedOrganization] =
+    useState<Item<string>>();
   const [selectedStore, setSelectedStore] = useState<Item<string>>();
   const [error, setError] = useState<ExtractedApiError>();
+  const [errorStores, setErrorStores] = useState<ExtractedApiError>();
 
   useEffect(() => {
     apiSdk
@@ -25,9 +28,11 @@ export const Switch = () => {
   useEffect(() => {
     if (selectedOrganization) {
       apiSdk
-        .stores()
+        .stores(undefined, {
+          "x-instant-organization": selectedOrganization.value,
+        })
         .then((res) => setStores(res.stores))
-        .catch((err) => setError(extractApiError(err)));
+        .catch((err) => setErrorStores(extractApiError(err)));
     }
   }, [selectedOrganization]);
 
@@ -41,32 +46,46 @@ export const Switch = () => {
     setSelectedStore(item);
   };
 
-  if (!organizations && !error) {
+  if (error) {
+    return <Text>Failed to fetch organizations: {error.message}</Text>;
+  }
+
+  if (errorStores) {
+    return <Text>Failed to fetch stores: {errorStores.message}</Text>;
+  }
+
+  if (!organizations) {
     return <Text>Fetching organizations...</Text>;
   }
 
-  if (error) {
-    return <Text>Failed to fetch organizations: {error.message}</Text>;
-  } else if (!organizations) {
-    return <Text>Fetching organizations...</Text>;
-  } else if (!selectedOrganization) {
+  if (!selectedOrganization) {
     return (
       <>
         <Text>Select an organization:</Text>
         <SelectInput
-          items={organizations?.map((org) => ({ label: org.name, value: org.slug }))}
+          items={organizations?.map((org) => ({
+            label: org.name,
+            value: org.slug,
+          }))}
           onSelect={handleOrgSelect}
         />
       </>
     );
-  } else if (!stores) {
+  }
+
+  if (!stores) {
     return <Text>Fetching stores...</Text>;
-  } else if (!selectedStore) {
+  }
+
+  if (!selectedStore) {
     return (
       <>
         <Text>Select a store:</Text>
         <SelectInput
-          items={stores?.edges.map(({ node }) => ({ label: node.name, value: node.id }))}
+          items={stores?.edges.map(({ node }) => ({
+            label: node.name,
+            value: node.id,
+          }))}
           onSelect={handleStoreSelect}
         />
       </>

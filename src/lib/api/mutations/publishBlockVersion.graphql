@@ -1,0 +1,5 @@
+mutation publishBlockVersion($input: PublishBlockVersionInput!) {
+  publishBlockVersion(input: $input) {
+    ...BlockFragment
+  }
+}

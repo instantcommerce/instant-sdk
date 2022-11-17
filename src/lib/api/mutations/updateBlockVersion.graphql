@@ -1,5 +1,0 @@
-mutation updateBlockVersion($input: UpdateBlockVersionInput!) {
-  updateBlockVersion(input: $input) {
-    ...BlockFragment
-  }
-}

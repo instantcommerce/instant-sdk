@@ -123,12 +123,10 @@ export const Publish = ({
 
           blockIdToUpdate = existingBlockConfig.id;
 
-          const updatedBlock = await apiSdk.updateBlockVersion({
+          const publishedBlock = await apiSdk.publishBlockVersion({
             input: {
               id: blockIdToUpdate,
-              code: {
-                file: blockFile,
-              },
+              code: blockFile,
               contentSchema,
               customizerSchema,
             },
@@ -136,7 +134,7 @@ export const Publish = ({
 
           setUploadedBlocks((previous) => [
             ...previous,
-            updatedBlock.updateBlockVersion,
+            publishedBlock.publishBlockVersion,
           ]);
         } catch (err: any) {
           /** No changes to block detected */
