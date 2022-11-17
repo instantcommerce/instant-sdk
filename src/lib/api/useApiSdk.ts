@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { GraphQLClient } from "graphql-request";
 import { useApp, useStderr } from "ink";
+import terminalLink from "terminal-link";
 import { config } from "~/config";
 
 import { getSdk } from "./sdk";
@@ -29,8 +30,15 @@ export const useApiSdk = () => {
       } catch (err: any) {
         /** Handle FetchError's as fatal */
         if (err?.type === "system") {
+          const link = terminalLink.stderr(
+            "our status page",
+            "https://status.instantcommerce.io",
+            {
+              fallback: (text, url) => `${text} (${url})`,
+            }
+          );
           write(
-            "❌ Could not connect to API, please check your internet connection or go to \nhttps://status.instantcommerce.io\n"
+            `❌ Could not connect to API, please check your internet connection or go to ${link}\n`
           );
           exit(err);
           return err;

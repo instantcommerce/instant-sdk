@@ -39,6 +39,7 @@
     "open": "^8.4.0",
     "react": "^17.0.2",
     "serve-static": "^1.15.0",
+    "terminal-link": "^3.0.0",
     "vite": "^3.2.3",
     "yargs": "^17.6.0"
   },
