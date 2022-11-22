@@ -30,16 +30,10 @@ export const useApiSdk = () => {
       } catch (err: any) {
         /** Handle FetchError's as fatal */
         if (err?.type === "system") {
-          const link = terminalLink.stderr(
-            "our status page",
-            "https://status.instantcommerce.io",
-            {
-              fallback: (text, url) => `${text} (${url})`,
-            }
-          );
-          write(
-            `❌ Could not connect to API, please check your internet connection or go to ${link}\n`
-          );
+          const link = terminalLink.stderr("our status page", "https://status.instantcommerce.io", {
+            fallback: (text, url) => `${text} (${url})`,
+          });
+          write(`❌ Could not connect to API, please check your internet connection or go to ${link}\n`);
           exit(err);
           return err;
         }
