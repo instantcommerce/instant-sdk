@@ -15,7 +15,7 @@
     "build": "tsc --noEmit && npm run compile",
     "build:dev": "npm run compile && cp .env dist/.env",
     "start": "npm run build && dist/cli.js",
-    "dev": "npm run build:dev && cp .env dist/.env && dist/cli.js",
+    "dev": "npm run build:dev && cp .env dist/.env && FORCE_DIR=../../instant-frontend/examples/block-extension dist/cli.js",
     "pretest": "yarn build",
     "test": "xo && ava",
     "codegen": "graphql-codegen -r dotenv/config"

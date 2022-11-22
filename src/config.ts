@@ -1,4 +1,5 @@
 import Conf from "conf";
+import { fileURLToPath } from "url";
 
 interface ConfigData {
   accessToken?: string;
@@ -16,3 +17,8 @@ export const config = new Conf<ConfigData>({
     storeId: { type: "string" },
   },
 });
+
+const resolvePath = (path: string) =>
+  fileURLToPath(new URL(path, import.meta.url));
+
+export const dirname = resolvePath(process.env["FORCE_DIR"] || import.meta.url);

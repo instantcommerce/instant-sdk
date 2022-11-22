@@ -1,27 +1,15 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, render, Static, Text } from "ink";
 import { CommandModule } from "yargs";
-import { fileURLToPath } from "url";
 import { build } from "vite";
 import path from "path";
 import { createReadStream, existsSync } from "fs";
-import glob from "glob";
 import { extractApiError, useApiSdk } from "~/lib/api";
 import { getProjectConfig } from "~/lib/getProjectConfig";
 import { BlockFragmentFragment } from "~/lib/api/sdk";
 import { getBlockNameFromPath } from "~/lib/getBlockNameFromPath";
-
-const resolvePath = (path: string) =>
-  fileURLToPath(new URL(path, import.meta.url));
-
-const __dirname = resolvePath(
-  "../../instant-frontend/examples/block-extension"
-);
-
-const getBlockFiles = () =>
-  glob
-    .sync(path.join(__dirname, "src/blocks/**/index.tsx"))
-    .map((file) => getBlockNameFromPath(file));
+import { getBlockFiles } from "~/lib/getBlockFiles";
+import { dirname } from "~/config";
 
 export const Publish = ({
   blockNames: providedBlockNames,
@@ -42,8 +30,8 @@ export const Publish = ({
 
   const buildBlocks = async () => {
     const output = await build({
-      configFile: `${__dirname}/vite.config.ts`,
-      root: __dirname,
+      configFile: `${dirname}/vite.config.ts`,
+      root: dirname,
       logLevel: "silent",
       build: {
         outDir: "dist",
@@ -114,7 +102,7 @@ export const Publish = ({
             )?.source
           );
           const blockFile = createReadStream(
-            path.join(__dirname, "dist", entry.file)
+            path.join(dirname, "dist", entry.file)
           );
 
           const existingBlockConfig = config.current!.get(
@@ -168,7 +156,9 @@ export const Publish = ({
   }, [blocks]);
 
   useEffect(() => {
-    process.chdir(__dirname);
+    if (process.env["FORCE_DIR"]) {
+      process.chdir(dirname);
+    }
 
     if (!existsSync("./instant.config.json")) {
       setError(`No "instant.config.json" file found.`);

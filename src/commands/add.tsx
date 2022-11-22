@@ -1,25 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, render, Static, Text, useApp, useInput, useStdout } from "ink";
 import { CommandModule } from "yargs";
-import { fileURLToPath } from "url";
-import path from "path";
 import { existsSync } from "fs";
-import glob from "glob";
 import { useApiSdk } from "~/lib/api";
 import { getProjectConfig } from "~/lib/getProjectConfig";
-import { getBlockNameFromPath } from "~/lib/getBlockNameFromPath";
-
-const resolvePath = (path: string) =>
-  fileURLToPath(new URL(path, import.meta.url));
-
-const __dirname = resolvePath(
-  "../../instant-frontend/examples/block-extension"
-);
-
-const getBlockFiles = () =>
-  glob
-    .sync(path.join(__dirname, "src/blocks/**/index.tsx"))
-    .map((file) => getBlockNameFromPath(file));
+import { getBlockFiles } from "~/lib/getBlockFiles";
+import { dirname } from "~/config";
 
 const AskDeploy = ({
   blocks,
@@ -103,7 +89,9 @@ export const Add = ({
   }, [doDeploy]);
 
   useEffect(() => {
-    process.chdir(__dirname);
+    if (process.env["FORCE_DIR"]) {
+      process.chdir(dirname);
+    }
 
     if (!existsSync("./instant.config.json")) {
       setError(`No "instant.config.json" file found.`);
