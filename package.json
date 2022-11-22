@@ -8,7 +8,7 @@
   },
   "type": "module",
   "engines": {
-    "node": ">=16.13.0"
+    "node": "16"
   },
   "scripts": {
     "compile": "rm -rf dist && tsup src/cli.ts --format esm && chmod +x dist/cli.js",
