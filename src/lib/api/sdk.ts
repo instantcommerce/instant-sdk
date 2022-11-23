@@ -5663,7 +5663,7 @@ export type MeQuery = { __typename?: 'Query', me: { __typename?: 'User', firstNa
 export type StoresQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type StoresQuery = { __typename?: 'Query', stores: { __typename?: 'StoreConnection', edges: Array<{ __typename?: 'StoreEdge', node: { __typename?: 'Store', id: any, name: string, slug: string } }> } };
+export type StoresQuery = { __typename?: 'Query', stores: { __typename?: 'StoreConnection', edges: Array<{ __typename?: 'StoreEdge', node: { __typename?: 'Store', id: any, name: string, slug: string, domains: Array<{ __typename?: 'Domain', isPrimary: boolean, hostname: string }> } }> } };
 
 export type UserWithOrgsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -5714,6 +5714,10 @@ export const StoresDocument = gql`
         id
         name
         slug
+        domains {
+          isPrimary
+          hostname
+        }
       }
     }
   }

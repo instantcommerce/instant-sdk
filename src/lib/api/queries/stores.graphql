@@ -5,6 +5,10 @@ query stores {
         id
         name
         slug
+        domains {
+          isPrimary
+          hostname
+        }
       }
     }
   }

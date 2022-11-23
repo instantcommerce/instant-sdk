@@ -8,6 +8,7 @@ import connect from "connect";
 import http from "http";
 import compression from "compression";
 import serveStatic from "serve-static";
+import { useApiSdk } from "~/lib/api";
 
 const BLOCKS_MANIFEST =
   "@id/__x00__virtual:vite-plugin-instant-sdk/blocks-manifest";
@@ -16,8 +17,11 @@ const __dirname = fileURLToPath(
   new URL("../../instant-frontend/examples/block-extension", import.meta.url)
 );
 
+type Stores = Array<{ id: string; name: string; hostname: string }>;
+
 export const Dev: FC = ({}) => {
   const { exit } = useApp();
+  const apiSdk = useApiSdk();
   const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string>();
   const viteDevServer = useRef<ViteDevServer>();
@@ -52,7 +56,10 @@ export const Dev: FC = ({}) => {
     return server;
   };
 
-  const createPreviewServer = async (blockServerAddress: string) => {
+  const createPreviewServer = async (
+    blockServerAddress: string,
+    stores: Stores
+  ) => {
     return new Promise<void>(async (resolve) => {
       const app = connect();
 
@@ -77,7 +84,9 @@ export const Dev: FC = ({}) => {
 <script type="module" src="${blockServerAddress}/${BLOCKS_MANIFEST}"></script>
 <script>window.__INSTANT_BLOCK_SERVER__=${JSON.stringify(
                   `${blockServerAddress}`
-                )};</script>`
+                )};window.__INSTANT_STORES__=JSON.parse(\'${JSON.stringify(
+                  stores
+                )}\');</script>`
               ),
               encoding
             );
@@ -124,8 +133,20 @@ export const Dev: FC = ({}) => {
   };
 
   const startServers = async () => {
+    let stores: Stores = [];
+
+    try {
+      stores = (await apiSdk.stores()).stores.edges.map(({ node }) => ({
+        id: node.id,
+        name: node.name,
+        hostname: node.domains.find((domain) => !!domain.isPrimary)?.hostname!,
+      }));
+    } catch (e) {
+      console.log(e);
+    }
+
     const devServer = await createDevServer();
-    await createPreviewServer(getAddress(devServer.httpServer!));
+    await createPreviewServer(getAddress(devServer.httpServer!), stores);
 
     setSuccess(true);
   };
