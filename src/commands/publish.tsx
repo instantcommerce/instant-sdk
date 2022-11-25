@@ -10,6 +10,7 @@ import { BlockFragmentFragment } from "~/lib/api/sdk";
 import { getBlockNameFromPath } from "~/lib/getBlockNameFromPath";
 import { getBlockFiles } from "~/lib/getBlockFiles";
 import { dirname } from "~/config";
+import { getViteConfig } from "~/lib/getViteConfig";
 
 export const Publish = ({
   blockNames: providedBlockNames,
@@ -29,14 +30,18 @@ export const Publish = ({
   const config = useRef<ReturnType<typeof getProjectConfig>>();
 
   const buildBlocks = async () => {
-    const output = await build({
-      configFile: `${dirname}/vite.config.ts`,
-      root: dirname,
-      logLevel: "silent",
-      build: {
-        outDir: "dist",
-      },
-    });
+    const output = await build(
+      await getViteConfig(
+        "production",
+        {
+          logLevel: "silent",
+          build: {
+            outDir: "dist",
+          },
+        },
+        config.current!.get(`blocks`)
+      )
+    );
 
     if (!("output" in output)) {
       throw new Error("No build output found");

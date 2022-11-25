@@ -2,20 +2,18 @@ import React, { FC, useEffect, useRef, useState } from "react";
 import { Box, render, Text, useApp, useInput } from "ink";
 import { CommandModule } from "yargs";
 import open from "open";
-import { fileURLToPath, parse } from "url";
+import { parse } from "url";
 import { createServer, ViteDevServer } from "vite";
 import connect from "connect";
 import http from "http";
 import compression from "compression";
 import serveStatic from "serve-static";
+import { dirname } from "~/config";
 import { useApiSdk } from "~/lib/api";
+import { getViteConfig } from "~/lib/getViteConfig";
 
 const BLOCKS_MANIFEST =
   "@id/__x00__virtual:vite-plugin-instant-sdk/blocks-manifest";
-
-const __dirname = fileURLToPath(
-  new URL("../../instant-frontend/examples/block-extension", import.meta.url)
-);
 
 type Stores = Array<{ id: string; name: string; hostname: string }>;
 
@@ -40,15 +38,17 @@ export const Dev: FC = ({}) => {
   });
 
   const createDevServer = async () => {
-    process.chdir(__dirname);
+    if (process.env["FORCE_DIR"]) {
+      process.chdir(dirname);
+    }
 
-    const server = await createServer({
-      configFile: `${__dirname}/vite.config.ts`,
-      root: __dirname,
-      server: {
-        port: 5173,
-      },
-    });
+    const server = await createServer(
+      await getViteConfig("development", {
+        server: {
+          port: 5173,
+        },
+      })
+    );
     await server.listen();
 
     viteDevServer.current = server;
