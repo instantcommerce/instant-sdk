@@ -1,53 +1,64 @@
-import React, { FC, useEffect, useRef, useState } from "react";
-import { Box, render, Text, useApp, useInput } from "ink";
-import { CommandModule } from "yargs";
-import open from "open";
-import { parse } from "url";
-import { createServer, ViteDevServer } from "vite";
-import connect from "connect";
-import http from "http";
-import compression from "compression";
-import serveStatic from "serve-static";
-import { dirname } from "~/config";
-import { useApiSdk } from "~/lib/api";
-import { getViteConfig } from "~/lib/getViteConfig";
+import http from 'http';
+import { parse } from 'url';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import compression from 'compression';
+import connect from 'connect';
+import { Box, render, Text, useApp, useInput, useStdin } from 'ink';
+import open from 'open';
+import serveStatic from 'serve-static';
+import { createServer, ViteDevServer } from 'vite';
+import { CommandModule } from 'yargs';
+import { dirname } from '~/config';
+import { useApiSdk } from '~/lib/api';
+import { getViteConfig } from '~/lib/getViteConfig';
 
 const BLOCKS_MANIFEST =
-  "@id/__x00__virtual:vite-plugin-instant-sdk/blocks-manifest";
+  '@id/__x00__virtual:vite-plugin-instant-sdk/blocks-manifest';
 
 type Stores = Array<{ id: string; name: string; hostname: string }>;
 
-export const Dev: FC = ({}) => {
+const Shortcuts = ({ address }: { address: string }) => {
   const { exit } = useApp();
-  const apiSdk = useApiSdk();
-  const [success, setSuccess] = useState<boolean>(false);
-  const [error, setError] = useState<string>();
-  const viteDevServer = useRef<ViteDevServer>();
-  const previewServer = useRef<http.Server>();
 
   useInput((input) => {
     switch (input) {
-      case "q":
+      case 'q':
         exit();
         break;
-      case "o":
-        open(getAddress(previewServer.current!));
+      case 'o':
+        open(address);
         break;
       default:
     }
   });
 
+  return (
+    <>
+      <Text>Press "o" to open in browser</Text>
+      <Text>Press "q" to quit</Text>
+    </>
+  );
+};
+
+export const Dev: FC = ({}) => {
+  const apiSdk = useApiSdk();
+  const { isRawModeSupported } = useStdin();
+  const [success, setSuccess] = useState<boolean>(false);
+  const [error, setError] = useState<string>();
+  const viteDevServer = useRef<ViteDevServer>();
+  const previewServer = useRef<http.Server>();
+
   const createDevServer = async () => {
-    if (process.env["FORCE_DIR"]) {
+    if (process.env['FORCE_DIR']) {
       process.chdir(dirname);
     }
 
     const server = await createServer(
-      await getViteConfig("development", {
+      await getViteConfig('development', {
         server: {
           port: 5173,
         },
-      })
+      }),
     );
     await server.listen();
 
@@ -58,7 +69,7 @@ export const Dev: FC = ({}) => {
 
   const createPreviewServer = async (
     blockServerAddress: string,
-    stores: Stores
+    stores: Stores,
   ) => {
     return new Promise<void>(async (resolve) => {
       const app = connect();
@@ -68,27 +79,27 @@ export const Dev: FC = ({}) => {
       app.use((req, res, next) => {
         if (
           req.url &&
-          ["/", "/preview.html"].includes(parse(req.url)?.pathname || "")
+          ['/', '/preview.html'].includes(parse(req.url)?.pathname || '')
         ) {
           const _write = res.write;
 
           res.write = function (chunk, encoding: BufferEncoding) {
             const value: string = chunk.toString();
-            res.removeHeader("Content-Length");
+            res.removeHeader('Content-Length');
 
             return _write.call(
               res,
               value.replace(
-                "<head>",
+                '<head>',
                 `<head>
 <script type="module" src="${blockServerAddress}/${BLOCKS_MANIFEST}"></script>
 <script>window.__INSTANT_BLOCK_SERVER__=${JSON.stringify(
-                  `${blockServerAddress}`
-                )};window.__INSTANT_STORES__=JSON.parse(\'${JSON.stringify(
-                  stores
-                )}\');</script>`
+                  `${blockServerAddress}`,
+                )};window.__INSTANT_STORES__=JSON.parse(\\'${JSON.stringify(
+                  stores,
+                )}\\');</script>`,
               ),
-              encoding
+              encoding,
             );
           } as typeof _write;
         }
@@ -97,17 +108,17 @@ export const Dev: FC = ({}) => {
       });
 
       app.use(
-        serveStatic(`${__dirname}/../../packages/ui-preview/dist`, {
+        serveStatic(`${dirname}/../../packages/preview/dist`, {
           setHeaders: (res, path) => {
-            if ((serveStatic.mime as any).lookup(path) === "text/html") {
+            if ((serveStatic.mime as any).lookup(path) === 'text/html') {
               /** Don't cache HTML */
               res.setHeader(
-                "Cache-Control",
-                "private, no-cache, no-store, max-age=0, must-revalidate"
+                'Cache-Control',
+                'private, no-cache, no-store, max-age=0, must-revalidate',
               );
             }
           },
-        })
+        }),
       );
 
       previewServer.current = http
@@ -120,16 +131,16 @@ export const Dev: FC = ({}) => {
 
   const getAddress = (server: http.Server) => {
     if (!server) {
-      return "";
+      return '';
     }
 
     const address = server.address();
 
-    return address && typeof address !== "string"
-      ? `http://${address.address !== "::" ? address.address : "127.0.0.1"}:${
+    return address && typeof address !== 'string'
+      ? `http://${address.address !== '::' ? address.address : '127.0.0.1'}:${
           address.port
         }`
-      : "";
+      : '';
   };
 
   const startServers = async () => {
@@ -145,8 +156,12 @@ export const Dev: FC = ({}) => {
       console.log(e);
     }
 
-    const devServer = await createDevServer();
-    await createPreviewServer(getAddress(devServer.httpServer!), stores);
+    try {
+      const devServer = await createDevServer();
+      await createPreviewServer(getAddress(devServer.httpServer!), stores);
+    } catch (e: any) {
+      setError(e?.toString?.());
+    }
 
     setSuccess(true);
   };
@@ -175,15 +190,16 @@ export const Dev: FC = ({}) => {
   return (
     <Box flexDirection="column">
       <Text>⚡️ Dev server running</Text>
-      <Text>Press "o" to open in browser</Text>
-      <Text>Press "q" to quit</Text>
+      {isRawModeSupported && (
+        <Shortcuts address={getAddress(previewServer.current!)} />
+      )}
     </Box>
   );
 };
 
 export const dev: CommandModule = {
-  command: "dev",
-  describe: "Start the local development environment",
+  command: 'dev',
+  describe: 'Start the local development environment',
   handler: () => {
     render(<Dev />);
   },

@@ -1,0 +1,24 @@
+{
+  "name": "instant-client",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "sideEffects": false,
+  "engines": {
+    "node": ">=16"
+  },
+  "scripts": {},
+  "dependencies": {
+    "@remote-ui/react": "4.5.12",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "tsconfig": "*"
+  },
+  "devDependencies": {
+    "@types/react": "18.0.5",
+    "@types/react-dom": "18.0.1",
+    "@vitejs/plugin-react": "2.0.0",
+    "typescript": "4.3.5"
+  }
+}

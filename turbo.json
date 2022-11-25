@@ -1,0 +1,25 @@
+{
+  "$schema": "https://turborepo.org/schema.json",
+  "pipeline": {
+    "build": {
+      "dependsOn": ["^build"]
+    },
+    "dev": {
+      "cache": false
+    },
+    "instant-cli#build": {
+      "dependsOn": [
+        "postcss-plugin-instant-sdk#build",
+        "vite-plugin-instant-sdk#build",
+        "instant-sdk-preview#build"
+      ]
+    },
+    "instant-cli#dev": {
+      "dependsOn": [
+        "postcss-plugin-instant-sdk#build",
+        "vite-plugin-instant-sdk#build",
+        "instant-sdk-preview#build"
+      ]
+    }
+  }
+}

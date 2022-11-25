@@ -21,4 +21,4 @@ export const config = new Conf<ConfigData>({
 const resolvePath = (path: string) =>
   fileURLToPath(new URL(path, import.meta.url));
 
-export const dirname = resolvePath(process.env["FORCE_DIR"] || import.meta.url);
+export const dirname = (resolvePath(process.env["FORCE_DIR"] || process.cwd()));

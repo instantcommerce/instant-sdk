@@ -4,6 +4,8 @@ node_modules
 *.local
 .env
 yarn-error.log
+_*
+.turbo
 
 */coverage
 */stats.html

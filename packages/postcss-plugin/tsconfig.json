@@ -1,0 +1,10 @@
+{
+  "extends": "tsconfig/react-library.json",
+  "compilerOptions": {
+    "baseUrl": "./",
+    "module": "CommonJS",
+    "outDir": "./dist",
+    "noEmit": false
+  },
+  "include": ["./src"]
+}

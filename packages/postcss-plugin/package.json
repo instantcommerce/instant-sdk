@@ -1,0 +1,23 @@
+{
+  "name": "postcss-plugin-instant-sdk",
+  "version": "0.0.0",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "npm run build:clean && npm run build:compile:cjs",
+    "build:clean": "rm -rf dist && mkdir dist",
+    "build:compile:cjs": "cd src && yarn tsc --build tsconfig.json",
+    "format": "prettier --write ."
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "dependencies": {
+    "postcss": "8.4.18",
+    "postcss-selector-parser": "6.0.11"
+  },
+  "peerDependencies": {}
+}

@@ -1,15 +1,36 @@
 {
   "files.watcherExclude": {
+    "**/.cache/**": true,
     "**/dist": true
   },
   "search.exclude": {
     "**/dist": true
   },
   "files.exclude": {
-    "**/.DS_Store": true,
-    "**/node_modules": true
+    "**/.DS_Store": true
   },
   "editor.formatOnSave": true,
+  // turn it off for JS and JSX, we will do this via eslint
+  "[javascript]": {
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": null
+  },
+  "[javascriptreact]": {
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": null
+  },
+  "[typescript]": {
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": null
+  },
+  "[typescriptreact]": {
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": null
+  },
+  // tell the ESLint plugin to run on save
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  },
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode"

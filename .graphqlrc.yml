@@ -2,16 +2,20 @@ projects:
   default:
     schema:
       - http://localhost:4000/graphql
-    documents: "src/lib/api/**/*.graphql"
+    documents: "./packages/cli/src/lib/api/**/*.graphql"
     extensions:
       codegen:
         generates:
-          src/lib/api/schema.json:
+          ./packages/cli/src/lib/api/schema.json:
             plugins:
               - introspection
             config:
               minify: true
-          src/lib/api/sdk.ts:
+          ./packages/types/api.ts:
+            plugins:
+              - typescript
+              - typescript-operations
+          ./packages/cli/src/lib/api/sdk.ts:
             plugins:
               - typescript
               - typescript-operations

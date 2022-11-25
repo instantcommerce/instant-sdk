@@ -1,0 +1,108 @@
+import { useMemo } from 'react';
+import {
+  ArrowCounterClockwise,
+  ArrowSquareOut,
+  Faders,
+  Star,
+  XCircle,
+} from 'phosphor-react';
+import { useBlocks, Button, useConfig, Select } from '..';
+import { Logo } from './Logo';
+
+export const TopBar = () => {
+  const { selectedBlock, blocksManifest, reloadPreview } = useBlocks();
+  const {
+    updateConfig,
+    setRightPanelVisible,
+    rightPanelVisible,
+    updateBookmarks,
+    bookmarks,
+    getUrl,
+    selectedStore,
+    setSelectedStore,
+  } = useConfig();
+
+  const toggleRightPanel = () => {
+    updateConfig({ rightPanel: !rightPanelVisible });
+    setRightPanelVisible(!rightPanelVisible);
+  };
+
+  const blockName = useMemo(
+    () => blocksManifest?.[selectedBlock]?.name,
+    [selectedBlock, blocksManifest],
+  );
+
+  const availableStores = useMemo(
+    () =>
+      window.__INSTANT_STORES__?.map(({ name, hostname }) => ({
+        label: name,
+        value: hostname,
+      })),
+    [],
+  );
+
+  return (
+    <nav
+      id="preview-top-bar"
+      className="sticky top-0 z-30 flex h-12 w-full bg-white border-b border-gray-100 px-2"
+    >
+      <div className="flex w-full items-center justify-between relative pl-2">
+        <div className="flex items-center">
+          <Logo />
+
+          <div className="w-[1px] bg-gray-200 mr-2 h-6 my-auto ml-5" />
+
+          {!!selectedStore && !!availableStores && (
+            <Select
+              className="border-none"
+              items={availableStores}
+              value={selectedStore.hostname}
+              onValueChange={(value) => {
+                const store = window.__INSTANT_STORES__?.find(
+                  ({ hostname }) => hostname === value,
+                );
+
+                if (store) {
+                  setSelectedStore(store);
+                }
+              }}
+            />
+          )}
+        </div>
+
+        <div className="flex items-center gap-1 mx-auto absolute left-2/4 top-2/4 -translate-y-2/4 -translate-x-2/4">
+          <h1 className="text-sm">{blockName}</h1>
+          <Button
+            iconOnly
+            variant="unstyled"
+            onClick={() => updateBookmarks(blockName)}
+          >
+            <Star
+              size={14}
+              weight={bookmarks?.includes(blockName) ? 'fill' : 'regular'}
+            />
+          </Button>
+        </div>
+
+        <div className="flex gap-1.5">
+          <Button iconOnly onClick={reloadPreview}>
+            <ArrowCounterClockwise size={16} />
+          </Button>
+
+          <Button
+            iconOnly
+            to={getUrl({ viewMode: 'fullScreen' })}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <ArrowSquareOut size={16} />
+          </Button>
+
+          <Button iconOnly onClick={toggleRightPanel}>
+            {rightPanelVisible ? <XCircle size={16} /> : <Faders size={16} />}
+          </Button>
+        </div>
+      </div>
+    </nav>
+  );
+};
