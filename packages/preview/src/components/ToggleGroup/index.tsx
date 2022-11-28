@@ -1,6 +1,5 @@
 import * as ToggleGroupPrimitive from '@radix-ui/react-toggle-group';
-import cx from 'classnames';
-import { twMerge } from 'tailwind-merge';
+import { twJoin, twMerge } from 'tailwind-merge';
 import { InputWrapper, InputWrapperProps } from '../Input/InputWrapper';
 
 interface ToggleGroupProps
@@ -22,7 +21,7 @@ export const ToggleGroup = ({
           value={item}
           aria-label={item}
           className={twMerge(
-            cx(
+            twJoin(
               'flex-1 h-8 bg-white border border-gray-300 border-r-[0.5px] border-l-[0.5px] text-xs text-gray-700 px-2',
               idx === 0 && 'rounded-l border-l-[1px]',
               idx === options?.length - 1 && 'rounded-r border-r-[1px]',

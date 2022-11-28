@@ -4,7 +4,6 @@ import {
   Layout,
   PreviewFrame,
   ConfigProvider,
-  PreviewWrapper,
 } from '../components';
 
 export const App = () => {
@@ -12,9 +11,7 @@ export const App = () => {
     <BlocksProvider>
       <ConfigProvider>
         <Layout>
-          <PreviewWrapper>
-            <PreviewFrame />
-          </PreviewWrapper>
+          <PreviewFrame />
         </Layout>
       </ConfigProvider>
 

@@ -1,32 +1,35 @@
-import { useState } from 'react';
+import { Fragment, useId, useState } from 'react';
 import * as SelectPrimitive from '@radix-ui/react-select';
 import { CaretDown, CaretUp } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
 import { InputWrapper, InputWrapperProps } from '../Input/InputWrapper';
 
-type SelectItem = {
+type Option = {
   value: string;
   label?: string;
 };
 
-interface SelectProps {
-  items: string[] | SelectItem[];
+interface SelectProps extends SelectPrimitive.SelectProps {
+  options: (Option | string)[] | (Option | string)[][];
   placeholder?: string;
   variant?: 'dark' | 'light';
+  onChange?(value: string): void;
 }
 
 export const Select = ({
   className,
   wrapperClassName,
   labelClassName,
-  items,
+  options,
   placeholder,
   variant = 'light',
   direction,
   label,
+  onChange,
   ...props
-}: SelectProps & SelectPrimitive.SelectProps & InputWrapperProps) => {
+}: SelectProps & InputWrapperProps) => {
   const [open, setOpen] = useState(!!props?.defaultOpen);
+  const id = useId();
 
   const triggerStylesByVariant = {
     light:
@@ -49,6 +52,14 @@ export const Select = ({
     variant === 'light' ? 'text-gray-600' : 'text-gray-200'
   } flex items-center justify-center`;
 
+  // @HELP IDK WHAT I'M DOING WRONG HERE :sob
+  // @ts-ignore
+  const groups: (Option | string)[][] | [] = Array.isArray(options?.[0])
+    ? options
+    : !!options.length && Array.isArray(options)
+    ? [options]
+    : [];
+
   return (
     <InputWrapper
       className={wrapperClassName}
@@ -56,15 +67,20 @@ export const Select = ({
       labelClassName={labelClassName}
       direction={direction}
     >
-      <SelectPrimitive.Root open={open} onOpenChange={setOpen} {...props}>
+      <SelectPrimitive.Root
+        open={open}
+        onOpenChange={setOpen}
+        onValueChange={onChange}
+        disabled={!options?.length}
+        {...props}
+      >
         <SelectPrimitive.Trigger
           asChild
           aria-label={label || 'Select one option'}
         >
           <button
             className={twMerge(
-              `text-sm font-medium flex items-center gap-2 p-2 border rounded w-full h-[30px] content-between [&_span]:text-ellipsis [&_span]:overflow-hidden [&_span]:whitespace-nowrap`,
-              direction === 'row' && 'max-w-[calc(100%-4px)]',
+              `text-sm font-medium flex items-center gap-2 p-2 border rounded w-full h-8 content-between [&_span]:text-ellipsis [&_span]:overflow-hidden [&_span]:whitespace-nowrap shadow-sm`,
               triggerStylesByVariant[variant],
               className,
             )}
@@ -95,26 +111,34 @@ export const Select = ({
             </SelectPrimitive.ScrollUpButton>
 
             <SelectPrimitive.Viewport>
-              <SelectPrimitive.Group>
-                {items.map((item, i) => (
-                  <SelectPrimitive.Item
-                    key={`${
-                      typeof item === 'string' ? item : item?.value
-                    }-${i}`}
-                    value={typeof item === 'string' ? item : item?.value}
-                    className={twMerge(
-                      'text-xs hover:outline-none focus:outline-none focus:font-medium px-2 py-1.5 cursor-pointer radix-disabled:opacity-50 select-none',
-                      textStylesByVariant[variant],
-                    )}
-                  >
-                    <SelectPrimitive.ItemText>
-                      {typeof item === 'string'
-                        ? item
-                        : item?.label || item?.value}
-                    </SelectPrimitive.ItemText>
-                  </SelectPrimitive.Item>
-                ))}
-              </SelectPrimitive.Group>
+              {groups?.map((groupItems, idx) => (
+                <Fragment key={`select-${id}-${idx}`}>
+                  <SelectPrimitive.Group>
+                    {groupItems?.map((item, i) => (
+                      <SelectPrimitive.Item
+                        key={`${
+                          typeof item === 'string' ? item : item?.value
+                        }-${i}`}
+                        value={typeof item === 'string' ? item : item?.value}
+                        className={twMerge(
+                          'text-xs hover:outline-none focus:outline-none focus:font-medium px-2 py-1.5 cursor-pointer radix-disabled:opacity-50 select-none',
+                          textStylesByVariant[variant],
+                        )}
+                      >
+                        <SelectPrimitive.ItemText>
+                          {typeof item === 'string'
+                            ? item
+                            : item?.label || item?.value}
+                        </SelectPrimitive.ItemText>
+                      </SelectPrimitive.Item>
+                    ))}
+                  </SelectPrimitive.Group>
+
+                  {idx < groups?.length - 1 && (
+                    <SelectPrimitive.Separator className="w-full h-[1px] bg-gray-200 my-2" />
+                  )}
+                </Fragment>
+              ))}
             </SelectPrimitive.Viewport>
 
             <SelectPrimitive.ScrollDownButton className={scrollButtonClassName}>

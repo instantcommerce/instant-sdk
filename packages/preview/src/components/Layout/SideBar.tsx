@@ -51,11 +51,13 @@ export const SideBar = ({ className }: { className?: string }) => {
 
   const blocks = useMemo(
     () =>
-      Object.keys(blocksManifest)?.map((key) => ({
-        name: blocksManifest[key]?.name,
-        url: key,
-      })),
-    [blocksManifest],
+      Object.keys(blocksManifest)
+        ?.filter((key) => !bookmarks?.includes(blocksManifest[key]?.name))
+        .map((key) => ({
+          name: blocksManifest[key]?.name,
+          url: key,
+        })),
+    [blocksManifest, bookmarks],
   );
 
   const bookmarkItems = useMemo(
@@ -80,11 +82,13 @@ export const SideBar = ({ className }: { className?: string }) => {
       )}
     >
       <nav>
-        <SidebarSection
-          title="Bookmarks"
-          items={bookmarkItems}
-          selectedItem={selectedItem}
-        />
+        {!!bookmarkItems?.length && (
+          <SidebarSection
+            title="Bookmarks"
+            items={bookmarkItems}
+            selectedItem={selectedItem}
+          />
+        )}
 
         <SidebarSection
           title="Blocks"

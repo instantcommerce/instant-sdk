@@ -19,9 +19,12 @@ export interface ConfigContextValue {
     leftPanel?: boolean;
     rightPanel?: boolean;
     darkMode?: boolean;
+    scale?: number;
   }): void;
   updateBookmarks(blockName: string): void;
   bookmarks: string[];
+  scale?: number;
+  setScale(value?: number): void;
 }
 
 export const ConfigContext = createContext<ConfigContextValue | null>(null);

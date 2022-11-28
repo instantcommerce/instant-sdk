@@ -9,7 +9,7 @@ export const Tooltip = ({ children, content, ...props }: Props) => {
   return (
     <TooltipPrimitive.Provider>
       <TooltipPrimitive.Root {...props}>
-        <TooltipPrimitive.Trigger>{children}</TooltipPrimitive.Trigger>
+        <TooltipPrimitive.Trigger asChild>{children}</TooltipPrimitive.Trigger>
 
         <TooltipPrimitive.Content
           side="bottom"

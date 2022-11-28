@@ -3,7 +3,7 @@ import { twJoin, twMerge } from 'tailwind-merge';
 import { Resizable, useConfig, screenSizes } from '../components';
 
 export const PreviewWrapper = ({ children }: { children: ReactNode }) => {
-  const { screenSize, params, darkModeEnabled } = useConfig();
+  const { screenSize, darkModeEnabled, scale } = useConfig();
 
   const iframeDimensions = useMemo(
     () => screenSizes?.find((item) => item.value === screenSize),
@@ -14,7 +14,7 @@ export const PreviewWrapper = ({ children }: { children: ReactNode }) => {
     <div
       id="preview-wrapper"
       className={twJoin(
-        params?.scale === '50' ? 'scale-50' : '',
+        scale ? 'scale-50' : '',
         'flex flex-col flex-1 min-w-0',
       )}
     >

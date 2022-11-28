@@ -1,33 +1,94 @@
-import cx from 'classnames';
-import { twMerge } from 'tailwind-merge';
-import { inputBaseStyles, InputProps } from '../Input';
-import { InputWrapper } from '../Input/InputWrapper';
+import { useRef, useState } from 'react';
+import { SketchPicker } from 'react-color';
+import { useClickAway } from 'react-use';
+import { twJoin, twMerge } from 'tailwind-merge';
+import { inputBaseStyles } from '../Input';
+import {
+  InputWrapper,
+  InputWrapperProps,
+  splitInputProps,
+} from '../Input/InputWrapper';
 
 interface ColorInputProps {
-  color: string;
+  defaultValue: string;
+  onChange(value: string): void;
 }
 
 export const ColorInput = ({
   className,
-  color,
+  defaultValue = '#000000',
+  labelClassName,
+  onChange,
   ...props
-}: InputProps & ColorInputProps) => (
-  <InputWrapper {...props}>
-    <div
-      className={twMerge(
-        cx(
-          inputBaseStyles,
-          'relative before:w-8 before:h-full before:bg-gray-300 before:left-0 before:top-0 px-0',
-        ),
-        className,
+}: InputWrapperProps & ColorInputProps) => {
+  const [value, setValue] = useState(defaultValue);
+  const [showPicker, setShowPicker] = useState(false);
+  const { wrapperProps } = splitInputProps(props);
+
+  const ref = useRef(null);
+
+  useClickAway(ref, () => {
+    setShowPicker(false);
+  });
+
+  return (
+    <div className="relative w-full z-50">
+      {showPicker && (
+        <div
+          ref={ref}
+          className={twJoin(
+            'absolute w-[max-content]',
+            props?.direction === 'row' ? 'top-10 right-0' : 'left-0 top-[70px]',
+          )}
+        >
+          <SketchPicker
+            onChange={(newColor: any) => {
+              setValue(newColor.hex);
+              onChange(newColor.hex as string);
+            }}
+            color={value}
+          />
+        </div>
       )}
-    >
-      <span
-        {...props}
-        className="flex items-center px-3 w-full h-full outline-none"
+
+      <InputWrapper
+        {...wrapperProps}
+        labelClassName={twMerge('text-left', labelClassName)}
       >
-        {color}
-      </span>
+        <button
+          onClick={() => {
+            if (!showPicker) {
+              setShowPicker(true);
+            }
+          }}
+          onFocus={() => {
+            if (!showPicker) {
+              setShowPicker(true);
+            }
+          }}
+          onBlur={() => {
+            if (showPicker) {
+              setShowPicker(false);
+            }
+          }}
+          className={twMerge(
+            twJoin(
+              inputBaseStyles,
+              'flex px-0 h-8 overflow-hidden z-50 w-full focus:border-transparent',
+            ),
+            className,
+          )}
+        >
+          <div
+            className="w-8 h-full shrink-0"
+            style={{ backgroundColor: value }}
+          />
+
+          <span className="flex items-center px-3 w-full h-full">
+            {value?.toUpperCase()}
+          </span>
+        </button>
+      </InputWrapper>
     </div>
-  </InputWrapper>
-);
+  );
+};

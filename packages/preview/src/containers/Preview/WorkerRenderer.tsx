@@ -6,23 +6,23 @@ import {
   useLayoutEffect,
   startTransition,
   useCallback,
-} from "react";
-import type { RemoteChannel } from "@remote-ui/core";
+} from 'react';
+import type { RemoteChannel } from '@remote-ui/core';
 import {
   createRemoteReceiver,
   RemoteRenderer,
   createController,
-} from "@remote-ui/react/host";
-import { createEndpoint, fromInsideIframe } from "@remote-ui/rpc";
-import { createWorkerFactory, expose, terminate } from "@shopify/web-worker";
-import { BlockContextValue } from "instant-client/src/BlockProvider/context";
-import { SchemaTypes } from "../../components/BlocksProvider/context";
+} from '@remote-ui/react/host';
+import { createEndpoint, fromInsideIframe } from '@remote-ui/rpc';
+import { createWorkerFactory, expose, terminate } from '@shopify/web-worker';
+import { BlockContextValue } from 'instant-client/src/BlockProvider/context';
+import { SchemaTypes } from '../../components/BlocksProvider/context';
 
-import { previewSchema } from "./previewSchema";
-import sandbox from "./sandbox?worker&url";
+import { previewSchema } from './previewSchema';
+import sandbox from './sandbox?worker&url';
 
 const BLOCK_SERVER = import.meta.env.DEV
-  ? "http://127.0.0.1:5173"
+  ? 'http://127.0.0.1:5173'
   : window.__INSTANT_BLOCK_SERVER__;
 
 const COMPONENTS = {};
@@ -35,7 +35,7 @@ const CONTROLLER = createController(COMPONENTS, { strictComponents: false });
 const createWorker = createWorkerFactory<{
   render: (channel: RemoteChannel, blockProps: BlockContextValue) => void;
   run: (script: string, channel: RemoteChannel) => void;
-}>("");
+}>('');
 
 const getWorkerScript = (url: string) =>
   new URL(url, import.meta.url).toString();
@@ -45,7 +45,7 @@ const useWorker = (create: typeof createWorker) => {
     return create({
       createMessenger() {
         const worker = new Worker(sandbox, {
-          type: "module",
+          type: 'module',
         });
 
         return worker;
@@ -92,8 +92,8 @@ const call =
   },
   customer: null,
   request: {
-    country: "NL",
-    locale: "nl",
+    country: 'NL',
+    locale: 'nl',
   },
   Toast: {
     create: call.toastCreate,
@@ -116,7 +116,7 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
   const receiver = useMemo(() => createRemoteReceiver(), []);
   const worker = useWorker(createWorker);
 
-  const blockPath = new URLSearchParams(window.location.search).get("block");
+  const blockPath = new URLSearchParams(window.location.search).get('block');
 
   useEffect(() => {
     setRegistered(false);
@@ -127,7 +127,7 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
           addSchemas: (contentSchema: any, customizerSchema: any) => {
             if (window.parent) {
               window.parent.postMessage({
-                type: "addSchemas",
+                type: 'addSchemas',
                 block: blockPath,
                 contentSchema,
                 customizerSchema,
@@ -143,9 +143,9 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
             let style = sheetsMap.get(id);
 
             if (!style) {
-              style = document.createElement("style");
-              style.setAttribute("type", "text/css");
-              style.setAttribute("data-vite-dev-id", id);
+              style = document.createElement('style');
+              style.setAttribute('type', 'text/css');
+              style.setAttribute('data-vite-dev-id', id);
               style.innerHTML = content;
               document.head.appendChild(style);
             } else {
@@ -168,7 +168,7 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
         try {
           worker.run(
             getWorkerScript(`${BLOCK_SERVER}/${blockPath}`),
-            receiver.receive
+            receiver.receive,
           );
         } catch (e) {
           if (import.meta.env.DEV) {
@@ -182,17 +182,17 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
   const contentData = useMemo(
     () =>
       contentSchema
-        ? previewSchema("content", contentSchema, previewValues)
+        ? previewSchema('content', contentSchema, previewValues)
         : {},
-    [contentSchema, previewValues]
+    [contentSchema, previewValues],
   );
 
   const customizerData = useMemo(
     () =>
       customizerSchema
-        ? previewSchema("customizer", customizerSchema, previewValues)
+        ? previewSchema('customizer', customizerSchema, previewValues)
         : {},
-    [customizerSchema, previewValues]
+    [customizerSchema, previewValues],
   );
 
   useEffect(() => {
@@ -208,30 +208,30 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
                 theme: {
                   colors: {
                     primary: {
-                      s50: "#F5FAFF",
-                      s100: "#EFF8FF",
-                      s200: "#D1E9FF",
-                      s300: "#84CAFF",
-                      s400: "#53B1FD",
-                      s500: "#2E90FA",
-                      s600: "#1570EF",
-                      s700: "#175CD3",
-                      s800: "#1849A9",
-                      s900: "#0F2C60",
+                      s50: '#F5FAFF',
+                      s100: '#EFF8FF',
+                      s200: '#D1E9FF',
+                      s300: '#84CAFF',
+                      s400: '#53B1FD',
+                      s500: '#2E90FA',
+                      s600: '#1570EF',
+                      s700: '#175CD3',
+                      s800: '#1849A9',
+                      s900: '#0F2C60',
                     },
                     grayscale: {
-                      s50: "#FAFAFA",
-                      s100: "#F4F4F5",
-                      s200: "#E4E4E7",
-                      s300: "#D4D4D8",
-                      s400: "#A1A1AA",
-                      s500: "#71717A",
-                      s600: "#52525B",
-                      s700: "#3F3F46",
-                      s800: "#27272A",
-                      s900: "#18181B",
+                      s50: '#FAFAFA',
+                      s100: '#F4F4F5',
+                      s200: '#E4E4E7',
+                      s300: '#D4D4D8',
+                      s400: '#A1A1AA',
+                      s500: '#71717A',
+                      s600: '#52525B',
+                      s700: '#3F3F46',
+                      s800: '#27272A',
+                      s900: '#18181B',
                     },
-                    text: "LIGHT",
+                    text: 'LIGHT',
                   },
                 },
               },
@@ -248,17 +248,18 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
 
   const onMessage = useCallback((message: MessageEvent<any>) => {
     if (message.isTrusted) {
-      if (message.data?.type === "updatePreviewValues") {
+      if (message.data?.type === 'updatePreviewValues') {
+        console.log(message.data.previewValues);
         setPreviewValues(message.data.previewValues);
       }
     }
   }, []);
 
   useEffect(() => {
-    window.addEventListener("message", onMessage);
+    window.addEventListener('message', onMessage);
 
     return () => {
-      window.removeEventListener("message", onMessage);
+      window.removeEventListener('message', onMessage);
     };
   });
 

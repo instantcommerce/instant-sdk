@@ -12,7 +12,6 @@ import { Logo } from './Logo';
 export const TopBar = () => {
   const { selectedBlock, blocksManifest, reloadPreview } = useBlocks();
   const {
-    updateConfig,
     setRightPanelVisible,
     rightPanelVisible,
     updateBookmarks,
@@ -22,13 +21,9 @@ export const TopBar = () => {
     setSelectedStore,
   } = useConfig();
 
-  const toggleRightPanel = () => {
-    updateConfig({ rightPanel: !rightPanelVisible });
-    setRightPanelVisible(!rightPanelVisible);
-  };
-
   const blockName = useMemo(
-    () => blocksManifest?.[selectedBlock]?.name,
+    () =>
+      selectedBlock ? blocksManifest?.[selectedBlock]?.name : 'Select block',
     [selectedBlock, blocksManifest],
   );
 
@@ -55,7 +50,7 @@ export const TopBar = () => {
           {!!selectedStore && !!availableStores && (
             <Select
               className="border-none"
-              items={availableStores}
+              options={availableStores}
               value={selectedStore.hostname}
               onValueChange={(value) => {
                 const store = window.__INSTANT_STORES__?.find(
@@ -72,16 +67,18 @@ export const TopBar = () => {
 
         <div className="flex items-center gap-1 mx-auto absolute left-2/4 top-2/4 -translate-y-2/4 -translate-x-2/4">
           <h1 className="text-sm">{blockName}</h1>
-          <Button
-            iconOnly
-            variant="unstyled"
-            onClick={() => updateBookmarks(blockName)}
-          >
-            <Star
-              size={14}
-              weight={bookmarks?.includes(blockName) ? 'fill' : 'regular'}
-            />
-          </Button>
+          {selectedBlock && (
+            <Button
+              iconOnly
+              variant="unstyled"
+              onClick={() => updateBookmarks(blockName)}
+            >
+              <Star
+                size={14}
+                weight={bookmarks?.includes(blockName) ? 'fill' : 'regular'}
+              />
+            </Button>
+          )}
         </div>
 
         <div className="flex gap-1.5">
@@ -98,7 +95,12 @@ export const TopBar = () => {
             <ArrowSquareOut size={16} />
           </Button>
 
-          <Button iconOnly onClick={toggleRightPanel}>
+          <Button
+            iconOnly
+            onClick={() => {
+              setRightPanelVisible(!rightPanelVisible);
+            }}
+          >
             {rightPanelVisible ? <XCircle size={16} /> : <Faders size={16} />}
           </Button>
         </div>

@@ -1,22 +1,23 @@
-import { retain, createRemoteRoot, RemoteChannel } from "@remote-ui/core";
-import { endpoint } from "@shopify/web-worker/worker";
-import { RenderCallback } from "instant-client";
-import { BlockContextValue } from "instant-client/src/BlockProvider/context";
+import { retain, createRemoteRoot, RemoteChannel } from '@remote-ui/core';
+import { endpoint } from '@shopify/web-worker/worker';
 
-endpoint.callable("addSchemas");
-endpoint.callable("updateStyle");
-endpoint.callable("reload");
+import { RenderCallback } from 'ui-api';
+import { BlockContextValue } from 'ui-api/src/BlockProvider/context';
+
+endpoint.callable('addSchemas');
+endpoint.callable('updateStyle');
+endpoint.callable('reload');
 
 let renderCallback: undefined | RenderCallback;
 
 // We bring third-party code into the environment by running `importScripts()` below.
 // We expect that code to call `self.render`, which we define below, to register
 // to receive the `RemoteRoot` object it needs to start rendering.
-Reflect.defineProperty(self, "render", {
+Reflect.defineProperty(self, 'render', {
   value: (
     contentSchema: any,
     customizerSchema: any,
-    callback: RenderCallback
+    callback: RenderCallback,
   ) => {
     (endpoint.call as any).addSchemas(contentSchema, customizerSchema);
     renderCallback = callback;
@@ -24,7 +25,7 @@ Reflect.defineProperty(self, "render", {
   writable: false,
 });
 
-Reflect.defineProperty(self, "reload", {
+Reflect.defineProperty(self, 'reload', {
   value: () =>
     (
       endpoint.call as {
@@ -34,18 +35,18 @@ Reflect.defineProperty(self, "reload", {
   writable: false,
 });
 
-Reflect.defineProperty(self, "updateStyle", {
+Reflect.defineProperty(self, 'updateStyle', {
   value: (id: string, content: string) =>
     (endpoint.call as any).updateStyle(id, content),
   writable: false,
 });
 
-Reflect.defineProperty(self, "removeStyle", {
+Reflect.defineProperty(self, 'removeStyle', {
   value: (id: string) => (endpoint.call as any).removeStyle(id),
   writable: false,
 });
 
-Reflect.defineProperty(location, "reload", {
+Reflect.defineProperty(location, 'reload', {
   value: (timestamp: number) => (endpoint.call as any).reload(),
   writable: false,
 });
@@ -61,7 +62,7 @@ export async function run(script: string, channel: RemoteChannel) {
 
   if (renderCallback == null) {
     throw new Error(
-      `The ${script} script did not register a callback to render UI. Make sure that code runs self.onRender().`
+      `The ${script} script did not register a callback to render UI. Make sure that code runs self.onRender().`,
     );
   }
 }
@@ -70,7 +71,7 @@ let root: ReturnType<typeof createRemoteRoot>;
 
 export async function render(
   channel: RemoteChannel,
-  blockProps: BlockContextValue
+  blockProps: BlockContextValue,
 ) {
   retain(channel);
   retain(blockProps);

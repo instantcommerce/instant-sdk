@@ -22,21 +22,23 @@ if (import.meta.env.DEV) {
 }
 
 export const screenSizes = [
+  { label: 'Responsive', value: 'responsive', w: '100%', h: '100%' },
   { label: 'iPhone 14 Pro', value: 'iphone-14-pro', w: 393, h: 852 },
   { label: 'iPad Air', value: 'ipad-air', w: 820, h: 1180 },
   { label: 'Macbook Pro', value: 'macbook-pro', w: 393, h: 852 },
   { label: 'Laptop', value: 'laptop', w: 393, h: 852 },
   { label: 'Full HD', value: 'full-hd', w: 393, h: 852 },
   { label: '4k', value: '4-k', w: 393, h: 852 },
-  { label: 'Responsive', value: 'responsive', w: '100%', h: '100%' },
 ];
 
 export const ConfigProvider = ({ children }: { children: ReactNode }) => {
   const [leftPanelVisible, setLeftPanelVisible] = useState(true);
   const [rightPanelVisible, setRightPanelVisible] = useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
+  const [scale, setScale] = useState<number | undefined>(undefined);
   const [screenSize, setScreenSize] = useState(screenSizes[0]?.value);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
+  const [initializedConfig, setInitializedConfig] = useState(false);
   const [selectedStore, setSelectedStore] = useState(
     window.__INSTANT_STORES__?.[0],
   );
@@ -66,12 +68,26 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
       setLeftPanelVisible(userConfig?.leftPanel);
       setRightPanelVisible(userConfig?.rightPanel);
       setDarkModeEnabled(userConfig?.darkMode);
+      setScale(userConfig?.scale);
     }
+
+    setInitializedConfig(true);
   }, []);
 
   useEffect(() => {
     localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
   }, [bookmarks]);
+
+  useEffect(() => {
+    if (initializedConfig) {
+      updateConfig({
+        leftPanel: leftPanelVisible,
+        rightPanel: rightPanelVisible,
+        darkMode: darkModeEnabled,
+        scale,
+      });
+    }
+  }, [leftPanelVisible, rightPanelVisible, darkModeEnabled, scale]);
 
   const updateBookmarks = (blockName: string) => {
     if (bookmarks?.includes(blockName)) {
@@ -114,6 +130,8 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
       updateBookmarks,
       bookmarks,
       getUrl,
+      scale,
+      setScale,
     };
   }, [
     leftPanelVisible,
@@ -131,6 +149,8 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
     updateBookmarks,
     bookmarks,
     getUrl,
+    scale,
+    setScale,
   ]);
 
   return (
