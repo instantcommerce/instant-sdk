@@ -13,7 +13,12 @@ import {
   RemoteRenderer,
   createController,
 } from '@remote-ui/react/host';
-import { createEndpoint, fromInsideIframe } from '@remote-ui/rpc';
+import {
+  createEndpoint,
+  fromInsideIframe,
+  release,
+  retain,
+} from '@remote-ui/rpc';
 import { createWorkerFactory, expose, terminate } from '@shopify/web-worker';
 import { BlockContextValue } from 'instant-client/src/BlockProvider/context';
 import { SchemaTypes } from '../../components/BlocksProvider/context';
@@ -124,6 +129,56 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
     startTransition(() => {
       if (worker) {
         expose(worker, {
+          addInstantEventListener: (
+            type,
+            listener,
+            { preventDefault, ...options },
+          ) => {
+            retain(listener);
+
+            console.log('addEventListener', type, options);
+
+            window.addEventListener(
+              type,
+              (ev: any) => {
+                if (preventDefault) {
+                  ev.preventDefault();
+                }
+
+                const customEv = [
+                  'isTrusted',
+                  'bubbles',
+                  'detail',
+                  'timeStamp',
+                  'type',
+                ].reduce(
+                  (all, prop) => {
+                    all[prop] = ev[prop];
+                    return all;
+                  },
+                  { cancelable: false } as any,
+                );
+
+                listener(customEv);
+              },
+              options,
+            );
+
+            window.dispatchEvent(
+              new CustomEvent('instantAddToCart', {
+                bubbles: false,
+                cancelable: false,
+                detail: {
+                  test: true,
+                },
+              }),
+            );
+          },
+          removeInstantEventListener: (type, listener, options) => {
+            release(listener);
+
+            console.log('removeEventListener', type, listener, options);
+          },
           addSchemas: (contentSchema: any, customizerSchema: any) => {
             if (window.parent) {
               window.parent.postMessage({

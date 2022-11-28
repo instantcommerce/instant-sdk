@@ -1,9 +1,11 @@
 import { retain, createRemoteRoot, RemoteChannel } from '@remote-ui/core';
 import { endpoint } from '@shopify/web-worker/worker';
 
-import { RenderCallback } from 'ui-api';
-import { BlockContextValue } from 'ui-api/src/BlockProvider/context';
+import { RenderCallback } from 'instant-client';
+import { BlockContextValue } from 'instant-client/src/BlockProvider/context';
 
+endpoint.callable('addInstantEventListener');
+endpoint.callable('removeInstantEventListener');
 endpoint.callable('addSchemas');
 endpoint.callable('updateStyle');
 endpoint.callable('reload');
@@ -22,6 +24,18 @@ Reflect.defineProperty(self, 'render', {
     (endpoint.call as any).addSchemas(contentSchema, customizerSchema);
     renderCallback = callback;
   },
+  writable: false,
+});
+
+Reflect.defineProperty(self, 'addInstantEventListener', {
+  value: (...args: any[]) =>
+    (endpoint.call as any).addInstantEventListener(...args),
+  writable: false,
+});
+
+Reflect.defineProperty(self, 'removeInstantEventListener', {
+  value: (...args: any[]) =>
+    (endpoint.call as any).removeInstantEventListener(...args),
   writable: false,
 });
 

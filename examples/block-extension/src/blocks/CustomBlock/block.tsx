@@ -1,11 +1,13 @@
-import { HTMLProps, ReactNode, useEffect, useState } from "react";
+import { HTMLProps, ReactNode, useCallback, useEffect, useState } from 'react';
 import {
   gql,
   useBlockState,
+  useEventListener,
+  useRequestData,
   useShopifyClient,
   useTheme,
   useToast,
-} from "instant-client";
+} from 'instant-client';
 
 const Box = ({
   children,
@@ -32,8 +34,17 @@ export const CustomBlock = () => {
   const { colors } = useTheme();
   const shopifyClient = useShopifyClient();
   const toast = useToast();
+  const request = useRequestData();
 
   const [products, setProducts] = useState<ProductsConnection>();
+
+  const onAddToCart = useCallback((ev: any) => {
+    console.log(ev);
+  }, []);
+
+  useEventListener('addToCart', onAddToCart, {
+    preventDefault: true,
+  });
 
   const loadProducts = async () => {
     try {
@@ -59,7 +70,7 @@ export const CustomBlock = () => {
   useEffect(() => {
     loadProducts();
 
-    toast.create({ message: "Test" });
+    toast.create({ message: 'Test' });
   }, []);
 
   if (!products) {
@@ -70,6 +81,7 @@ export const CustomBlock = () => {
     <Box className="shadow-lg text-orange-600">
       Title: <b style={{ color: colors.primary.s700 }}>{content.title}</b>
       <a href="https://google.com">Google</a>
+      Locale: {request.locale}
       <Box className="mt-4" style={{ color: customizations.textColor }}>
         <h1 className="text-lg">Products</h1>
 

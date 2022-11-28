@@ -126,7 +126,7 @@ export const Resizable = ({
               topLeft: false,
             }
       }
-      resizeRatio={{ x: 2 }}
+      resizeRatio={2}
       {...props}
     >
       {children}
