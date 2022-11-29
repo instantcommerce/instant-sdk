@@ -145,10 +145,10 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   return params?.viewMode === 'fullScreen' ? (
     <div className="h-full w-full">{children}</div>
   ) : (
-    <div className="flex flex-1 flex-col w-full">
+    <div className="flex flex-1 flex-col w-full h-full">
       <TopBar />
 
-      <div className="flex flex-row flex-1 relative">
+      <div className="flex flex-row flex-1 relative h-full min-h-0">
         <SideBar
           className={`${
             leftPanelVisible ? 'translate-x-0' : '-translate-x-full'
@@ -160,11 +160,14 @@ export const Layout = ({ children }: { children: ReactNode }) => {
             darkModeEnabled ? 'bg-[#1E1E1E]' : 'bg-gray-50',
             rightPanelVisible ? 'pr-96' : 'pr-4',
             leftPanelVisible ? 'pl-[12.5rem]' : 'pl-4',
-            'flex flex-row flex-1 min-w-0',
+            'flex flex-row flex-1 min-w-0 ',
           )}
         >
-          <div id="preview-wrapper" className="flex flex-col flex-1 min-w-0">
-            <div id="preview-top-bar" className="sticky top-12 z-50 p-2">
+          <div
+            id="preview-wrapper"
+            className="flex flex-col flex-1 min-w-0 overflow-auto"
+          >
+            <div id="preview-top-bar" className="sticky top-0 z-50 p-2">
               <div className="relative w-full h-full flex items-center justify-between">
                 <div className="flex gap-1.5">
                   <Button
@@ -228,7 +231,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               </div>
             </div>
 
-            <div className="h-full w-full overflow-auto flex items-center">
+            <div className="w-full flex flex-1 items-center">
               <PreviewWrapper onSizeChange={setIframeSize}>
                 {children}
               </PreviewWrapper>
