@@ -159,7 +159,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         <main
           className={twJoin(
             darkModeEnabled ? 'bg-[#1E1E1E]' : 'bg-gray-50',
-            rightPanelVisible ? 'pr-80' : 'pr-4',
+            rightPanelVisible ? 'pr-96' : 'pr-4',
             leftPanelVisible ? 'pl-[12.5rem]' : 'pl-4',
             'flex flex-row flex-1 min-w-0',
           )}
@@ -240,7 +240,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         <aside
           className={`${
             rightPanelVisible ? 'translate-x-0' : 'translate-x-full'
-          } absolute right-0 transition-transform bg-white h-full flex flex-col shrink-0 w-80 border-l border-gray-100 py-2 overflow-y-auto`}
+          } absolute right-0 transition-transform bg-white h-full flex flex-col shrink-0 border-l border-gray-100 py-2 overflow-y-auto w-96`}
         >
           <Tabs
             tabs={tabs}
