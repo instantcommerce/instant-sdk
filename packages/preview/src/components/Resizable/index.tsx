@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useLayoutEffect, useState } from 'react';
 import { Resizable as ResizableComponent, ResizableProps } from 're-resizable';
 import { Handle } from './Handle';
 
@@ -15,6 +15,28 @@ export const Resizable = ({
   enabled?: boolean;
 } & ResizableProps) => {
   const [size, setSize] = useState(defaultSize);
+
+  const getMaxWidth = () =>
+    (document.querySelector('#preview-wrapper')?.getBoundingClientRect?.()
+      ?.width || 0) - 16;
+
+  const getMaxHeight = () =>
+    (document.querySelector('#preview-wrapper')?.getBoundingClientRect?.()
+      ?.height || 0) -
+    (document.querySelector('#preview-top-bar')?.getBoundingClientRect?.()
+      ?.height || 0) -
+    16;
+
+  useLayoutEffect(() => {
+    if (!sizeProp) {
+      const width = getMaxWidth();
+      const height = getMaxHeight();
+
+      if (width && height) {
+        setSize({ width, height });
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (sizeProp) {
@@ -66,14 +88,7 @@ export const Resizable = ({
             onMouseDown={(e) => {
               /** Fill height on double-click */
               if (e.detail === 2) {
-                const height =
-                  (document
-                    .querySelector('#preview-wrapper')
-                    ?.getBoundingClientRect?.()?.height || 0) -
-                  (document
-                    .querySelector('#preview-top-bar')
-                    ?.getBoundingClientRect?.()?.height || 0) -
-                  16;
+                const height = getMaxHeight();
 
                 if (height) {
                   setSize({ height, width: size.width });
@@ -89,10 +104,7 @@ export const Resizable = ({
             onMouseDown={(e) => {
               /** Fill width on double-click */
               if (e.detail === 2) {
-                const width =
-                  (document
-                    .querySelector('#preview-wrapper')
-                    ?.getBoundingClientRect?.()?.width || 0) - 16;
+                const width = getMaxWidth();
 
                 if (width) {
                   setSize({ height: size.height, width });

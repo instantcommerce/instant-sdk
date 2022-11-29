@@ -17,9 +17,9 @@ let renderCallback: undefined | RenderCallback;
 // to receive the `RemoteRoot` object it needs to start rendering.
 Reflect.defineProperty(self, 'render', {
   value: (
-    contentSchema: any,
-    customizerSchema: any,
     callback: RenderCallback,
+    contentSchema?: any,
+    customizerSchema?: any,
   ) => {
     (endpoint.call as any).addSchemas(contentSchema, customizerSchema);
     renderCallback = callback;

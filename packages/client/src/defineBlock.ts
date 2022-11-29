@@ -1,5 +1,6 @@
 import { createElement, ReactElement, ReactNode } from 'react';
 import { render as remoteRender, RemoteRoot } from '@remote-ui/react';
+import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 
 import { BlockProvider } from './BlockProvider';
 import { BlockContextValue } from './BlockProvider/context';
@@ -12,45 +13,51 @@ export type RenderCallback = (
 export type RenderElement = Parameters<typeof remoteRender>[0];
 
 function render(
-  contentSchema: any,
-  customizerSchema: any,
   callback: RenderCallback,
+  contentSchema?: DefineContentSchema,
+  customizerSchema?: DefineCustomizerSchema,
 ) {
-  (self as any).render(contentSchema, customizerSchema, callback);
+  (self as any).render(callback, contentSchema, customizerSchema);
 }
 
 interface DefineBlockParams {
-  title?: string;
+  /** React component rendered by the block */
   component: () => RenderElement | ReactElement;
   preview?: {
+    /** Wrap the block in one or more decorators for previewing */
     decorators?: Array<(component: ReactElement) => ReactNode>;
   };
-  customizerSchema?: {};
-  contentSchema?: {};
+  /** The customizer schema that can be filled in within the admin's customizer */
+  customizerSchema?: DefineCustomizerSchema;
+  /** The content schema that is synced to the CMS */
+  contentSchema?: DefineContentSchema;
 }
 
 export const defineBlock = ({
-  title,
   component,
   preview: { decorators } = {},
   customizerSchema,
   contentSchema,
 }: DefineBlockParams) => {
-  render(contentSchema, customizerSchema, (root, blockProps) => {
-    const renderedComponent =
-      typeof component === 'function' ? createElement(component) : component;
+  render(
+    (root, blockProps) => {
+      const renderedComponent =
+        typeof component === 'function' ? createElement(component) : component;
 
-    const result =
-      decorators?.reduce((total, decorator) => {
-        return decorator(total);
-      }, renderedComponent as any) || renderedComponent;
+      const result =
+        decorators?.reduce((total, decorator) => {
+          return decorator(total);
+        }, renderedComponent as any) || renderedComponent;
 
-    remoteRender(
-      createElement(BlockProvider, {
-        children: result,
-        blockProps,
-      }),
-      root,
-    );
-  });
+      remoteRender(
+        createElement(BlockProvider, {
+          children: result,
+          blockProps,
+        }),
+        root,
+      );
+    },
+    contentSchema,
+    customizerSchema,
+  );
 };

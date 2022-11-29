@@ -12,7 +12,6 @@ export const PreviewWrapper = ({ children }: { children: ReactNode }) => {
 
   return (
     <div
-      id="preview-wrapper"
       className={twJoin(
         scale ? 'scale-50' : '',
         'flex flex-col flex-1 min-w-0',

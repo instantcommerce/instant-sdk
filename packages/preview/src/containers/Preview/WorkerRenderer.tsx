@@ -16,11 +16,13 @@ import {
 import {
   createEndpoint,
   fromInsideIframe,
-  release,
+  // release,
   retain,
 } from '@remote-ui/rpc';
 import { createWorkerFactory, expose, terminate } from '@shopify/web-worker';
+import equal from 'fast-deep-equal';
 import { BlockContextValue } from 'instant-client/src/BlockProvider/context';
+import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import { SchemaTypes } from '../../components/BlocksProvider/context';
 
 import { previewSchema } from './previewSchema';
@@ -111,126 +113,163 @@ interface WorkerRendererProps {
   store?: any;
 }
 
+const eventListeners: any[] = [];
+
 export function WorkerRenderer({ store }: WorkerRendererProps) {
   const [isRegistered, setRegistered] = useState(false);
-  const [contentSchema, setContentSchema] = useState<any>();
-  const [customizerSchema, setCustomizerSchema] = useState<any>();
+  const [contentSchema, setContentSchema] = useState<DefineContentSchema>();
+  const [customizerSchema, setCustomizerSchema] =
+    useState<DefineCustomizerSchema>();
   const [previewValues, setPreviewValues] =
     useState<Record<SchemaTypes, Record<string, string>>>();
+  const [error, setError] = useState('');
 
   const receiver = useMemo(() => createRemoteReceiver(), []);
   const worker = useWorker(createWorker);
 
   const blockPath = new URLSearchParams(window.location.search).get('block');
 
+  const runWorker = async () => {
+    if (worker) {
+      expose(worker, {
+        addInstantEventListener: (type, listener, options) => {
+          const { preventDefault, ...optionsRest } = options;
+
+          retain(listener);
+
+          console.log('addEventListener', type, options);
+
+          const passthroughListener = (ev: any) => {
+            if (preventDefault) {
+              ev.preventDefault();
+            }
+
+            const customEv = [
+              'isTrusted',
+              'bubbles',
+              'detail',
+              'timeStamp',
+              'type',
+            ].reduce(
+              (all, prop) => {
+                all[prop] = ev[prop];
+                return all;
+              },
+              { cancelable: false } as any,
+            );
+
+            listener(customEv);
+          };
+
+          window.addEventListener(type, passthroughListener, optionsRest);
+
+          const cleanup = () => {
+            window.removeEventListener(type, passthroughListener, optionsRest);
+          };
+
+          eventListeners.push([
+            {
+              type,
+              listener,
+              options,
+            },
+            cleanup,
+          ]);
+
+          window.dispatchEvent(
+            new CustomEvent('instantAddToCart', {
+              bubbles: false,
+              cancelable: false,
+              detail: {
+                test: true,
+              },
+            }),
+          );
+        },
+        removeInstantEventListener: (type, listener, options) => {
+          const cleanupIdx = eventListeners.findIndex((l) =>
+            equal(l[0], {
+              type,
+              listener,
+              options,
+            }),
+          );
+
+          if (cleanupIdx >= 0) {
+            eventListeners[cleanupIdx][1]();
+            eventListeners.splice(cleanupIdx, 1);
+          }
+
+          // release(listener);
+
+          console.log('removeEventListener', type, options);
+        },
+        addSchemas: (
+          contentSchema?: DefineContentSchema,
+          customizerSchema?: DefineCustomizerSchema,
+        ) => {
+          if (window.parent) {
+            window.parent.postMessage({
+              type: 'addSchemas',
+              block: blockPath,
+              contentSchema,
+              customizerSchema,
+            });
+          }
+
+          setContentSchema(contentSchema);
+          setCustomizerSchema(customizerSchema);
+
+          setRegistered(true);
+        },
+        updateStyle: (id: string, content: string) => {
+          let style = sheetsMap.get(id);
+
+          if (!style) {
+            style = document.createElement('style');
+            style.setAttribute('type', 'text/css');
+            style.setAttribute('data-vite-dev-id', id);
+            style.innerHTML = content;
+            document.head.appendChild(style);
+          } else {
+            style.innerHTML = content;
+          }
+          sheetsMap.set(id, style);
+        },
+        removeStyle: (id: string) => {
+          const style = sheetsMap.get(id);
+          if (style) {
+            document.head.removeChild(style);
+            sheetsMap.delete(id);
+          }
+        },
+        reload: () => {
+          window.location.reload();
+        },
+      });
+
+      try {
+        await worker.run(
+          getWorkerScript(`${BLOCK_SERVER}/${blockPath}`),
+          receiver.receive,
+        );
+      } catch (e) {
+        if (import.meta.env.DEV) {
+          console.error(e);
+        }
+
+        setError(e?.toString?.() || 'An unknown error has occurred');
+      }
+    }
+  };
+
   useEffect(() => {
     setRegistered(false);
 
+    setError('');
+
     startTransition(() => {
-      if (worker) {
-        expose(worker, {
-          addInstantEventListener: (
-            type,
-            listener,
-            { preventDefault, ...options },
-          ) => {
-            retain(listener);
-
-            console.log('addEventListener', type, options);
-
-            window.addEventListener(
-              type,
-              (ev: any) => {
-                if (preventDefault) {
-                  ev.preventDefault();
-                }
-
-                const customEv = [
-                  'isTrusted',
-                  'bubbles',
-                  'detail',
-                  'timeStamp',
-                  'type',
-                ].reduce(
-                  (all, prop) => {
-                    all[prop] = ev[prop];
-                    return all;
-                  },
-                  { cancelable: false } as any,
-                );
-
-                listener(customEv);
-              },
-              options,
-            );
-
-            window.dispatchEvent(
-              new CustomEvent('instantAddToCart', {
-                bubbles: false,
-                cancelable: false,
-                detail: {
-                  test: true,
-                },
-              }),
-            );
-          },
-          removeInstantEventListener: (type, listener, options) => {
-            release(listener);
-
-            console.log('removeEventListener', type, listener, options);
-          },
-          addSchemas: (contentSchema: any, customizerSchema: any) => {
-            if (window.parent) {
-              window.parent.postMessage({
-                type: 'addSchemas',
-                block: blockPath,
-                contentSchema,
-                customizerSchema,
-              });
-            }
-
-            setContentSchema(contentSchema);
-            setCustomizerSchema(customizerSchema);
-
-            setRegistered(true);
-          },
-          updateStyle: (id: string, content: string) => {
-            let style = sheetsMap.get(id);
-
-            if (!style) {
-              style = document.createElement('style');
-              style.setAttribute('type', 'text/css');
-              style.setAttribute('data-vite-dev-id', id);
-              style.innerHTML = content;
-              document.head.appendChild(style);
-            } else {
-              style.innerHTML = content;
-            }
-            sheetsMap.set(id, style);
-          },
-          removeStyle: (id: string) => {
-            const style = sheetsMap.get(id);
-            if (style) {
-              document.head.removeChild(style);
-              sheetsMap.delete(id);
-            }
-          },
-          reload: () => {
-            window.location.reload();
-          },
-        });
-
-        try {
-          worker.run(
-            getWorkerScript(`${BLOCK_SERVER}/${blockPath}`),
-            receiver.receive,
-          );
-        } catch (e) {
-          if (import.meta.env.DEV) {
-            console.log(e);
-          }
-        }
-      }
+      runWorker();
     });
   }, [worker, receiver]);
 
@@ -317,6 +356,27 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
       window.removeEventListener('message', onMessage);
     };
   });
+
+  if (error) {
+    return (
+      <div>
+        <b>Error running block:</b>
+        <div style={{ marginTop: '16px', marginBottom: '32px' }}>
+          <div
+            style={{
+              padding: '8px',
+              borderRadius: '8px',
+              backgroundColor: 'black',
+              color: '#EEE',
+            }}
+          >
+            <code>{error}</code>
+          </div>
+        </div>
+        Check the console for errors.
+      </div>
+    );
+  }
 
   return <RemoteRenderer receiver={receiver} controller={CONTROLLER} />;
 }

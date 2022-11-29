@@ -6,6 +6,8 @@ import {
   useRef,
   useState,
 } from 'react';
+import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
+import { useConfig } from '../ConfigProvider';
 
 import { BlocksContext, SchemaTypes } from './context';
 
@@ -23,30 +25,60 @@ if (import.meta.env.DEV) {
 }
 
 export const BlocksProvider = ({ children }: { children: ReactNode }) => {
+  const { params } = useConfig();
   const previewRef = useRef<HTMLIFrameElement | null>(null);
 
   const [blocksManifest, setBlocksManifest] = useState(
     window.__INSTANT_BLOCKS_MANIFEST__,
   );
   const [selectedBlock, setSelectedBlock] = useState<string | null>(
-    (blocksManifest ? Object.keys(blocksManifest)?.[0] : null) || null,
+    (blocksManifest
+      ? Object.entries(blocksManifest)?.find(
+          (entry) => entry[1].name === params.block,
+        )?.[0] || Object.keys(blocksManifest)?.[0]
+      : null) || null,
   );
   const [previewValues, setPreviewValues] = useState<
     Record<string, Record<SchemaTypes, Record<string, string>>>
   >({});
+  const isPreviewValuesDirty = useRef(false);
 
   const onMessage = useCallback((message: MessageEvent<any>) => {
     if (message.isTrusted) {
       if (message.data?.type === 'addSchemas') {
         if (message.data?.block in blocksManifest) {
-          setBlocksManifest({
+          const newBlocksManifest = {
             ...blocksManifest,
             [message.data.block]: {
               ...blocksManifest[message.data.block],
               contentSchema: message.data.contentSchema,
               customizerSchema: message.data.customizerSchema,
             },
-          });
+          };
+
+          setBlocksManifest(newBlocksManifest);
+
+          if (!isPreviewValuesDirty.current) {
+            setPreviewValues({
+              ...previewValues,
+              [message.data.block]: {
+                content: message.data.contentSchema?.fields?.reduce(
+                  (all: any, current: DefineContentSchema['fields'][0]) => {
+                    all[current.name] = current.preview;
+                    return all;
+                  },
+                  {} as any,
+                ),
+                customizer: message.data.customizerSchema?.fields?.reduce(
+                  (all: any, current: DefineCustomizerSchema['fields'][0]) => {
+                    all[current.name] = current.preview;
+                    return all;
+                  },
+                  {} as any,
+                ),
+              },
+            });
+          }
         }
       }
     }
@@ -84,6 +116,10 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
   const setPreviewValue = useCallback(
     (schema: SchemaTypes, name: string, value: string) => {
       if (selectedBlock) {
+        if (!isPreviewValuesDirty.current) {
+          isPreviewValuesDirty.current = true;
+        }
+
         setPreviewValues((currentPreviewValues) => ({
           ...currentPreviewValues,
           [selectedBlock]: {
