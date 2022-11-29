@@ -8,14 +8,14 @@ import {
 
 export const App = () => {
   return (
-    <BlocksProvider>
-      <ConfigProvider>
+    <ConfigProvider>
+      <BlocksProvider>
         <Layout>
           <PreviewFrame />
         </Layout>
-      </ConfigProvider>
 
-      <Toaster />
-    </BlocksProvider>
+        <Toaster />
+      </BlocksProvider>
+    </ConfigProvider>
   );
 };

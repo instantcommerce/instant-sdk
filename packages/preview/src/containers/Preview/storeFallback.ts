@@ -1,4 +1,4 @@
-import { PublicStoreByHostnameQuery } from 'types/api/instant/storefront';
+import { PublicStore } from 'types/api';
 
 export const storeFallback = {
   storefront: {
@@ -31,4 +31,4 @@ export const storeFallback = {
       },
     },
   },
-} as any as PublicStoreByHostnameQuery['publicStoreByHostname'];
+} as any as PublicStore;

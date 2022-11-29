@@ -1,10 +1,9 @@
-import { defineBlock } from "instant-client";
-import { CustomBlock } from "./block";
-import "../test.css";
-import "./styles.css";
+import { defineBlock } from 'instant-client';
+import { CustomBlock } from './block';
+import '../test.css';
+import './styles.css';
 
 export default defineBlock({
-  title: "CustomBlock",
   component: CustomBlock,
   preview: {
     decorators: [
@@ -12,9 +11,9 @@ export default defineBlock({
     ],
   },
   customizerSchema: {
-    fields: [{ type: "TEXT", name: "textColor", preview: "#A020F0" }],
+    fields: [{ type: 'text', name: 'textColor', preview: '#A020F0' }],
   },
   contentSchema: {
-    fields: [{ type: "TEXT", name: "title", preview: "Placeholder" }],
+    fields: [{ type: 'text', name: 'title', preview: 'Placeholder' }],
   },
 });

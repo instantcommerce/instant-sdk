@@ -1,11 +1,21 @@
 import { useEffect, useRef } from 'react';
 
-type InstantEvent = 'addToCart' | 'checkout' | 'loadPage' | 'updateCartLine';
+type InstantEventType =
+  | 'addToCart'
+  | 'checkout'
+  | 'loadPage'
+  | 'updateCartLine';
+
+interface InstantEvent
+  extends Omit<
+    Event,
+    'preventDefault' | 'stopPropagation' | 'stopImmediatePropagation'
+  > {}
 
 export const useEventListener = (
-  event: InstantEvent,
-  listener: (ev: Event) => any,
-  options?: AddEventListenerOptions,
+  event: InstantEventType,
+  listener: (ev: InstantEvent) => any,
+  options?: AddEventListenerOptions & { preventDefault?: boolean },
 ) => {
   const savedListener = useRef<EventListener>(listener);
   const cleanup = useRef(() => {});
@@ -15,7 +25,7 @@ export const useEventListener = (
   }, [listener]);
 
   useEffect(() => {
-    if (typeof window === 'undefined') {
+    if (typeof self === 'undefined') {
       return;
     }
 
@@ -24,10 +34,18 @@ export const useEventListener = (
       1,
     )}`;
 
-    window.addEventListener(eventName, savedListener.current, options);
+    (self as any).addInstantEventListener(
+      eventName,
+      savedListener.current,
+      options,
+    );
 
     cleanup.current = () => {
-      window.removeEventListener(eventName, savedListener.current, options);
+      (self as any).removeInstantEventListener(
+        eventName,
+        savedListener.current,
+        options,
+      );
     };
 
     return cleanup.current;

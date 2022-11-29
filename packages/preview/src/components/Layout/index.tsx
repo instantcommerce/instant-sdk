@@ -1,7 +1,9 @@
 import { ChangeEvent, ReactNode, useEffect, useState } from 'react';
 import { useMemo } from 'react';
+import humanizeString from 'humanize-string';
 import { ArrowsInSimple, CaretCircleDoubleLeft, Moon } from 'phosphor-react';
 import { twJoin } from 'tailwind-merge';
+import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import {
   Button,
   ColorInput,
@@ -59,15 +61,12 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 
   const renderField = (
     schema: SchemaTypes,
-    field: {
-      name: string;
-      type: string;
-      preview: string;
-      options?: string[];
-    },
+    field:
+      | DefineContentSchema['fields'][0]
+      | DefineCustomizerSchema['fields'][0],
   ) => {
     const baseProps = {
-      label: field.name,
+      label: field.label || humanizeString(field.name),
       key: field.name,
       id: field.name,
       defaultValue: field.preview,
@@ -77,21 +76,21 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     };
 
     switch (field.type) {
-      case 'TEXT':
+      case 'text':
         return <Input {...baseProps} direction="row" />;
 
-      case 'COLOR':
-        return (
-          <ColorInput
-            {...baseProps}
-            direction="row"
-            onChange={(value: string) => {
-              setPreviewValue(schema, field.name, value);
-            }}
-          />
-        );
+      // case 'color':
+      //   return (
+      //     <ColorInput
+      //       {...baseProps}
+      //       direction="row"
+      //       onChange={(value: string) => {
+      //         setPreviewValue(schema, field.name, value);
+      //       }}
+      //     />
+      //   );
 
-      case 'SELECT':
+      case 'select':
         return (
           <Select
             {...baseProps}
@@ -103,13 +102,13 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           />
         );
 
-      case 'IMAGE':
+      case 'image':
         return <ImageInput {...baseProps} direction="row" />;
 
-      case 'DATE':
+      case 'date':
         return <Input type="date" {...baseProps} direction="row" />;
 
-      case 'RICH_TEXT':
+      case 'richText':
         return <RichText {...baseProps} direction="col" />;
 
       default:
@@ -122,7 +121,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
       return (
         <div className="px-3 py-6">
           {blocksManifest?.[selectedBlock]?.contentSchema?.fields?.map(
-            (field: any) => renderField('content', field),
+            (field) => renderField('content', field),
           )}
         </div>
       );
@@ -135,7 +134,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         <div className="flex flex-col gap-5 pt-2 pb-6">
           <InputGroup title="Input group">
             {blocksManifest?.[selectedBlock]?.customizerSchema?.fields?.map(
-              (field: any) => renderField('customizer', field),
+              (field) => renderField('customizer', field),
             )}
           </InputGroup>
         </div>
@@ -164,8 +163,8 @@ export const Layout = ({ children }: { children: ReactNode }) => {
             'flex flex-row flex-1 min-w-0',
           )}
         >
-          <div className="flex flex-col flex-1 min-w-0">
-            <div className="sticky top-12 z-50 p-2">
+          <div id="preview-wrapper" className="flex flex-col flex-1 min-w-0">
+            <div id="preview-top-bar" className="sticky top-12 z-50 p-2">
               <div className="relative w-full h-full flex items-center justify-between">
                 <div className="flex gap-1.5">
                   <Button
@@ -229,7 +228,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               </div>
             </div>
 
-            <div className="h-full w-full max-w-[calc(100%-40px)] max-h-[calc(100%-60px)] overflow-auto flex items-center mb-5 mr-5 ml-5">
+            <div className="h-full w-full overflow-auto flex items-center">
               <PreviewWrapper onSizeChange={setIframeSize}>
                 {children}
               </PreviewWrapper>

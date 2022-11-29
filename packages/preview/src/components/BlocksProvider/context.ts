@@ -1,4 +1,5 @@
 import { createContext, MutableRefObject } from 'react';
+import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 
 export type SchemaTypes = 'customizer' | 'content';
 
@@ -8,8 +9,8 @@ export interface BlocksContextValue {
     {
       name: string;
       path?: string;
-      contentSchema?: any;
-      customizerSchema?: any;
+      contentSchema?: DefineContentSchema;
+      customizerSchema?: DefineCustomizerSchema;
     }
   >;
   previewRef: MutableRefObject<HTMLIFrameElement | null>;
