@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
+    "build:cli": "turbo run build --filter=instant-cli",
     "codegen": "graphql-codegen -r dotenv/config",
     "commit": "npx git-emoji-cli",
     "dev": "concurrently \"FORCE_DIR=./../../../examples/block-extension npm run dev:cli dev\" \"npm run dev:preview\"",

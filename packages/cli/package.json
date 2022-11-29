@@ -10,7 +10,7 @@
   },
   "scripts": {
     "compile": "rm -rf dist && tsup src/cli.ts --format esm && chmod +x dist/cli.js",
-    "build": "tsc --noEmit && npm run compile",
+    "build": "tsc --noEmit && npm run compile && cp -r ../preview/dist ./dist/preview-dist",
     "build:dev": "npm run compile && cp .env dist/.env",
     "start": "npm run build && dist/cli.js",
     "dev": "npm run build:dev && cp .env dist/.env",

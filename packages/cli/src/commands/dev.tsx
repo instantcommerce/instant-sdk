@@ -108,7 +108,7 @@ export const Dev: FC = ({}) => {
       });
 
       app.use(
-        serveStatic(`${dirname}/../../packages/preview/dist`, {
+        serveStatic(`./preview-dist`, {
           setHeaders: (res, path) => {
             if ((serveStatic.mime as any).lookup(path) === 'text/html') {
               /** Don't cache HTML */
