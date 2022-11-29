@@ -1,4 +1,4 @@
-import { ChangeEvent, ReactNode } from 'react';
+import { ChangeEvent, ReactNode, useEffect, useState } from 'react';
 import { useMemo } from 'react';
 import { ArrowsInSimple, CaretCircleDoubleLeft, Moon } from 'phosphor-react';
 import { twJoin } from 'tailwind-merge';
@@ -16,6 +16,7 @@ import {
   screenSizes,
   RichText,
   PreviewWrapper,
+  IFRAME_DEFAULT_SIZE,
 } from '..';
 import { SchemaTypes } from '../BlocksProvider/context';
 import { SideBar } from './SideBar';
@@ -34,6 +35,8 @@ const tabs = [
 
 export const Layout = ({ children }: { children: ReactNode }) => {
   const { selectedBlock, blocksManifest, setPreviewValue } = useBlocks();
+  const [iframeSize, setIframeSize] = useState(IFRAME_DEFAULT_SIZE);
+
   const {
     rightPanelVisible,
     darkModeEnabled,
@@ -44,7 +47,15 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     params,
     scale,
     setScale,
+    iframeWidth,
+    iframeHeight,
+    setWidth,
+    setHeight,
   } = useConfig();
+
+  useEffect(() => {
+    setIframeSize({ width: iframeWidth, height: iframeHeight });
+  }, [iframeWidth, iframeHeight]);
 
   const renderField = (
     schema: SchemaTypes,
@@ -170,10 +181,28 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                   options={[[screenSizes[0]], screenSizes.slice(1)]}
                   defaultValue={screenSizes[0].value}
                   variant={darkModeEnabled ? 'dark' : 'light'}
-                  onValueChange={setScreenSize}
+                  onValueChange={(val) => setScreenSize(Number(val))}
                 />
               </div>
-
+              <div className="flex gap-1.5 items-center text-xs text-primary-700">
+                <input
+                  className="w-12 text-center bg-transparent px-2 py-1 focus:bg-primary-100 focus:outline-1 focus:outline-primary-200 [-moz-appearance]-none"
+                  value={iframeSize.width}
+                  type="number"
+                  onChange={(e) => {
+                    setWidth(Number(e.target.value));
+                  }}
+                />
+                x
+                <input
+                  className="w-12 text-center bg-transparent px-2 py-1 focus:bg-primary-100 focus:outline-1 focus:outline-primary-200"
+                  value={iframeSize.height}
+                  type="number"
+                  onChange={(e) => {
+                    setHeight(Number(e.target.value));
+                  }}
+                />
+              </div>
               <div className="flex gap-1.5">
                 <Button
                   onClick={() => setScale(scale ? undefined : 50)}
@@ -198,7 +227,9 @@ export const Layout = ({ children }: { children: ReactNode }) => {
             </div>
 
             <div className="h-full w-full max-w-[calc(100%-40px)] max-h-[calc(100%-60px)] overflow-auto flex items-center mb-5 mr-5 ml-5">
-              <PreviewWrapper>{children}</PreviewWrapper>
+              <PreviewWrapper onSizeChange={setIframeSize}>
+                {children}
+              </PreviewWrapper>
             </div>
           </div>
         </main>

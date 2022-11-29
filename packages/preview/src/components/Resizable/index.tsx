@@ -2,17 +2,26 @@ import { ReactNode, useEffect, useState } from 'react';
 import { Resizable as ResizableComponent, ResizableProps } from 're-resizable';
 import { Handle } from './Handle';
 
+export type SizeProp = {
+  width: number | string;
+  height: number | string;
+};
+
+export const IFRAME_DEFAULT_SIZE: SizeProp = { width: 300, height: 200 };
+
 export const Resizable = ({
   children,
   darkMode,
   enabled = true,
-  defaultSize = { width: 300, height: 200 },
+  defaultSize = IFRAME_DEFAULT_SIZE,
   size: sizeProp,
+  onSizeChange,
   ...props
 }: {
   children: ReactNode;
   darkMode?: boolean;
   enabled?: boolean;
+  onSizeChange?(values: SizeProp): void;
 } & ResizableProps) => {
   const [size, setSize] = useState(defaultSize);
 
@@ -20,7 +29,7 @@ export const Resizable = ({
     if (sizeProp) {
       setSize(sizeProp);
     }
-  }, [sizeProp]);
+  }, [sizeProp?.width, sizeProp?.height]);
 
   const handleClassName = darkMode
     ? 'bg-gray-700 hover:bg-gray-600'
@@ -34,6 +43,14 @@ export const Resizable = ({
           width: +size.width + d.width,
           height: +size.height + d.height,
         });
+      }}
+      onResize={(_1, _2, _3, d) => {
+        if (!!onSizeChange) {
+          onSizeChange({
+            width: +size.width + d.width,
+            height: +size.height + d.height,
+          });
+        }
       }}
       className="mx-auto"
       maxWidth="100%"
@@ -103,29 +120,16 @@ export const Resizable = ({
           />
         ),
       }}
-      enable={
-        enabled
-          ? {
-              top: false,
-              right: true,
-              bottom: true,
-              left: false,
-              topRight: false,
-              bottomRight: true,
-              bottomLeft: false,
-              topLeft: false,
-            }
-          : {
-              top: false,
-              right: false,
-              bottom: false,
-              left: false,
-              topRight: false,
-              bottomRight: false,
-              bottomLeft: false,
-              topLeft: false,
-            }
-      }
+      enable={{
+        top: false,
+        right: true,
+        bottom: true,
+        left: false,
+        topRight: false,
+        bottomRight: true,
+        bottomLeft: false,
+        topLeft: false,
+      }}
       resizeRatio={{ x: 2 }}
       {...props}
     >
