@@ -1,9 +1,9 @@
-import React, { FC, useEffect, useState } from "react";
-import { existsSync, mkdirSync, writeFileSync } from "fs";
-import { render, Text } from "ink";
-import { CommandModule } from "yargs";
-import { blockTemplate, instantConfigTemplate } from "~/templates";
-import { config } from "~/config";
+import { existsSync, mkdirSync, writeFileSync } from 'fs';
+import React, { FC, useEffect, useState } from 'react';
+import { render, Text } from 'ink';
+import { CommandModule } from 'yargs';
+import { config } from '~/config';
+import { blockTemplate, instantConfigTemplate } from '~/templates';
 
 export const Init: FC<{ name: string }> = ({ name }) => {
   const [success, setSuccess] = useState<boolean>(false);
@@ -15,12 +15,15 @@ export const Init: FC<{ name: string }> = ({ name }) => {
     if (existsSync(dir)) {
       setError(`The directory "${name}" already exists`);
     } else {
-      mkdirSync(`${dir}/blocks`, { recursive: true });
+      mkdirSync(`${dir}/blocks/Hero`, { recursive: true });
       writeFileSync(
         `${dir}/instant.config.json`,
-        instantConfigTemplate(config.get("organization"), config.get("storeId"))
+        instantConfigTemplate(
+          config.get('organization'),
+          config.get('storeId'),
+        ),
       );
-      writeFileSync(`${dir}/blocks/Hero.tsx`, blockTemplate("Hero"));
+      writeFileSync(`${dir}/blocks/Hero/index.tsx`, blockTemplate('Hero'));
       setSuccess(true);
     }
   }, []);
@@ -37,9 +40,9 @@ export const Init: FC<{ name: string }> = ({ name }) => {
 };
 
 export const init: CommandModule = {
-  command: "init <name>",
-  describe: "Initialize a new Instant project",
+  command: 'init <name>',
+  describe: 'Initialize a new Instant project',
   handler: (argv) => {
-    render(<Init name={argv["name"] as string} />);
+    render(<Init name={argv['name'] as string} />);
   },
 };
