@@ -165,64 +165,67 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           )}
         >
           <div className="flex flex-col flex-1 min-w-0">
-            <div className="sticky top-12 z-50 flex items-center justify-between p-2">
-              <div className="flex gap-1.5">
-                <Button
-                  onClick={() => {
-                    setLeftPanelVisible(!leftPanelVisible);
-                  }}
-                  variant={darkModeEnabled ? 'dark' : 'white'}
-                  iconOnly
-                >
-                  <CaretCircleDoubleLeft size={16} />
-                </Button>
-
-                <Select
-                  options={[[screenSizes[0]], screenSizes.slice(1)]}
-                  defaultValue={screenSizes[0].value}
-                  variant={darkModeEnabled ? 'dark' : 'light'}
-                  onValueChange={(val) => setScreenSize(Number(val))}
-                />
-              </div>
-              <div className="flex gap-1.5 items-center text-xs text-primary-700">
-                <input
-                  className="w-12 text-center bg-transparent px-2 py-1 focus:bg-primary-100 focus:outline-1 focus:outline-primary-200 [-moz-appearance]-none"
-                  value={iframeSize.width}
-                  type="number"
-                  onChange={(e) => {
-                    setWidth(Number(e.target.value));
-                  }}
-                />
-                x
-                <input
-                  className="w-12 text-center bg-transparent px-2 py-1 focus:bg-primary-100 focus:outline-1 focus:outline-primary-200"
-                  value={iframeSize.height}
-                  type="number"
-                  onChange={(e) => {
-                    setHeight(Number(e.target.value));
-                  }}
-                />
-              </div>
-              <div className="flex gap-1.5">
-                <Button
-                  onClick={() => setScale(scale ? undefined : 50)}
-                  variant={darkModeEnabled ? 'dark' : 'white'}
-                >
-                  <ArrowsInSimple size={16} />
-                  {scale ? '100%' : '50%'}
-                </Button>
-
-                <Tooltip content="Toggle dark mode">
+            <div className="sticky top-12 z-50 p-2">
+              <div className="relative w-full h-full flex items-center justify-between">
+                <div className="flex gap-1.5">
                   <Button
                     onClick={() => {
-                      setDarkModeEnabled(!darkModeEnabled);
+                      setLeftPanelVisible(!leftPanelVisible);
                     }}
                     variant={darkModeEnabled ? 'dark' : 'white'}
                     iconOnly
                   >
-                    <Moon size={16} />
+                    <CaretCircleDoubleLeft size={16} />
                   </Button>
-                </Tooltip>
+
+                  <Select
+                    options={[[screenSizes[0]], screenSizes.slice(1)]}
+                    defaultValue={screenSizes[0].value}
+                    variant={darkModeEnabled ? 'dark' : 'light'}
+                    onValueChange={(val) => setScreenSize(Number(val))}
+                  />
+                </div>
+
+                <div className="flex gap-1.5 items-center text-xs text-primary-700 absolute left-2/4 top-2/4 -translate-y-2/4 -translate-x-2/4">
+                  <input
+                    className="w-12 text-center bg-transparent px-2 py-1 focus:bg-primary-100 focus:outline-1 focus:outline-primary-200 [-moz-appearance]-none"
+                    value={iframeSize.width}
+                    type="number"
+                    onChange={(e) => {
+                      setWidth(Number(e.target.value));
+                    }}
+                  />
+                  x
+                  <input
+                    className="w-12 text-center bg-transparent px-2 py-1 focus:bg-primary-100 focus:outline-1 focus:outline-primary-200"
+                    value={iframeSize.height}
+                    type="number"
+                    onChange={(e) => {
+                      setHeight(Number(e.target.value));
+                    }}
+                  />
+                </div>
+                <div className="flex gap-1.5">
+                  <Button
+                    onClick={() => setScale(scale ? undefined : 50)}
+                    variant={darkModeEnabled ? 'dark' : 'white'}
+                  >
+                    <ArrowsInSimple size={16} />
+                    {scale ? '100%' : '50%'}
+                  </Button>
+
+                  <Tooltip content="Toggle dark mode">
+                    <Button
+                      onClick={() => {
+                        setDarkModeEnabled(!darkModeEnabled);
+                      }}
+                      variant={darkModeEnabled ? 'dark' : 'white'}
+                      iconOnly
+                    >
+                      <Moon size={16} />
+                    </Button>
+                  </Tooltip>
+                </div>
               </div>
             </div>
 
