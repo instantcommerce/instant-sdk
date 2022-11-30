@@ -19,7 +19,7 @@ export const PreviewWrapper = ({
         'flex flex-col flex-1 min-w-0',
       )}
     >
-      <div className="w-full mx-0 my-4 max-w-full overflow-auto px-2">
+      <div className="w-full h-full mx-0 my-4 max-w-full overflow-auto px-2">
         <Resizable
           size={{
             width: iframeWidth || 300,
