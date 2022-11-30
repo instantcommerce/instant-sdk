@@ -5,6 +5,7 @@ node_modules
 .env
 yarn-error.log
 _*
+!_gitignore
 .turbo
 
 */coverage

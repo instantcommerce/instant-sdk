@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/accessible-emoji */
 import http from 'http';
 import { parse } from 'url';
 import React, { FC, useEffect, useRef, useState } from 'react';
@@ -40,7 +41,7 @@ const Shortcuts = ({ address }: { address: string }) => {
   );
 };
 
-export const Dev: FC = ({}) => {
+export const Dev: FC = () => {
   const apiSdk = useApiSdk();
   const { isRawModeSupported } = useStdin();
   const [success, setSuccess] = useState<boolean>(false);
