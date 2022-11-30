@@ -7,8 +7,8 @@ export interface ConfigContextValue {
   setRightPanelVisible(value: boolean): void;
   darkModeEnabled: boolean;
   setDarkModeEnabled(value: boolean): void;
-  screenSize: string;
-  setScreenSize(size: string): void;
+  screenSize: number;
+  setScreenSize(size: number): void;
   selectedStore?: NonNullable<typeof window.__INSTANT_STORES__>[0];
   setSelectedStore(
     value: NonNullable<typeof window.__INSTANT_STORES__>[0],
@@ -25,6 +25,11 @@ export interface ConfigContextValue {
   bookmarks: string[];
   scale?: number;
   setScale(value?: number): void;
+  iframeWidth: number | string;
+  setWidth(value: number | string): void;
+  iframeHeight: number | string;
+  setHeight(value: number | string): void;
+  updateDimensions(value: number, reset?: boolean): void;
 }
 
 export const ConfigContext = createContext<ConfigContextValue | null>(null);
