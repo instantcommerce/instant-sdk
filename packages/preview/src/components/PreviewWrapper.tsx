@@ -1,14 +1,16 @@
-import { ReactNode, useMemo } from 'react';
+import { ReactNode } from 'react';
+import { ResizableProps } from 're-resizable';
 import { twJoin, twMerge } from 'tailwind-merge';
-import { Resizable, useConfig, screenSizes } from '../components';
+import { Resizable, useConfig, SizeProp } from '../components';
 
-export const PreviewWrapper = ({ children }: { children: ReactNode }) => {
-  const { screenSize, darkModeEnabled, scale } = useConfig();
-
-  const iframeDimensions = useMemo(
-    () => screenSizes?.find((item) => item.value === screenSize),
-    [screenSize],
-  );
+export const PreviewWrapper = ({
+  children,
+  ...props
+}: {
+  children: ReactNode;
+  onSizeChange?(values: SizeProp): void;
+} & ResizableProps) => {
+  const { darkModeEnabled, scale, iframeWidth, iframeHeight } = useConfig();
 
   return (
     <div
@@ -17,18 +19,14 @@ export const PreviewWrapper = ({ children }: { children: ReactNode }) => {
         'flex flex-col flex-1 min-w-0',
       )}
     >
-      <div className="w-full mb-4 mr-4 max-w-[calc(100%-16px)]">
+      <div className="w-full h-full mx-0 my-4 max-w-full overflow-auto px-2">
         <Resizable
-          size={
-            iframeDimensions?.value === 'responsive'
-              ? undefined
-              : {
-                  width: iframeDimensions?.w,
-                  height: 200,
-                }
-          }
-          enabled={iframeDimensions?.value === 'responsive'}
+          size={{
+            width: iframeWidth || 300,
+            height: iframeHeight || 200,
+          }}
           darkMode={darkModeEnabled}
+          {...props}
         >
           <div
             className={twMerge(

@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useMemo, useState } from 'react';
 import qs from 'qs';
 import { useLocation } from 'react-router';
 
+import { IFRAME_DEFAULT_SIZE } from '../Resizable';
 import { ConfigContext } from './context';
 
 export * from './useConfig';
@@ -22,26 +23,32 @@ if (import.meta.env.DEV) {
 }
 
 export const screenSizes = [
-  { label: 'Responsive', value: 'responsive', w: '100%', h: '100%' },
-  { label: 'iPhone 14 Pro', value: 'iphone-14-pro', w: 393, h: 852 },
-  { label: 'iPad Air', value: 'ipad-air', w: 820, h: 1180 },
-  { label: 'Macbook Pro', value: 'macbook-pro', w: 393, h: 852 },
-  { label: 'Laptop', value: 'laptop', w: 393, h: 852 },
-  { label: 'Full HD', value: 'full-hd', w: 393, h: 852 },
-  { label: '4k', value: '4-k', w: 393, h: 852 },
-];
+  {
+    label: 'Responsive',
+    w: IFRAME_DEFAULT_SIZE.width,
+    h: IFRAME_DEFAULT_SIZE.height,
+  },
+  { label: 'iPhone 14 Pro', w: 393, h: 852 },
+  { label: 'iPad Air', w: 820, h: 1180 },
+  { label: 'Laptop', w: 1600, h: 900 },
+  { label: 'Full HD', w: 1920, h: 1080 },
+  { label: 'Macbook Pro', w: 2880, h: 1800 },
+  { label: '4k', w: 3840, h: 2160 },
+].map((item, idx) => ({ ...item, value: `${idx}` }));
 
 export const ConfigProvider = ({ children }: { children: ReactNode }) => {
   const [leftPanelVisible, setLeftPanelVisible] = useState(true);
   const [rightPanelVisible, setRightPanelVisible] = useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
   const [scale, setScale] = useState<number | undefined>(undefined);
-  const [screenSize, setScreenSize] = useState(screenSizes[0]?.value);
+  const [screenSize, setScreenSize] = useState(0);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [initializedConfig, setInitializedConfig] = useState(false);
   const [selectedStore, setSelectedStore] = useState(
     window.__INSTANT_STORES__?.[0],
   );
+  const [iframeWidth, setWidth] = useState(IFRAME_DEFAULT_SIZE.width);
+  const [iframeHeight, setHeight] = useState(IFRAME_DEFAULT_SIZE.height);
 
   const location = useLocation();
 
@@ -52,6 +59,17 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
 
   const getUrl = (searchParams = {}) =>
     `${location?.pathname}?${qs.stringify({ ...params, ...searchParams })}`;
+
+  const updateDimensions = (size: number, reset = false) => {
+    if (size || reset) {
+      setWidth(screenSizes[screenSize].w);
+      setHeight(screenSizes[screenSize].h);
+    }
+  };
+
+  useEffect(() => {
+    updateDimensions(screenSize);
+  }, [screenSize]);
 
   useEffect(() => {
     const favouriteBlocks = JSON.parse(
@@ -132,6 +150,11 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
       getUrl,
       scale,
       setScale,
+      iframeWidth,
+      iframeHeight,
+      setWidth,
+      setHeight,
+      updateDimensions,
     };
   }, [
     leftPanelVisible,
@@ -151,6 +174,11 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
     getUrl,
     scale,
     setScale,
+    iframeWidth,
+    iframeHeight,
+    setWidth,
+    setHeight,
+    updateDimensions,
   ]);
 
   return (

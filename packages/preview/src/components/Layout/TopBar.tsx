@@ -37,7 +37,7 @@ export const TopBar = () => {
   );
 
   return (
-    <nav className="sticky top-0 z-30 flex h-12 w-full bg-white border-b border-gray-100 px-2">
+    <nav className="sticky top-0 z-30 flex shrink-0 h-12 w-full bg-white border-b border-gray-100 px-2">
       <div className="flex w-full items-center justify-between relative pl-2">
         <div className="flex items-center">
           <Logo />
