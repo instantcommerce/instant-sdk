@@ -60,11 +60,15 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
   const getUrl = (searchParams = {}) =>
     `${location?.pathname}?${qs.stringify({ ...params, ...searchParams })}`;
 
-  useEffect(() => {
-    if (typeof screenSize === 'number') {
+  const updateDimensions = (size: number, reset = false) => {
+    if (size || reset) {
       setWidth(screenSizes[screenSize].w);
       setHeight(screenSizes[screenSize].h);
     }
+  };
+
+  useEffect(() => {
+    updateDimensions(screenSize);
   }, [screenSize]);
 
   useEffect(() => {
@@ -150,6 +154,7 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
       iframeHeight,
       setWidth,
       setHeight,
+      updateDimensions,
     };
   }, [
     leftPanelVisible,
@@ -173,6 +178,7 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
     iframeHeight,
     setWidth,
     setHeight,
+    updateDimensions,
   ]);
 
   return (

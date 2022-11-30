@@ -29,6 +29,7 @@ export interface ConfigContextValue {
   setWidth(value: number | string): void;
   iframeHeight: number | string;
   setHeight(value: number | string): void;
+  updateDimensions(value: number, reset?: boolean): void;
 }
 
 export const ConfigContext = createContext<ConfigContextValue | null>(null);

@@ -73,7 +73,6 @@ export const Resizable = ({
         }
       }}
       className="mx-auto"
-      maxWidth="100%"
       handleClasses={{
         left: 'flex items-center justify-center',
         right: 'flex items-center justify-center',

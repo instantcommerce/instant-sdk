@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { ResizableProps } from 're-resizable';
 import { twJoin, twMerge } from 'tailwind-merge';
 import { Resizable, useConfig, SizeProp } from '../components';
 
@@ -8,7 +9,7 @@ export const PreviewWrapper = ({
 }: {
   children: ReactNode;
   onSizeChange?(values: SizeProp): void;
-}) => {
+} & ResizableProps) => {
   const { darkModeEnabled, scale, iframeWidth, iframeHeight } = useConfig();
 
   return (
@@ -18,7 +19,7 @@ export const PreviewWrapper = ({
         'flex flex-col flex-1 min-w-0',
       )}
     >
-      <div className="w-full mb-4 mr-4 max-w-[calc(100%-16px)]">
+      <div className="w-full mx-0 my-4 max-w-full overflow-auto px-2">
         <Resizable
           size={{
             width: iframeWidth || 300,

@@ -45,7 +45,6 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     setDarkModeEnabled,
     leftPanelVisible,
     setLeftPanelVisible,
-    setScreenSize,
     params,
     scale,
     setScale,
@@ -53,6 +52,9 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     iframeHeight,
     setWidth,
     setHeight,
+    screenSize,
+    setScreenSize,
+    updateDimensions,
   } = useConfig();
 
   useEffect(() => {
@@ -183,8 +185,18 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                   <Select
                     options={[[screenSizes[0]], screenSizes.slice(1)]}
                     defaultValue={screenSizes[0].value}
+                    value={`${screenSize}`}
                     variant={darkModeEnabled ? 'dark' : 'light'}
-                    onValueChange={(val) => setScreenSize(Number(val))}
+                    onValueChange={(val) => {
+                      const value = Number(val);
+                      const reset = !value;
+
+                      setScreenSize(value);
+
+                      if (reset) {
+                        updateDimensions(value, reset);
+                      }
+                    }}
                   />
                 </div>
 
@@ -207,6 +219,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                     }}
                   />
                 </div>
+
                 <div className="flex gap-1.5">
                   <Button
                     onClick={() => setScale(scale ? undefined : 50)}
@@ -231,8 +244,14 @@ export const Layout = ({ children }: { children: ReactNode }) => {
               </div>
             </div>
 
-            <div className="w-full flex flex-1 items-center">
-              <PreviewWrapper onSizeChange={setIframeSize}>
+            <div className="w-full flex flex-1 overflow-hidden">
+              <PreviewWrapper
+                onSizeChange={setIframeSize}
+                onResizeStart={() => {
+                  setScreenSize(0);
+                  updateDimensions(0);
+                }}
+              >
                 {children}
               </PreviewWrapper>
             </div>
