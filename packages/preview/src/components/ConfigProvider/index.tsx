@@ -30,10 +30,10 @@ export const screenSizes = [
   },
   { label: 'iPhone 14 Pro', w: 393, h: 852 },
   { label: 'iPad Air', w: 820, h: 1180 },
-  { label: 'Macbook Pro', w: 393, h: 852 },
-  { label: 'Laptop', w: 393, h: 852 },
-  { label: 'Full HD', w: 393, h: 852 },
-  { label: '4k', w: 393, h: 852 },
+  { label: 'Laptop', w: 1600, h: 900 },
+  { label: 'Full HD', w: 1920, h: 1080 },
+  { label: 'Macbook Pro', w: 2880, h: 1800 },
+  { label: '4k', w: 3840, h: 2160 },
 ].map((item, idx) => ({ ...item, value: `${idx}` }));
 
 export const ConfigProvider = ({ children }: { children: ReactNode }) => {
