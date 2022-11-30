@@ -1,6 +1,8 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import http from 'http';
+import path from 'path';
 import { parse } from 'url';
+import { fileURLToPath } from 'url';
 import React, { FC, useEffect, useRef, useState } from 'react';
 import compression from 'compression';
 import connect from 'connect';
@@ -10,7 +12,7 @@ import serveStatic from 'serve-static';
 import { createServer, ViteDevServer } from 'vite';
 import { CommandModule } from 'yargs';
 import { dirname } from '~/config';
-import { useApiSdk } from '~/lib/api';
+import { extractApiError, useApiSdk } from '~/lib/api';
 import { getViteConfig } from '~/lib/getViteConfig';
 
 const BLOCKS_MANIFEST =
@@ -96,9 +98,9 @@ export const Dev: FC = () => {
 <script type="module" src="${blockServerAddress}/${BLOCKS_MANIFEST}"></script>
 <script>window.__INSTANT_BLOCK_SERVER__=${JSON.stringify(
                   `${blockServerAddress}`,
-                )};window.__INSTANT_STORES__=JSON.parse(\\'${JSON.stringify(
+                )};window.__INSTANT_STORES__=JSON.parse(\`${JSON.stringify(
                   stores,
-                )}\\');</script>`,
+                )}\`);</script>`,
               ),
               encoding,
             );
@@ -108,8 +110,14 @@ export const Dev: FC = () => {
         next();
       });
 
+      const previewDir = path.resolve(
+        fileURLToPath(import.meta.url),
+        '../',
+        'preview-dist',
+      );
+
       app.use(
-        serveStatic(`./preview-dist`, {
+        serveStatic(previewDir, {
           setHeaders: (res, path) => {
             if ((serveStatic.mime as any).lookup(path) === 'text/html') {
               /** Don't cache HTML */
@@ -148,13 +156,16 @@ export const Dev: FC = () => {
     let stores: Stores = [];
 
     try {
-      stores = (await apiSdk.stores()).stores.edges.map(({ node }) => ({
-        id: node.id,
-        name: node.name,
-        hostname: node.domains.find((domain) => !!domain.isPrimary)?.hostname!,
-      }));
+      stores = await apiSdk.stores().then((r) =>
+        r.stores.edges.map(({ node }) => ({
+          id: node.id,
+          name: node.name,
+          hostname: node.domains.find((domain) => !!domain.isPrimary)
+            ?.hostname!,
+        })),
+      );
     } catch (e) {
-      console.log(e);
+      console.log('Unable to load stores:', extractApiError(e));
     }
 
     try {

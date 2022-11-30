@@ -2,7 +2,7 @@ node_modules
 .DS_Store
 **/dist
 *.local
-.env
+.env*
 yarn-error.log
 _*
 !_gitignore

@@ -25,6 +25,7 @@ export const useShopifyClient = () => {
     [],
   );
 
+  /** @todo fix types for variables */
   const request = <T = any, V = any>(
     document: RequestDocument,
     variables?: V,
@@ -33,6 +34,7 @@ export const useShopifyClient = () => {
       throw new Error('Shopify integration needs to be active');
     }
 
+    // @ts-ignore
     return client.request<T, V>(document, variables);
   };
 

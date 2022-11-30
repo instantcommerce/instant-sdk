@@ -343,7 +343,6 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
   const onMessage = useCallback((message: MessageEvent<any>) => {
     if (message.isTrusted) {
       if (message.data?.type === 'updatePreviewValues') {
-        console.log(message.data.previewValues);
         setPreviewValues(message.data.previewValues);
       }
     }

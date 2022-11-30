@@ -8,7 +8,7 @@
     "publish": "instant publish"
   },
   "dependencies": {
-    "instant-client": "^0.0.1",
+    "instant-client": "./instant-client-v0.0.1.tgz",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
