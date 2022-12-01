@@ -1,6 +1,10 @@
 import { createElement, ReactElement, ReactNode } from 'react';
 import { render as remoteRender, RemoteRoot } from '@remote-ui/react';
-import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
+/** This relative import forces types from this package to be included in this bundle */
+import {
+  DefineContentSchema,
+  DefineCustomizerSchema,
+} from '../../types/schemas';
 
 import { BlockProvider } from './BlockProvider';
 import { BlockContextValue } from './BlockProvider/context';

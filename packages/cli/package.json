@@ -10,7 +10,7 @@
   },
   "scripts": {
     "compile": "tsup && chmod +x dist/cli.js",
-    "build": "npm run compile && cp -r ../preview ./dist/preview && cp -r ../../templates ./dist/",
+    "build": "npm run compile && mkdir -p ./dist/preview/ && cp -r ../preview/dist ./dist/preview/ && cp -r ../../templates ./dist/",
     "build:dev": "npm run compile && cp .env dist/.env",
     "start": "npm run build && dist/cli.js",
     "dev": "npm run build:dev && cp .env dist/.env",
