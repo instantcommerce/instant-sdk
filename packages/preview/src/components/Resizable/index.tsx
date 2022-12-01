@@ -1,5 +1,6 @@
-import { ReactNode, useEffect, useLayoutEffect, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Resizable as ResizableComponent, ResizableProps } from 're-resizable';
+import { useConfig } from '../ConfigProvider';
 import { Handle } from './Handle';
 
 export type SizeProp = {
@@ -21,33 +22,41 @@ export const Resizable = ({
   darkMode?: boolean;
   onSizeChange?(values: SizeProp): void;
 } & ResizableProps) => {
+  const isInitialSizing = useRef(true);
   const [size, setSize] = useState(defaultSize);
+  const { setWidth, setHeight } = useConfig();
 
   const getMaxWidth = () =>
     (document.querySelector('#preview-wrapper')?.getBoundingClientRect?.()
-      ?.width || 0) - 16;
+      ?.width || 0) - 48;
 
   const getMaxHeight = () =>
     (document.querySelector('#preview-wrapper')?.getBoundingClientRect?.()
       ?.height || 0) -
     (document.querySelector('#preview-top-bar')?.getBoundingClientRect?.()
       ?.height || 0) -
-    16;
-
-  useLayoutEffect(() => {
-    if (!sizeProp) {
-      const width = getMaxWidth();
-      const height = getMaxHeight();
-
-      if (width && height) {
-        setSize({ width, height });
-      }
-    }
-  }, []);
+    48;
 
   useEffect(() => {
     if (sizeProp) {
-      setSize(sizeProp);
+      if (
+        isInitialSizing.current &&
+        size.height === IFRAME_DEFAULT_SIZE.height &&
+        size.width === IFRAME_DEFAULT_SIZE.width
+      ) {
+        isInitialSizing.current = false;
+
+        const width = getMaxWidth();
+        const height = getMaxHeight();
+
+        if (width && height) {
+          setSize({ width, height });
+          setWidth(`${width}`);
+          setHeight(`${height}`);
+        }
+      } else {
+        setSize(sizeProp);
+      }
     }
   }, [sizeProp?.width, sizeProp?.height]);
 
@@ -139,7 +148,7 @@ export const Resizable = ({
         bottomLeft: false,
         topLeft: false,
       }}
-      resizeRatio={2}
+      resizeRatio={{ x: 2 }}
       {...props}
     >
       {children}

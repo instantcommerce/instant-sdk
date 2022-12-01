@@ -21,10 +21,14 @@ export const PreviewWrapper = ({
     >
       <div className="w-full h-full mx-0 my-4 max-w-full overflow-auto px-2">
         <Resizable
-          size={{
-            width: iframeWidth || 300,
-            height: iframeHeight || 200,
-          }}
+          size={
+            iframeWidth && iframeHeight
+              ? {
+                  width: iframeWidth,
+                  height: iframeHeight,
+                }
+              : undefined
+          }
           darkMode={darkModeEnabled}
           {...props}
         >

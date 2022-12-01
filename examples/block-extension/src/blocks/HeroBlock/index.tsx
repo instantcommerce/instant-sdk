@@ -1,4 +1,4 @@
-import { defineBlock, useBlockState } from 'instant-client';
+import { defineBlock, useBlockState } from 'instant-client/src';
 import './index.css';
 
 const HeroBlock = () => {

@@ -7,7 +7,7 @@ import {
   useShopifyClient,
   useTheme,
   useToast,
-} from 'instant-client';
+} from 'instant-client/src';
 
 const Box = ({
   children,

@@ -27,6 +27,7 @@ export const screenSizes = [
     label: 'Responsive',
     w: IFRAME_DEFAULT_SIZE.width,
     h: IFRAME_DEFAULT_SIZE.height,
+    isDefault: true,
   },
   { label: 'iPhone 14 Pro', w: 393, h: 852 },
   { label: 'iPad Air', w: 820, h: 1180 },
