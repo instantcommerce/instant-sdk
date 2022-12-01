@@ -49,7 +49,6 @@ export const Login = () => {
     /** Get device code, open verification link, start polling */
     getDeviceCode().then((getData) => {
       setDeviceCodeData(getData);
-      console.log(getData);
       open(getData.verification_uri_complete);
       setTimeout(
         () => polling(getData.device_code, getData.interval),

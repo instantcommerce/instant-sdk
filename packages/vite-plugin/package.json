@@ -11,28 +11,25 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
-    },
-    "./client": {
-      "types": "./dist/vite-client/client.d.ts",
-      "import": "./dist/vite-client/client.js"
     }
   },
   "scripts": {
-    "build": "npm run build:clean && npm run build:compile:esm",
-    "build:clean": "rm -rf dist && mkdir dist",
-    "build:compile:esm": "cd src && yarn tsc --build tsconfig.json",
+    "build": "tsup",
     "format": "prettier --write ."
   },
   "engines": {
     "node": ">=16.0.0"
   },
   "dependencies": {
+    "@babel/core": "7.20.5",
+    "glob": "8.0.3",
     "hashids": "2.2.10",
     "postcss-plugin-instant-sdk": "*",
     "react-refresh": "^0.14.0"
   },
   "devDependencies": {
-    "tsconfig": "*"
+    "tsconfig": "*",
+    "tsup": "6.5.0"
   },
   "peerDependencies": {
     "vite": "^3.0.0"

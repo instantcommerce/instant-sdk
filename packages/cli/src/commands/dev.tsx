@@ -113,7 +113,7 @@ export const Dev: FC = () => {
       const previewDir = path.resolve(
         fileURLToPath(import.meta.url),
         '../',
-        'preview-dist',
+        'preview/dist',
       );
 
       app.use(
