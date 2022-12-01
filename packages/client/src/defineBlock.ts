@@ -1,5 +1,7 @@
 import { createElement, ReactElement, ReactNode } from 'react';
 import { render as remoteRender, RemoteRoot } from '@remote-ui/react';
+import { O } from 'ts-toolbelt';
+import { Narrow } from 'ts-toolbelt/out/Function/Narrow';
 /** This relative import forces types from this package to be included in this bundle */
 import {
   DefineContentSchema,
@@ -24,7 +26,7 @@ function render(
   (self as any).render(callback, contentSchema, customizerSchema);
 }
 
-interface DefineBlockParams {
+type DefineBlockParams = {
   /** React component rendered by the block */
   component: () => RenderElement | ReactElement;
   preview?: {
@@ -35,14 +37,16 @@ interface DefineBlockParams {
   customizerSchema?: DefineCustomizerSchema;
   /** The content schema that is synced to the CMS */
   contentSchema?: DefineContentSchema;
-}
+};
 
-export const defineBlock = ({
-  component,
-  preview: { decorators } = {},
-  customizerSchema,
-  contentSchema,
-}: DefineBlockParams) => {
+export const defineBlock = (params: DefineBlockParams) => {
+  const {
+    component,
+    preview: { decorators } = {},
+    customizerSchema,
+    contentSchema,
+  } = params;
+
   render(
     (root, blockProps) => {
       const renderedComponent =
@@ -64,4 +68,13 @@ export const defineBlock = ({
     contentSchema,
     customizerSchema,
   );
+
+  return params;
 };
+
+export interface InferBlockState<T extends ReturnType<typeof defineBlock>> {
+  content: {
+    [K in NonNullable<T['contentSchema']>['fields'][number]['name']]: string;
+  };
+  customizations: any;
+}

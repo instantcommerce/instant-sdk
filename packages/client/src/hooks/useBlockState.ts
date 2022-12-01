@@ -1,7 +1,15 @@
 import { useBlockContext } from '../BlockProvider';
 
-export function useBlockState() {
+export function useBlockState<
+  T extends { content: any; customizations: any } = {
+    content: any;
+    customizations: any;
+  },
+>() {
   const { content, customizations } = useBlockContext();
 
-  return { content, customizations };
+  return { content, customizations } as {
+    content: T['content'];
+    customizations: T['customizations'];
+  };
 }

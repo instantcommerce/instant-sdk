@@ -1,4 +1,4 @@
-import { defineBlock } from 'instant-client';
+import { defineBlock } from 'instant-client/src';
 import { CustomBlock } from './block';
 import '../test.css';
 import './styles.css';
