@@ -10,6 +10,7 @@ type Option = {
 };
 
 interface SelectProps extends SelectPrimitive.SelectProps {
+  itemClassName?: string;
   options: (Option | string)[] | (Option | string)[][];
   placeholder?: string;
   variant?: 'dark' | 'light';
@@ -20,6 +21,7 @@ export const Select = ({
   className,
   wrapperClassName,
   labelClassName,
+  itemClassName,
   options,
   placeholder,
   variant = 'light',
@@ -123,6 +125,7 @@ export const Select = ({
                         className={twMerge(
                           'text-xs hover:outline-none focus:outline-none focus:font-medium px-2 py-1.5 cursor-pointer radix-disabled:opacity-50 select-none',
                           textStylesByVariant[variant],
+                          itemClassName,
                         )}
                       >
                         <SelectPrimitive.ItemText>

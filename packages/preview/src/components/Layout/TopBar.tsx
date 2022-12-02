@@ -46,7 +46,8 @@ export const TopBar = () => {
 
           {!!selectedStore && !!availableStores && (
             <Select
-              className="border-none"
+              className="text-[13px] border-none shadow-none"
+              itemClassName="text-[13px]"
               options={availableStores}
               value={selectedStore.hostname}
               onValueChange={(value) => {
@@ -71,7 +72,7 @@ export const TopBar = () => {
               onClick={() => updateBookmarks(blockName)}
             >
               <Star
-                size={14}
+                size={16}
                 weight={bookmarks?.includes(blockName) ? 'fill' : 'regular'}
               />
             </Button>
@@ -80,7 +81,7 @@ export const TopBar = () => {
 
         <div className="flex gap-1.5">
           <Button iconOnly onClick={reloadPreview}>
-            <ArrowCounterClockwise size={16} />
+            <ArrowCounterClockwise size={18} />
           </Button>
 
           <Button
@@ -89,7 +90,7 @@ export const TopBar = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <ArrowSquareOut size={16} />
+            <ArrowSquareOut size={18} />
           </Button>
 
           <Button
@@ -98,7 +99,7 @@ export const TopBar = () => {
               setRightPanelVisible(!rightPanelVisible);
             }}
           >
-            {rightPanelVisible ? <XCircle size={16} /> : <Faders size={16} />}
+            {rightPanelVisible ? <XCircle size={18} /> : <Faders size={18} />}
           </Button>
         </div>
       </div>

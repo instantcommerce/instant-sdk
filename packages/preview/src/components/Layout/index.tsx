@@ -139,12 +139,10 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   const customizerSchema = useMemo(() => {
     if (selectedBlock) {
       return (
-        <div className="flex flex-col gap-5 pt-2 pb-6">
-          <InputGroup title="Input group">
-            {blocksManifest?.[selectedBlock]?.customizerSchema?.fields?.map(
-              (field) => renderField('customizer', field),
-            )}
-          </InputGroup>
+        <div className="flex flex-col gap-4 px-3 py-6">
+          {blocksManifest?.[selectedBlock]?.customizerSchema?.fields?.map(
+            (field) => renderField('customizer', field),
+          )}
         </div>
       );
     }
@@ -186,14 +184,20 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                     iconOnly
                   >
                     {leftPanelVisible ? (
-                      <CaretCircleDoubleLeft size={16} />
+                      <CaretCircleDoubleLeft size={18} />
                     ) : (
-                      <CaretCircleDoubleRight size={16} />
+                      <CaretCircleDoubleRight size={18} />
                     )}
                   </Button>
 
                   <Select
-                    className="text-xs h-[30px]"
+                    className={twMerge(
+                      'text-xs text-[13px] h-[30px] shadow-none',
+                      darkModeEnabled
+                        ? 'border-gray-800 hover:border-gray-700 focus:border-gray-700'
+                        : 'border-white hover:border-primary-100 focus:border-gray-200',
+                    )}
+                    itemClassName="text-[13px]"
                     options={[[screenSizes[0]], screenSizes.slice(1)]}
                     defaultValue={screenSizes[0].value}
                     value={`${screenSize}`}
@@ -265,7 +269,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                     onClick={() => setScale(scale ? undefined : 50)}
                     variant={darkModeEnabled ? 'dark' : 'white'}
                   >
-                    <ArrowsInSimple size={16} />
+                    <ArrowsInSimple size={18} />
                     {scale ? '100%' : '50%'}
                   </Button>
 
@@ -280,7 +284,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                       variant={darkModeEnabled ? 'dark' : 'white'}
                       iconOnly
                     >
-                      {darkModeEnabled ? <Sun size={16} /> : <Moon size={16} />}
+                      {darkModeEnabled ? <Sun size={18} /> : <Moon size={18} />}
                     </Button>
                   </Tooltip>
                 </div>
