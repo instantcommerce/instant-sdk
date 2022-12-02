@@ -219,17 +219,19 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                 >
                   <input
                     className={twMerge(
-                      'w-12 text-center bg-transparent px-2 py-1 focus:outline-1 [-moz-appearance]-none',
+                      'w-[38px] text-center bg-transparent outline-none rounded focus:ring-1 px-[3px] py-px [-moz-appearance]-none',
                       darkModeEnabled
-                        ? 'focus:bg-primary-900 focus:outline-primary-800'
-                        : 'focus:bg-primary-100 focus:outline-primary-200',
+                        ? 'focus:bg-gray-800 ring-gray-700'
+                        : 'focus:bg-primary-100 ring-primary-200',
                     )}
                     value={iframeSize.width}
                     type="number"
                     min={1}
                     max={9999}
                     onChange={(e) => {
-                      setWidth(Number(e.target.value));
+                      setWidth(
+                        Math.max(1, Math.min(9999, Number(e.target.value))),
+                      );
                     }}
                   />
                   <span
@@ -240,13 +242,20 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                     x
                   </span>
                   <input
-                    className="w-12 text-center bg-transparent px-2 py-1 focus:bg-primary-100 focus:outline-1 focus:outline-primary-200"
+                    className={twMerge(
+                      'w-[38px] text-center bg-transparent outline-none rounded focus:ring-1 px-[3px] py-px [-moz-appearance]-none',
+                      darkModeEnabled
+                        ? 'focus:bg-gray-800 ring-gray-700'
+                        : 'focus:bg-primary-100 ring-primary-200',
+                    )}
                     value={iframeSize.height}
                     type="number"
                     min={1}
                     max={9999}
                     onChange={(e) => {
-                      setHeight(Number(e.target.value));
+                      setHeight(
+                        Math.max(1, Math.min(9999, Number(e.target.value))),
+                      );
                     }}
                   />
                 </div>
@@ -260,7 +269,10 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                     {scale ? '100%' : '50%'}
                   </Button>
 
-                  <Tooltip content="Toggle dark mode">
+                  <Tooltip
+                    content="Toggle dark mode"
+                    variant={darkModeEnabled ? 'dark' : 'light'}
+                  >
                     <Button
                       onClick={() => {
                         setDarkModeEnabled(!darkModeEnabled);

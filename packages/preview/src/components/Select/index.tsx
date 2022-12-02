@@ -135,7 +135,12 @@ export const Select = ({
                   </SelectPrimitive.Group>
 
                   {idx < groups?.length - 1 && (
-                    <SelectPrimitive.Separator className="w-full h-[1px] bg-gray-200 my-2" />
+                    <SelectPrimitive.Separator
+                      className={twMerge(
+                        'w-full h-[1px] my-2',
+                        variant === 'light' ? 'bg-gray-200' : 'bg-gray-600',
+                      )}
+                    />
                   )}
                 </Fragment>
               ))}

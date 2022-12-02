@@ -294,7 +294,7 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
       try {
         worker.render(receiver.receive, {
           content: contentData,
-          customizations: customizerData,
+          customizer: customizerData,
           instantObject: (window as any).Instant,
           store: store || {
             storefront: {

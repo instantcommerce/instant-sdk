@@ -30,7 +30,7 @@ interface Products {
 }
 
 export const CustomBlock = () => {
-  const { content, customizations } = useBlockState();
+  const { content, customizer } = useBlockState();
   const { colors } = useTheme();
   const shopifyClient = useShopifyClient();
   const toast = useToast();
@@ -82,7 +82,7 @@ export const CustomBlock = () => {
       Title: <b style={{ color: colors.primary.s700 }}>{content.title}</b>
       <a href="https://google.com">Google</a>
       Locale: {request.locale}
-      <Box className="mt-4" style={{ color: customizations.textColor }}>
+      <Box className="mt-4" style={{ color: customizer.textColor }}>
         <h1 className="text-lg">Products</h1>
 
         {/* {products?.edges?.map(({ node }) => (

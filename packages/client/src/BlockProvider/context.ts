@@ -2,7 +2,7 @@ import { createContext } from 'react';
 
 export interface BlockState {
   content?: any;
-  customizations?: any;
+  customizer?: any;
 }
 
 export interface UnifiedCart {

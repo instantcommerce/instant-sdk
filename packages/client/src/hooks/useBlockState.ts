@@ -1,7 +1,7 @@
 import { useBlockContext } from '../BlockProvider';
 
 export function useBlockState() {
-  const { content, customizations } = useBlockContext();
+  const { content, customizer } = useBlockContext();
 
-  return { content, customizations };
+  return { content, customizer };
 }
