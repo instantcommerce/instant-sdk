@@ -340,13 +340,16 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
     }
   }, [isRegistered, contentData, customizerData, receiver, worker]);
 
-  const onMessage = useCallback((message: MessageEvent<any>) => {
-    if (message.isTrusted) {
-      if (message.data?.type === 'updatePreviewValues') {
-        setPreviewValues(message.data.previewValues);
+  const onMessage = useCallback(
+    (message: MessageEvent<any>) => {
+      if (message.isTrusted) {
+        if (message.data?.type === 'updatePreviewValues') {
+          setPreviewValues(message.data.previewValues);
+        }
       }
-    }
-  }, []);
+    },
+    [setPreviewValues],
+  );
 
   useEffect(() => {
     window.addEventListener('message', onMessage);
@@ -354,7 +357,7 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
     return () => {
       window.removeEventListener('message', onMessage);
     };
-  });
+  }, [onMessage]);
 
   if (error) {
     return (

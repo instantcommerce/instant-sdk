@@ -43,61 +43,6 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
   >({});
   const isPreviewValuesDirty = useRef(false);
 
-  const onMessage = useCallback((message: MessageEvent<any>) => {
-    if (message.isTrusted) {
-      if (message.data?.type === 'addSchemas') {
-        if (message.data?.block in blocksManifest) {
-          const newBlocksManifest = {
-            ...blocksManifest,
-            [message.data.block]: {
-              ...blocksManifest[message.data.block],
-              contentSchema: message.data.contentSchema,
-              customizerSchema: message.data.customizerSchema,
-            },
-          };
-
-          setBlocksManifest(newBlocksManifest);
-
-          if (!isPreviewValuesDirty.current) {
-            setPreviewValues({
-              ...previewValues,
-              [message.data.block]: {
-                content: message.data.contentSchema?.fields?.reduce(
-                  (all: any, current: DefineContentSchema['fields'][0]) => {
-                    all[current.name] = current.preview;
-                    return all;
-                  },
-                  {} as any,
-                ),
-                customizer: message.data.customizerSchema?.fields?.reduce(
-                  (all: any, current: DefineCustomizerSchema['fields'][0]) => {
-                    all[current.name] = current.preview;
-                    return all;
-                  },
-                  {} as any,
-                ),
-              },
-            });
-          }
-        }
-      }
-    }
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener('message', onMessage);
-
-    return () => {
-      window.removeEventListener('message', onMessage);
-    };
-  }, []);
-
-  const reloadPreview = useCallback(() => {
-    if (previewRef.current) {
-      previewRef.current.src = `${previewRef.current.src}`;
-    }
-  }, [previewRef, previewValues, selectedBlock]);
-
   const sendPreviewValuesUpdate = useCallback(() => {
     if (previewRef.current?.contentWindow && selectedBlock) {
       previewRef.current.contentWindow.postMessage({
@@ -105,12 +50,73 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
         previewValues: previewValues[selectedBlock],
       });
     }
+  }, [previewRef, selectedBlock, previewValues]);
+
+  const onMessage = useCallback(
+    (message: MessageEvent<any>) => {
+      if (message.isTrusted) {
+        if (message.data?.type === 'addSchemas') {
+          if (message.data?.block in blocksManifest) {
+            const newBlocksManifest = {
+              ...blocksManifest,
+              [message.data.block]: {
+                ...blocksManifest[message.data.block],
+                contentSchema: message.data.contentSchema,
+                customizerSchema: message.data.customizerSchema,
+              },
+            };
+
+            setBlocksManifest(newBlocksManifest);
+
+            if (!isPreviewValuesDirty.current) {
+              setPreviewValues({
+                ...previewValues,
+                [message.data.block]: {
+                  content: message.data.contentSchema?.fields?.reduce(
+                    (all: any, current: DefineContentSchema['fields'][0]) => {
+                      all[current.name] = current.preview;
+                      return all;
+                    },
+                    {} as any,
+                  ),
+                  customizer: message.data.customizerSchema?.fields?.reduce(
+                    (
+                      all: any,
+                      current: DefineCustomizerSchema['fields'][0],
+                    ) => {
+                      all[current.name] = current.preview;
+                      return all;
+                    },
+                    {} as any,
+                  ),
+                },
+              });
+            } else {
+              sendPreviewValuesUpdate();
+            }
+          }
+        }
+      }
+    },
+    [previewValues, sendPreviewValuesUpdate],
+  );
+
+  useEffect(() => {
+    window.addEventListener('message', onMessage);
+
+    return () => {
+      window.removeEventListener('message', onMessage);
+    };
+  }, [onMessage]);
+
+  const reloadPreview = useCallback(() => {
+    if (previewRef.current) {
+      previewRef.current.src = `${previewRef.current.src}`;
+    }
   }, [previewRef, previewValues, selectedBlock]);
 
   const onPreviewRef = useCallback((node: HTMLIFrameElement) => {
     previewRef.current = node;
-
-    sendPreviewValuesUpdate();
   }, []) as unknown as typeof previewRef;
 
   const setPreviewValue = useCallback(

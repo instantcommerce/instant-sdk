@@ -14,6 +14,6 @@ export default defineBlock({
     fields: [{ type: 'text', name: 'textColor', preview: '#A020F0' }],
   },
   contentSchema: {
-    fields: [{ type: 'text', name: 'title', preview: 'Placeholder' }],
+    fields: [{ type: 'text', name: 'title', preview: 'haha' }],
   },
 });
