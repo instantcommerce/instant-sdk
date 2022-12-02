@@ -4,6 +4,7 @@ import humanizeString from 'humanize-string';
 import {
   ArrowsInSimple,
   CaretCircleDoubleLeft,
+  CaretCircleDoubleRight,
   Moon,
   Sun,
 } from 'phosphor-react';
@@ -184,7 +185,11 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                     variant={darkModeEnabled ? 'dark' : 'white'}
                     iconOnly
                   >
-                    <CaretCircleDoubleLeft size={16} />
+                    {leftPanelVisible ? (
+                      <CaretCircleDoubleLeft size={16} />
+                    ) : (
+                      <CaretCircleDoubleRight size={16} />
+                    )}
                   </Button>
 
                   <Select
