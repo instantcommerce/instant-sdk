@@ -234,7 +234,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                     max={9999}
                     onChange={(e) => {
                       setWidth(
-                        Math.max(1, Math.min(9999, Number(e.target.value))),
+                        Math.max(1, Math.min(9999, parseInt(e.target.value))),
                       );
                     }}
                   />
@@ -258,7 +258,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                     max={9999}
                     onChange={(e) => {
                       setHeight(
-                        Math.max(1, Math.min(9999, Number(e.target.value))),
+                        Math.max(1, Math.min(9999, parseInt(e.target.value))),
                       );
                     }}
                   />
