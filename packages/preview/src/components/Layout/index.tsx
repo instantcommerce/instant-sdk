@@ -121,7 +121,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   const contentSchema = useMemo(() => {
     if (selectedBlock) {
       return (
-        <div className="px-3 py-6">
+        <div className="flex flex-col gap-4 px-3 py-6">
           {blocksManifest?.[selectedBlock]?.contentSchema?.fields?.map(
             (field) => renderField('content', field),
           )}
