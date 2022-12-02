@@ -82,7 +82,7 @@ export const Select = ({
         >
           <button
             className={twMerge(
-              `text-sm font-medium flex items-center gap-2 p-2 border rounded w-full h-8 content-between [&_span]:text-ellipsis [&_span]:overflow-hidden [&_span]:whitespace-nowrap shadow-sm`,
+              `text-xs font-medium flex items-center gap-2 p-2 border rounded w-full h-8 content-between [&_span]:text-ellipsis [&_span]:overflow-hidden [&_span]:whitespace-nowrap shadow-sm`,
               triggerStylesByVariant[variant],
               className,
             )}

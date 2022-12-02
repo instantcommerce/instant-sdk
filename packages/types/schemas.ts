@@ -13,9 +13,10 @@ import {
   CustomizerSchemaField,
 } from './api';
 
-type EnhancedContentSchemaField<T extends ContentSchemaField, Type> = Partial<
-  Pick<T, 'isRequired' | 'isTranslatable'>
-> &
+type EnhancedContentSchemaField<
+  T extends Omit<ContentSchemaField, 'withTime'>,
+  Type,
+> = Partial<Pick<T, 'isRequired' | 'isTranslatable'>> &
   Omit<T, '__typename' | 'isRequired' | 'isTranslatable'> & {
     preview?: string;
     type: Type;
@@ -31,6 +32,11 @@ type ContentImageField = EnhancedContentSchemaField<
   'image'
 >;
 
+type ContentLinkField = EnhancedContentSchemaField<
+  ContentSchemaLinkField,
+  'link'
+>;
+
 type ContentRichTextField = EnhancedContentSchemaField<
   ContentSchemaRichTextField,
   'richText'
@@ -44,11 +50,6 @@ type ContentSelectField = EnhancedContentSchemaField<
 type ContentTextField = EnhancedContentSchemaField<
   ContentSchemaTextField,
   'text'
->;
-
-type ContentLinkField = EnhancedContentSchemaField<
-  ContentSchemaLinkField,
-  'url'
 >;
 
 type ContentSchemaInputField =

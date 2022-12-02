@@ -19,7 +19,7 @@ export default defineBlock({
       {
         type: 'select',
         name: 'select',
-        preview: 'Select',
+        preview: 'value1',
         options: [
           { value: 'value1', label: 'Option 1' },
           { value: 'value2', label: 'Option 2' },
@@ -37,8 +37,8 @@ export default defineBlock({
           'https://images.unsplash.com/photo-1669962367460-00b711b2e3f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=80',
       },
       {
-        type: 'url',
-        name: 'url',
+        type: 'link',
+        name: 'link',
         preview: 'https://google.com',
       },
       {

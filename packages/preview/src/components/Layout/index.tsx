@@ -77,8 +77,10 @@ export const Layout = ({ children }: { children: ReactNode }) => {
       label: field.label || humanizeString(field.name),
       key: field.name,
       id: field.name,
+      name: field.name,
       defaultValue: field.preview,
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
+        console.log(e.target.value);
         setPreviewValue(schema, field.name, e.target.value);
       },
     };
@@ -111,13 +113,11 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         );
 
       case 'image':
+      case 'link':
         return <ImageInput {...baseProps} direction="row" />;
 
       case 'date':
         return <Input type="date" {...baseProps} direction="row" />;
-
-      case 'link':
-        return <Input type="url" {...baseProps} direction="row" />;
 
       case 'richText':
         return <RichText {...baseProps} direction="col" />;
