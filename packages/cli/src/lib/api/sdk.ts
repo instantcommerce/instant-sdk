@@ -861,9 +861,10 @@ export type ContentSchemaDateField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  withTime: Scalars['Boolean'];
 };
 
-export type ContentSchemaField = ContentSchemaDateField | ContentSchemaImageField | ContentSchemaRichTextField | ContentSchemaSelectField | ContentSchemaTextField | ContentSchemaUrlField;
+export type ContentSchemaField = ContentSchemaDateField | ContentSchemaImageField | ContentSchemaLinkField | ContentSchemaRichTextField | ContentSchemaSelectField | ContentSchemaSubschemaField | ContentSchemaTextField;
 
 export type ContentSchemaImageField = {
   __typename?: 'ContentSchemaImageField';
@@ -875,8 +876,19 @@ export type ContentSchemaImageField = {
 };
 
 export type ContentSchemaInput = {
+  displayName?: InputMaybe<Scalars['String']>;
   fields: Array<Scalars['Object']>;
+  name: Scalars['String'];
   subschemas?: InputMaybe<Array<ContentSubschemaInput>>;
+};
+
+export type ContentSchemaLinkField = {
+  __typename?: 'ContentSchemaLinkField';
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  isTranslatable: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
 };
 
 export type ContentSchemaRichTextField = {
@@ -896,7 +908,18 @@ export type ContentSchemaSelectField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  options: Array<KeyValue>;
+  options: Array<SelectOption>;
+};
+
+export type ContentSchemaSubschemaField = {
+  __typename?: 'ContentSchemaSubschemaField';
+  allowed: Array<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  isTranslatable: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  max?: Maybe<Scalars['Float']>;
+  name: Scalars['String'];
 };
 
 export type ContentSchemaTextField = {
@@ -906,15 +929,6 @@ export type ContentSchemaTextField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   maxLength?: Maybe<Scalars['Float']>;
-  name: Scalars['String'];
-};
-
-export type ContentSchemaUrlField = {
-  __typename?: 'ContentSchemaUrlField';
-  description?: Maybe<Scalars['String']>;
-  isRequired: Scalars['Boolean'];
-  isTranslatable: Scalars['Boolean'];
-  label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
 };
 
@@ -1109,6 +1123,14 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
+export type CustomBlock = {
+  __typename?: 'CustomBlock';
+  id: Scalars['UUID'];
+  metadata: Scalars['Object'];
+  name: Scalars['String'];
+  refId: Scalars['String'];
+};
+
 export type CustomerData = {
   __typename?: 'CustomerData';
   billingAddress: BillingAddress;
@@ -1151,7 +1173,7 @@ export type CustomizerSchemaSelectField = {
   isRequired: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  options: Array<KeyValue>;
+  options: Array<SelectOption>;
 };
 
 export type CustomizerSchemaTextField = {
@@ -2006,12 +2028,14 @@ export type InputComponentInput = {
 export type Integration = {
   __typename?: 'Integration';
   createdAt: Scalars['DateTime'];
+  errors: Array<ValidationMessage>;
   id: Scalars['UUID'];
   isActive: Scalars['Boolean'];
   metadata: IntegrationMetadata;
   type: IntegrationType;
   updatedAt: Scalars['DateTime'];
   verifiedAt?: Maybe<Scalars['DateTime']>;
+  warnings: Array<ValidationMessage>;
 };
 
 export type IntegrationAggregateGroupBy = {
@@ -2050,12 +2074,14 @@ export type IntegrationDeleteFilter = {
 export type IntegrationDeleteResponse = {
   __typename?: 'IntegrationDeleteResponse';
   createdAt?: Maybe<Scalars['DateTime']>;
+  errors?: Maybe<Array<ValidationMessage>>;
   id?: Maybe<Scalars['UUID']>;
   isActive?: Maybe<Scalars['Boolean']>;
   metadata?: Maybe<IntegrationMetadata>;
   type?: Maybe<IntegrationType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
   verifiedAt?: Maybe<Scalars['DateTime']>;
+  warnings?: Maybe<Array<ValidationMessage>>;
 };
 
 export type IntegrationEdge = {
@@ -2155,17 +2181,6 @@ export type JudgeMeMetadata = {
   __typename?: 'JudgeMeMetadata';
   privateToken?: Maybe<Scalars['String']>;
   publicToken?: Maybe<Scalars['String']>;
-};
-
-export type KeyValue = {
-  __typename?: 'KeyValue';
-  key: Scalars['String'];
-  value: Scalars['String'];
-};
-
-export type KeyValueInput = {
-  key: Scalars['String'];
-  value: Scalars['String'];
 };
 
 export type KiwiSizingMetadata = {
@@ -4350,6 +4365,17 @@ export enum ScrollDirection {
   Vertical = 'VERTICAL'
 }
 
+export type SelectOption = {
+  __typename?: 'SelectOption';
+  label: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type SelectOptionInput = {
+  label: Scalars['String'];
+  value: Scalars['String'];
+};
+
 export type ShopifyBulkOperation = {
   __typename?: 'ShopifyBulkOperation';
   createdAt: Scalars['DateTime'];
@@ -4887,7 +4913,7 @@ export type Storefront = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type StorefrontBlock = BlockquoteBlock | BlogCardsColumnsBlock | BlogCardsDefaultBlock | BlogHeaderBlock | BlogSliderBlock | CardBlock | CategoryBlock | CategorySliderBlock | CodeEmbedBlock | ContactDetailsBlock | ContactFormBlock | ContactFormImageBlock | EmailBannerBlock | EmailBannerImageBlock | FaqBlock | HeaderBlock | HeroBlock | HeroSliderBlock | HeroVideoBlock | ImageDualBlock | ImageSingleBlock | ImageTripleBlock | ListBlock | MultiColumnRichTextBlock | ProductSliderBlock | QuoteBlock | RichTextBlock | SocialGalleryBlock | SocialProofBlock | StatisticsBlock | StoreLocatorBlock | StoremapperBlock | TableBlock | TextImageBlock | UspsBlock | VideoBlock;
+export type StorefrontBlock = BlockquoteBlock | BlogCardsColumnsBlock | BlogCardsDefaultBlock | BlogHeaderBlock | BlogSliderBlock | CardBlock | CategoryBlock | CategorySliderBlock | CodeEmbedBlock | ContactDetailsBlock | ContactFormBlock | ContactFormImageBlock | CustomBlock | EmailBannerBlock | EmailBannerImageBlock | FaqBlock | HeaderBlock | HeroBlock | HeroSliderBlock | HeroVideoBlock | ImageDualBlock | ImageSingleBlock | ImageTripleBlock | ListBlock | MultiColumnRichTextBlock | ProductSliderBlock | QuoteBlock | RichTextBlock | SocialGalleryBlock | SocialProofBlock | StatisticsBlock | StoreLocatorBlock | StoremapperBlock | TableBlock | TextImageBlock | UspsBlock | VideoBlock;
 
 export type StorefrontComponents = {
   __typename?: 'StorefrontComponents';
@@ -5461,6 +5487,13 @@ export type UspsBlock = {
   theme: BlockTheme;
   titleColor?: Maybe<Scalars['String']>;
   titleSize: FontSize;
+};
+
+export type ValidationMessage = {
+  __typename?: 'ValidationMessage';
+  code: Scalars['String'];
+  message: Scalars['String'];
+  prop?: Maybe<Scalars['String']>;
 };
 
 export type VatId = {

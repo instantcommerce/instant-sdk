@@ -21,8 +21,8 @@ export default defineBlock({
         name: 'select',
         preview: 'Select',
         options: [
-          { key: 'value1', value: 'Option 1' },
-          { key: 'value2', value: 'Option 2' },
+          { value: 'value1', label: 'Option 1' },
+          { value: 'value2', label: 'Option 2' },
         ],
       },
       {

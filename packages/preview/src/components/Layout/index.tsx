@@ -116,6 +116,9 @@ export const Layout = ({ children }: { children: ReactNode }) => {
       case 'date':
         return <Input type="date" {...baseProps} direction="row" />;
 
+      case 'link':
+        return <Input type="url" {...baseProps} direction="row" />;
+
       case 'richText':
         return <RichText {...baseProps} direction="col" />;
 

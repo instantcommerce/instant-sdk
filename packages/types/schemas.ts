@@ -5,7 +5,7 @@ import {
   ContentSchemaRichTextField,
   ContentSchemaSelectField,
   ContentSchemaTextField,
-  ContentSchemaUrlField,
+  ContentSchemaLinkField,
   ContentSubschemaInput,
   ContentSchemaField,
   CustomizerSchemaSelectField,
@@ -22,7 +22,7 @@ type EnhancedContentSchemaField<T extends ContentSchemaField, Type> = Partial<
   };
 
 type ContentDateField = EnhancedContentSchemaField<
-  ContentSchemaDateField,
+  Omit<ContentSchemaDateField, 'withTime'> & { withTime?: boolean },
   'date'
 >;
 
@@ -46,7 +46,10 @@ type ContentTextField = EnhancedContentSchemaField<
   'text'
 >;
 
-type ContentUrlField = EnhancedContentSchemaField<ContentSchemaUrlField, 'url'>;
+type ContentLinkField = EnhancedContentSchemaField<
+  ContentSchemaLinkField,
+  'url'
+>;
 
 type ContentSchemaInputField =
   | ContentDateField
@@ -54,7 +57,7 @@ type ContentSchemaInputField =
   | ContentRichTextField
   | ContentSelectField
   | ContentTextField
-  | ContentUrlField;
+  | ContentLinkField;
 
 type ContentSubschema = Pick<ContentSubschemaInput, 'displayName' | 'name'> & {
   fields: Array<ContentSchemaInputField>;
