@@ -1,7 +1,12 @@
 import { ChangeEvent, ReactNode, useEffect, useState } from 'react';
 import { useMemo } from 'react';
 import humanizeString from 'humanize-string';
-import { ArrowsInSimple, CaretCircleDoubleLeft, Moon } from 'phosphor-react';
+import {
+  ArrowsInSimple,
+  CaretCircleDoubleLeft,
+  Moon,
+  Sun,
+} from 'phosphor-react';
 import { twJoin } from 'tailwind-merge';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import {
@@ -237,7 +242,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                       variant={darkModeEnabled ? 'dark' : 'white'}
                       iconOnly
                     >
-                      <Moon size={16} />
+                      {darkModeEnabled ? <Sun size={16} /> : <Moon size={16} />}
                     </Button>
                   </Tooltip>
                 </div>
