@@ -7,7 +7,7 @@ import {
   Moon,
   Sun,
 } from 'phosphor-react';
-import { twJoin } from 'tailwind-merge';
+import { twJoin, twMerge } from 'tailwind-merge';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import {
   Button,
@@ -188,6 +188,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                   </Button>
 
                   <Select
+                    className="text-xs h-[30px]"
                     options={[[screenSizes[0]], screenSizes.slice(1)]}
                     defaultValue={screenSizes[0].value}
                     value={`${screenSize}`}
@@ -205,20 +206,40 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                   />
                 </div>
 
-                <div className="flex gap-1.5 items-center text-xs text-primary-700 absolute left-2/4 top-2/4 -translate-y-2/4 -translate-x-2/4">
+                <div
+                  className={twMerge(
+                    'flex gap-1.5 items-center text-xs absolute left-2/4 top-2/4 -translate-y-2/4 -translate-x-2/4',
+                    darkModeEnabled ? 'text-primary-300' : 'text-primary-700',
+                  )}
+                >
                   <input
-                    className="w-12 text-center bg-transparent px-2 py-1 focus:bg-primary-100 focus:outline-1 focus:outline-primary-200 [-moz-appearance]-none"
+                    className={twMerge(
+                      'w-12 text-center bg-transparent px-2 py-1 focus:outline-1 [-moz-appearance]-none',
+                      darkModeEnabled
+                        ? 'focus:bg-primary-900 focus:outline-primary-800'
+                        : 'focus:bg-primary-100 focus:outline-primary-200',
+                    )}
                     value={iframeSize.width}
                     type="number"
+                    min={1}
+                    max={9999}
                     onChange={(e) => {
                       setWidth(Number(e.target.value));
                     }}
                   />
-                  x
+                  <span
+                    className={
+                      darkModeEnabled ? 'text-gray-400' : 'text-gray-600'
+                    }
+                  >
+                    x
+                  </span>
                   <input
                     className="w-12 text-center bg-transparent px-2 py-1 focus:bg-primary-100 focus:outline-1 focus:outline-primary-200"
                     value={iframeSize.height}
                     type="number"
+                    min={1}
+                    max={9999}
                     onChange={(e) => {
                       setHeight(Number(e.target.value));
                     }}

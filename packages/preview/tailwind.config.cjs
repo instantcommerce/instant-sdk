@@ -4,7 +4,7 @@ const primaryColors = {
   50: '#FFF2B9',
   100: '#EFF8FF', //
   200: '#D1E9FF', //
-  300: '#FFE053',
+  300: '#84CAFF',
   400: '#FFD82A',
   500: '#2E90FA', //
   600: '#1570EF', //
