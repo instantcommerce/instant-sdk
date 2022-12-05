@@ -65,13 +65,20 @@ export const scales = [
 ].map((item, idx) => ({ ...item, value: `${idx}` }));
 
 export const ConfigProvider = ({ children }: { children: ReactNode }) => {
-  const [leftPanelVisible, setLeftPanelVisible] = useState(true);
-  const [rightPanelVisible, setRightPanelVisible] = useState(true);
-  const [darkModeEnabled, setDarkModeEnabled] = useState(false);
-  const [scale, setScale] = useState(2);
+  const [leftPanelVisible, setLeftPanelVisible] = useState(
+    !!window.__INITIAL_USER_CONFIG__?.leftPanel,
+  );
+  const [rightPanelVisible, setRightPanelVisible] = useState(
+    !!window.__INITIAL_USER_CONFIG__?.rightPanel,
+  );
+  const [darkModeEnabled, setDarkModeEnabled] = useState(
+    !!window.__INITIAL_USER_CONFIG__?.darkMode,
+  );
+  const [scale, setScale] = useState(
+    window.__INITIAL_USER_CONFIG__?.scale || 2,
+  );
   const [screenSize, setScreenSize] = useState(0);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
-  const [initializedConfig, setInitializedConfig] = useState(false);
   const [selectedStore, setSelectedStore] = useState(
     window.__INSTANT_STORES__?.[0],
   );
@@ -107,17 +114,6 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
     if (favouriteBlocks?.length) {
       setBookmarks(favouriteBlocks);
     }
-
-    const userConfig = JSON.parse(localStorage.getItem('userConfig') || '{}');
-
-    if (Object.keys(userConfig)?.length) {
-      setLeftPanelVisible(userConfig?.leftPanel);
-      setRightPanelVisible(userConfig?.rightPanel);
-      setDarkModeEnabled(userConfig?.darkMode);
-      setScale(userConfig?.scale);
-    }
-
-    setInitializedConfig(true);
   }, []);
 
   useEffect(() => {
@@ -125,14 +121,12 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
   }, [bookmarks]);
 
   useEffect(() => {
-    if (initializedConfig) {
-      updateConfig({
-        leftPanel: leftPanelVisible,
-        rightPanel: rightPanelVisible,
-        darkMode: darkModeEnabled,
-        scale,
-      });
-    }
+    updateConfig({
+      leftPanel: leftPanelVisible,
+      rightPanel: rightPanelVisible,
+      darkMode: darkModeEnabled,
+      scale,
+    });
   }, [leftPanelVisible, rightPanelVisible, darkModeEnabled, scale]);
 
   const updateBookmarks = (blockName: string) => {

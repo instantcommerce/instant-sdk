@@ -29,7 +29,7 @@ export const Resizable = ({
   const getMaxWidth = () =>
     Math.floor(
       (document.querySelector('#preview-wrapper')?.getBoundingClientRect?.()
-        ?.width || 0) - 48,
+        ?.width || 0) - 24,
     );
 
   const getMaxHeight = () =>
@@ -38,7 +38,7 @@ export const Resizable = ({
         ?.height || 0) -
         (document.querySelector('#preview-top-bar')?.getBoundingClientRect?.()
           ?.height || 0) -
-        48,
+        16,
     );
 
   useEffect(() => {

@@ -158,9 +158,10 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 
       <div className="flex flex-row flex-1 relative h-full min-h-0">
         <SideBar
-          className={`${
-            leftPanelVisible ? 'translate-x-0' : '-translate-x-full'
-          } absolute left-0 transition-transform`}
+          className={twJoin(
+            'absolute left-0 transition-transform',
+            leftPanelVisible ? 'translate-x-0' : '-translate-x-full',
+          )}
         />
 
         <main
@@ -319,9 +320,10 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         </main>
 
         <aside
-          className={`${
-            rightPanelVisible ? 'translate-x-0' : 'translate-x-full'
-          } absolute right-0 transition-transform bg-white h-full flex flex-col shrink-0 border-l border-gray-100 py-2 overflow-y-auto w-96`}
+          className={twJoin(
+            'absolute right-0 transition-transform bg-white h-full flex flex-col shrink-0 border-l border-gray-100 py-2 overflow-y-auto w-96',
+            rightPanelVisible ? 'translate-x-0' : 'translate-x-full',
+          )}
         >
           <Tabs
             tabs={tabs}

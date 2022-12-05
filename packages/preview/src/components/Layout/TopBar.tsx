@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import {
   ArrowCounterClockwise,
+  ArrowRight,
   ArrowSquareOut,
   Faders,
   Star,
@@ -42,24 +43,37 @@ export const TopBar = () => {
         <div className="flex items-center">
           <Logo />
 
-          <div className="w-[1px] bg-gray-200 mr-2 h-6 my-auto ml-5" />
+          {!!availableStores ? (
+            <>
+              <div className="w-[1px] bg-gray-200 mr-2 h-6 my-auto ml-5" />
 
-          {!!selectedStore && !!availableStores && (
-            <Select
-              className="text-[13px] border-none shadow-none"
-              itemClassName="text-[13px]"
-              options={availableStores}
-              value={selectedStore.hostname}
-              onValueChange={(value) => {
-                const store = window.__INSTANT_STORES__?.find(
-                  ({ hostname }) => hostname === value,
-                );
+              <Select
+                className="text-[13px] border-none shadow-none"
+                itemClassName="text-[13px]"
+                options={availableStores}
+                value={selectedStore?.hostname}
+                onValueChange={(value) => {
+                  const store = window.__INSTANT_STORES__?.find(
+                    ({ hostname }) => hostname === value,
+                  );
 
-                if (store) {
-                  setSelectedStore(store);
-                }
-              }}
-            />
+                  if (store) {
+                    setSelectedStore(store);
+                  }
+                }}
+              />
+            </>
+          ) : (
+            <Button
+              href="http://docs.instantcommerce.io/"
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="warning"
+              className="h-7 ml-4 px-2 gap-[6px]"
+            >
+              Login to access your store
+              <ArrowRight size={16} />
+            </Button>
           )}
         </div>
 
