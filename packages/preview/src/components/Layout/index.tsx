@@ -4,14 +4,18 @@ import humanizeString from 'humanize-string';
 import {
   CaretCircleDoubleLeft,
   CaretCircleDoubleRight,
+  Faders,
+  Image,
   Moon,
   Sun,
+  WarningCircle,
 } from 'phosphor-react';
 import { twJoin, twMerge } from 'tailwind-merge';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import {
   Button,
   ColorInput,
+  StatusMessage,
   useConfig,
   ImageInput,
   Input,
@@ -86,13 +90,12 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 
     switch (field.type) {
       case 'text':
-        return <Input {...baseProps} direction="row" />;
+        return <Input {...baseProps} />;
 
       // case 'color':
       //   return (
       //     <ColorInput
       //       {...baseProps}
-      //       direction="row"
       //       onChange={(value: string) => {
       //         setPreviewValue(schema, field.name, value);
       //       }}
@@ -104,7 +107,6 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           <Select
             {...baseProps}
             options={field.options || []}
-            direction="row"
             onChange={(value: string) => {
               setPreviewValue(schema, field.name, value);
             }}
@@ -113,42 +115,117 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 
       case 'image':
       case 'link':
-        return <ImageInput {...baseProps} direction="row" />;
+        return <ImageInput {...baseProps} />;
 
       case 'date':
-        return <Input type="date" {...baseProps} direction="row" />;
+        return <Input type="date" {...baseProps} />;
 
       case 'richText':
-        return <RichText {...baseProps} direction="col" />;
+        return <RichText {...baseProps} />;
 
       default:
         return null;
     }
   };
 
-  const contentSchema = useMemo(() => {
+  const renderSchema = ({
+    type,
+    emptyMessage,
+  }: {
+    type: SchemaTypes;
+    emptyMessage: ReactNode;
+  }) => {
     if (selectedBlock) {
-      return (
-        <div className="flex flex-col gap-4 px-3 py-6">
-          {blocksManifest?.[selectedBlock]?.contentSchema?.fields?.map(
-            (field) => renderField('content', field),
-          )}
-        </div>
-      );
-    }
-  }, [selectedBlock, blocksManifest]);
+      let content = null;
+      const schema =
+        blocksManifest?.[selectedBlock]?.[
+          type === 'content' ? 'contentSchema' : 'customizerSchema'
+        ];
 
-  const customizerSchema = useMemo(() => {
-    if (selectedBlock) {
-      return (
-        <div className="flex flex-col gap-4 px-3 py-6">
-          {blocksManifest?.[selectedBlock]?.customizerSchema?.fields?.map(
-            (field) => renderField('customizer', field),
-          )}
-        </div>
-      );
+      if (schema?.fields?.length) {
+        let hasDuplicateFieldNames: string | false = false;
+
+        for (
+          let i = 0;
+          i < schema.fields.length && !hasDuplicateFieldNames;
+          i += 1
+        ) {
+          for (
+            let j = 0;
+            j < schema.fields.length && !hasDuplicateFieldNames;
+            j += 1
+          ) {
+            if (i !== j && schema.fields[i].name === schema.fields[j].name) {
+              hasDuplicateFieldNames = schema.fields[j].name;
+            }
+          }
+        }
+
+        if (!hasDuplicateFieldNames) {
+          content = schema.fields.map((field) => renderField(type, field));
+        } else {
+          content = (
+            <StatusMessage
+              type="error"
+              icon={WarningCircle}
+              title="Schema field names should be unique"
+              description={`Check the schema definition for fields with name "${hasDuplicateFieldNames}".`}
+              button={{
+                href: 'https://docs.instantcommerce.io',
+                text: 'Learn more',
+              }}
+            />
+          );
+        }
+      } else {
+        content = emptyMessage;
+      }
+
+      if (content) {
+        return <div className="flex flex-col gap-4 px-3 py-6">{content}</div>;
+      }
     }
-  }, [selectedBlock, blocksManifest]);
+
+    return null;
+  };
+
+  const contentSchema = useMemo(
+    () =>
+      renderSchema({
+        type: 'content',
+        emptyMessage: (
+          <StatusMessage
+            icon={Faders}
+            title="No customizer schema found"
+            description="Props of exported .tsx elements from your blocks will appear here."
+            button={{
+              href: 'https://docs.instantcommerce.io',
+              text: 'Learn more',
+            }}
+          />
+        ),
+      }),
+    [selectedBlock, blocksManifest],
+  );
+
+  const customizerSchema = useMemo(
+    () =>
+      renderSchema({
+        type: 'customizer',
+        emptyMessage: (
+          <StatusMessage
+            icon={Image}
+            title="No CMS schema found"
+            description="Storyblok schema and sub-schema fields will appear here."
+            button={{
+              href: 'https://docs.instantcommerce.io',
+              text: 'Learn more',
+            }}
+          />
+        ),
+      }),
+    [selectedBlock, blocksManifest],
+  );
 
   return params?.viewMode === 'fullScreen' ? (
     <div className="h-full w-full">{children}</div>

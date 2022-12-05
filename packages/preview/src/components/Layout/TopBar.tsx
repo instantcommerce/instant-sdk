@@ -66,8 +66,6 @@ export const TopBar = () => {
           ) : (
             <Button
               href="http://docs.instantcommerce.io/"
-              target="_blank"
-              rel="noopener noreferrer"
               variant="warning"
               className="h-7 ml-4 px-2 gap-[6px]"
             >

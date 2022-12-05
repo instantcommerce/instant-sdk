@@ -65,8 +65,8 @@ export const Resizable = ({
   }, [sizeProp?.width, sizeProp?.height]);
 
   const handleClassName = darkMode
-    ? 'bg-gray-700 hover:bg-gray-600'
-    : undefined;
+    ? 'bg-white opacity-30 transition-opacity group-hover:opacity-60 group-active:opacity-60'
+    : 'bg-gray-400 transition-colors group-hover:bg-gray-600 group-active:bg-gray-600';
 
   return (
     <ResizableComponent

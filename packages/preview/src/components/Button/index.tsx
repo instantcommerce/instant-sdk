@@ -14,6 +14,7 @@ export interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
     | 'error';
   iconOnly?: boolean;
   className?: string;
+  href?: string;
   to?: LinkProps['to'];
 }
 
@@ -55,6 +56,12 @@ export const Button = forwardRef(
           ),
           className,
         )}
+        {...(props.href?.startsWith('http')
+          ? {
+              target: '_blank',
+              rel: 'noopener noreferrer',
+            }
+          : {})}
         {...props}
       >
         {children}
