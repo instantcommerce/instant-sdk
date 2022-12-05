@@ -23,8 +23,8 @@ export interface ConfigContextValue {
   }): void;
   updateBookmarks(blockName: string): void;
   bookmarks: string[];
-  scale?: number;
-  setScale(value?: number): void;
+  scale: number;
+  setScale(value: number): void;
   iframeWidth: number | string;
   setWidth(value: number | string): void;
   iframeHeight: number | string;

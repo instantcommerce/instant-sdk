@@ -37,11 +37,38 @@ export const screenSizes = [
   { label: '4k', w: 3840, h: 2160 },
 ].map((item, idx) => ({ ...item, value: `${idx}` }));
 
+export const scales = [
+  {
+    label: '50%',
+    className:
+      'scale-50 min-w-[200%] h-[200%] -translate-x-1/4 -translate-y-1/4',
+  },
+  {
+    label: '75%',
+    className:
+      'scale-75 min-w-[133.33%] h-[133.33%] -translate-x-[12.5%] -translate-y-[12.5%]',
+  },
+  {
+    label: '100%',
+    className: '',
+  },
+  {
+    label: '125%',
+    className:
+      'scale-125 w-[80%] h-[80%] translate-x-[12.5%] translate-y-[12.5%]',
+  },
+  {
+    label: '150%',
+    className:
+      'scale-150 w-[66.66%] h-[66.66%] translate-x-1/4 translate-y-1/4',
+  },
+].map((item, idx) => ({ ...item, value: `${idx}` }));
+
 export const ConfigProvider = ({ children }: { children: ReactNode }) => {
   const [leftPanelVisible, setLeftPanelVisible] = useState(true);
   const [rightPanelVisible, setRightPanelVisible] = useState(true);
   const [darkModeEnabled, setDarkModeEnabled] = useState(false);
-  const [scale, setScale] = useState<number | undefined>(undefined);
+  const [scale, setScale] = useState(2);
   const [screenSize, setScreenSize] = useState(0);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
   const [initializedConfig, setInitializedConfig] = useState(false);

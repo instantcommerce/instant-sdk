@@ -91,6 +91,11 @@ export const CustomBlock = () => {
 
         <button onClick={console.log}>Test</button>
       </Box>
+      <Box className="mt-4">{content.date}</Box>
+      <Box className="mt-4">{content.select}</Box>
+      <Box className="mt-4">{content.link}</Box>
+      <Box className="mt-4">{content.richText}</Box>
+      <img alt="test" src={content.image} />
     </Box>
   );
 };

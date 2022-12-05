@@ -2,7 +2,6 @@ import { ChangeEvent, ReactNode, useEffect, useState } from 'react';
 import { useMemo } from 'react';
 import humanizeString from 'humanize-string';
 import {
-  ArrowsInSimple,
   CaretCircleDoubleLeft,
   CaretCircleDoubleRight,
   Moon,
@@ -16,7 +15,6 @@ import {
   useConfig,
   ImageInput,
   Input,
-  InputGroup,
   Select,
   Tabs,
   Tooltip,
@@ -27,6 +25,7 @@ import {
   IFRAME_DEFAULT_SIZE,
 } from '..';
 import { SchemaTypes } from '../BlocksProvider/context';
+import { scales } from '../ConfigProvider';
 import { SideBar } from './SideBar';
 import { TopBar } from './TopBar';
 
@@ -167,8 +166,8 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         <main
           className={twJoin(
             darkModeEnabled ? 'bg-[#1E1E1E]' : 'bg-gray-50',
-            rightPanelVisible ? 'pr-96' : 'pr-4',
-            leftPanelVisible ? 'pl-[12.5rem]' : 'pl-4',
+            rightPanelVisible && 'pr-96',
+            leftPanelVisible && 'pl-[12.5rem]',
             'flex flex-row flex-1 min-w-0 ',
           )}
         >
@@ -268,13 +267,24 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                 </div>
 
                 <div className="flex gap-1.5">
-                  <Button
-                    onClick={() => setScale(scale ? undefined : 50)}
-                    variant={darkModeEnabled ? 'dark' : 'white'}
-                  >
-                    <ArrowsInSimple size={18} />
-                    {scale ? '100%' : '50%'}
-                  </Button>
+                  <Select
+                    className={twMerge(
+                      'text-xs text-[13px] h-[30px] shadow-none',
+                      darkModeEnabled
+                        ? 'border-gray-800 hover:border-gray-700 focus:border-gray-700'
+                        : 'border-white hover:border-primary-100 focus:border-gray-200',
+                    )}
+                    itemClassName="text-[13px]"
+                    options={scales}
+                    defaultValue={scales[0].value}
+                    value={`${scale}`}
+                    variant={darkModeEnabled ? 'dark' : 'light'}
+                    onValueChange={(val) => {
+                      const value = Number(val);
+
+                      setScale(value);
+                    }}
+                  />
 
                   <Tooltip
                     content="Toggle dark mode"
