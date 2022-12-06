@@ -7,16 +7,21 @@ import {
   CaretCircleDoubleLeft,
   Moon,
   PencilSimple,
+  CaretCircleDoubleRight,
+  Faders,
+  Image,
+  Sun,
+  WarningCircle,
 } from 'phosphor-react';
 import { twJoin } from 'tailwind-merge';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import {
   Button,
   ColorInput,
+  StatusMessage,
   useConfig,
   ImageInput,
   Input,
-  InputGroup,
   Select,
   Tabs,
   Tooltip,
@@ -28,6 +33,7 @@ import {
   Modal,
 } from '..';
 import { SchemaTypes } from '../BlocksProvider/context';
+import { scales } from '../ConfigProvider';
 import { SideBar } from './SideBar';
 import { TopBar } from './TopBar';
 
@@ -99,8 +105,10 @@ export const Layout = ({ children }: { children: ReactNode }) => {
       label: field.label || humanizeString(field.name),
       key: field.name,
       id: field.name,
+      name: field.name,
       defaultValue: field.preview,
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
+        console.log(e.target.value);
         setPreviewValue(schema, field.name, e.target.value);
       },
     };
@@ -148,7 +156,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         );
 
       case 'richText':
-        return <RichText {...baseProps} direction="col" />;
+        return <RichText {...baseProps} />;
 
       case 'subSchema':
         return (
@@ -188,65 +196,148 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  console.log(blocksManifest?.[selectedBlock], subschemas, subSchema);
-
-  const contentSchema = useMemo(() => {
+  const renderSchema = ({
+    type,
+    emptyMessage,
+  }: {
+    type: SchemaTypes;
+    emptyMessage: ReactNode;
+  }) => {
     if (selectedBlock) {
-      return (
-        <div className="flex flex-col px-3 py-6 gap-5">
-          {subSchema ? (
-            <div className="text-xs">
-              <div className="mb-5">{subSchema}</div>
+      let content = null;
+      const schema =
+        blocksManifest?.[selectedBlock]?.[
+          type === 'content' ? 'contentSchema' : 'customizerSchema'
+        ];
 
-              <div className="text-gray-500 mb-3">{subSchema}</div>
+      if (schema?.fields?.length) {
+        let hasDuplicateFieldNames: string | false = false;
 
-              <div className="bg-gray-100 rounded-xl p-2 flex flex-col gap-2">
-                {blocksManifest?.[selectedBlock]?.contentSchema?.fields
-                  ?.find((f) => f.name === subSchema)
-                  ?.preview?.map((item) => (
-                    <div className="bg-white flex flex-col gap-2 p-2 rounded-lg border border-gray-300">
-                      <div className="text-gray-500">{item?.name}</div>
+        for (
+          let i = 0;
+          i < schema.fields.length && !hasDuplicateFieldNames;
+          i += 1
+        ) {
+          for (
+            let j = 0;
+            j < schema.fields.length && !hasDuplicateFieldNames;
+            j += 1
+          ) {
+            if (i !== j && schema.fields[i].name === schema.fields[j].name) {
+              hasDuplicateFieldNames = schema.fields[j].name;
+            }
+          }
+        }
 
-                      {subschemas[item.name]?.map((f) =>
-                        renderField('content', f, 2),
-                      )}
-                    </div>
-                  ))}
+        if (!hasDuplicateFieldNames) {
+          content = schema.fields.map((field) => renderField(type, field));
+        } else {
+          content = (
+            <StatusMessage
+              type="error"
+              icon={WarningCircle}
+              title="Schema field names should be unique"
+              description={`Check the schema definition for fields with name "${hasDuplicateFieldNames}".`}
+              button={{
+                href: 'https://docs.instantcommerce.io',
+                text: 'Learn more',
+              }}
+            />
+          );
+        }
+      } else {
+        content = emptyMessage;
+      }
 
-                <Button
-                  variant="secondary"
-                  className="bg-primary-100 border-primary-300 text-primary-500 flex items-center justify-center mt-2"
-                  onClick={() => {
-                    setAddFieldModalOpen(true);
-                  }}
-                >
-                  + Element
-                </Button>
-              </div>
-            </div>
-          ) : (
-            blocksManifest?.[selectedBlock]?.contentSchema?.fields?.map(
-              (field) => renderField('content', field),
-            )
-          )}
-        </div>
-      );
+      if (content) {
+        return <div className="flex flex-col gap-4 px-3 py-6">{content}</div>;
+      }
     }
-  }, [selectedBlock, blocksManifest, subSchema]);
 
-  const customizerSchema = useMemo(() => {
-    if (selectedBlock) {
-      return (
-        <div className="flex flex-col gap-5 pt-2 pb-6">
-          <InputGroup title="Input group">
-            {blocksManifest?.[selectedBlock]?.customizerSchema?.fields?.map(
-              (field) => renderField('customizer', field),
-            )}
-          </InputGroup>
-        </div>
-      );
-    }
-  }, [selectedBlock, blocksManifest]);
+    return null;
+  };
+
+  // const contentSchema = useMemo(() => {
+  //   if (selectedBlock) {
+  //     return (
+  //       <div className="flex flex-col px-3 py-6 gap-5">
+  //         {subSchema ? (
+  //           <div className="text-xs">
+  //             <div className="mb-5">{subSchema}</div>
+
+  //             <div className="text-gray-500 mb-3">{subSchema}</div>
+
+  //             <div className="bg-gray-100 rounded-xl p-2 flex flex-col gap-2">
+  //               {blocksManifest?.[selectedBlock]?.contentSchema?.fields
+  //                 ?.find((f) => f.name === subSchema)
+  //                 ?.preview?.map((item) => (
+  //                   <div className="bg-white flex flex-col gap-2 p-2 rounded-lg border border-gray-300">
+  //                     <div className="text-gray-500">{item?.name}</div>
+
+  //                     {subschemas[item.name]?.map((f) =>
+  //                       renderField('content', f, 2),
+  //                     )}
+  //                   </div>
+  //                 ))}
+
+  //               <Button
+  //                 variant="secondary"
+  //                 className="bg-primary-100 border-primary-300 text-primary-500 flex items-center justify-center mt-2"
+  //                 onClick={() => {
+  //                   setAddFieldModalOpen(true);
+  //                 }}
+  //               >
+  //                 + Element
+  //               </Button>
+  //             </div>
+  //           </div>
+  //         ) : (
+  //           blocksManifest?.[selectedBlock]?.contentSchema?.fields?.map(
+  //             (field) => renderField('content', field),
+  //           )
+  //         )}
+  //       </div>
+  //     );
+  //   }
+  // }, [selectedBlock, blocksManifest, subSchema]);
+
+  const contentSchema = useMemo(
+    () =>
+      renderSchema({
+        type: 'content',
+        emptyMessage: (
+          <StatusMessage
+            icon={Faders}
+            title="No customizer schema found"
+            description="Props of exported .tsx elements from your blocks will appear here."
+            button={{
+              href: 'https://docs.instantcommerce.io',
+              text: 'Learn more',
+            }}
+          />
+        ),
+      }),
+    [selectedBlock, blocksManifest],
+  );
+
+  const customizerSchema = useMemo(
+    () =>
+      renderSchema({
+        type: 'customizer',
+        emptyMessage: (
+          <StatusMessage
+            icon={Image}
+            title="No CMS schema found"
+            description="Storyblok schema and sub-schema fields will appear here."
+            button={{
+              href: 'https://docs.instantcommerce.io',
+              text: 'Learn more',
+            }}
+          />
+        ),
+      }),
+    [selectedBlock, blocksManifest],
+  );
 
   return params?.viewMode === 'fullScreen' ? (
     <div className="h-full w-full">{children}</div>
@@ -275,16 +366,17 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 
       <div className="flex flex-row flex-1 relative h-full min-h-0">
         <SideBar
-          className={`${
-            leftPanelVisible ? 'translate-x-0' : '-translate-x-full'
-          } absolute left-0 transition-transform`}
+          className={twJoin(
+            'absolute left-0 transition-transform',
+            leftPanelVisible ? 'translate-x-0' : '-translate-x-full',
+          )}
         />
 
         <main
           className={twJoin(
             darkModeEnabled ? 'bg-[#1E1E1E]' : 'bg-gray-50',
-            rightPanelVisible ? 'pr-96' : 'pr-4',
-            leftPanelVisible ? 'pl-[12.5rem]' : 'pl-4',
+            rightPanelVisible && 'pr-96',
+            leftPanelVisible && 'pl-[12.5rem]',
             'flex flex-row flex-1 min-w-0 ',
           )}
         >
@@ -302,10 +394,21 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                     variant={darkModeEnabled ? 'dark' : 'white'}
                     iconOnly
                   >
-                    <CaretCircleDoubleLeft size={16} />
+                    {leftPanelVisible ? (
+                      <CaretCircleDoubleLeft size={18} />
+                    ) : (
+                      <CaretCircleDoubleRight size={18} />
+                    )}
                   </Button>
 
                   <Select
+                    className={twMerge(
+                      'text-xs text-[13px] h-[30px] shadow-none',
+                      darkModeEnabled
+                        ? 'border-gray-800 hover:border-gray-700 focus:border-gray-700'
+                        : 'border-white hover:border-primary-100 focus:border-gray-200',
+                    )}
+                    itemClassName="text-[13px]"
                     options={[[screenSizes[0]], screenSizes.slice(1)]}
                     defaultValue={screenSizes[0].value}
                     value={`${screenSize}`}
@@ -323,36 +426,79 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                   />
                 </div>
 
-                <div className="flex gap-1.5 items-center text-xs text-primary-700 absolute left-2/4 top-2/4 -translate-y-2/4 -translate-x-2/4">
+                <div
+                  className={twMerge(
+                    'flex gap-1.5 items-center text-xs absolute left-2/4 top-2/4 -translate-y-2/4 -translate-x-2/4',
+                    darkModeEnabled ? 'text-primary-300' : 'text-primary-700',
+                  )}
+                >
                   <input
-                    className="w-12 text-center bg-transparent px-2 py-1 focus:bg-primary-100 focus:outline-1 focus:outline-primary-200 [-moz-appearance]-none"
+                    className={twMerge(
+                      'w-[38px] text-center bg-transparent outline-none rounded focus:ring-1 px-[3px] py-px [-moz-appearance]-none',
+                      darkModeEnabled
+                        ? 'focus:bg-gray-800 ring-gray-700'
+                        : 'focus:bg-primary-100 ring-primary-200',
+                    )}
                     value={iframeSize.width}
                     type="number"
+                    min={1}
+                    max={9999}
                     onChange={(e) => {
-                      setWidth(Number(e.target.value));
+                      setWidth(
+                        Math.max(1, Math.min(9999, parseInt(e.target.value))),
+                      );
                     }}
                   />
-                  x
+                  <span
+                    className={
+                      darkModeEnabled ? 'text-gray-400' : 'text-gray-600'
+                    }
+                  >
+                    x
+                  </span>
                   <input
-                    className="w-12 text-center bg-transparent px-2 py-1 focus:bg-primary-100 focus:outline-1 focus:outline-primary-200"
+                    className={twMerge(
+                      'w-[38px] text-center bg-transparent outline-none rounded focus:ring-1 px-[3px] py-px [-moz-appearance]-none',
+                      darkModeEnabled
+                        ? 'focus:bg-gray-800 ring-gray-700'
+                        : 'focus:bg-primary-100 ring-primary-200',
+                    )}
                     value={iframeSize.height}
                     type="number"
+                    min={1}
+                    max={9999}
                     onChange={(e) => {
-                      setHeight(Number(e.target.value));
+                      setHeight(
+                        Math.max(1, Math.min(9999, parseInt(e.target.value))),
+                      );
                     }}
                   />
                 </div>
 
                 <div className="flex gap-1.5">
-                  <Button
-                    onClick={() => setScale(scale ? undefined : 50)}
-                    variant={darkModeEnabled ? 'dark' : 'white'}
-                  >
-                    <ArrowsInSimple size={16} />
-                    {scale ? '100%' : '50%'}
-                  </Button>
+                  <Select
+                    className={twMerge(
+                      'text-xs text-[13px] h-[30px] shadow-none',
+                      darkModeEnabled
+                        ? 'border-gray-800 hover:border-gray-700 focus:border-gray-700'
+                        : 'border-white hover:border-primary-100 focus:border-gray-200',
+                    )}
+                    itemClassName="text-[13px]"
+                    options={scales}
+                    defaultValue={scales[0].value}
+                    value={`${scale}`}
+                    variant={darkModeEnabled ? 'dark' : 'light'}
+                    onValueChange={(val) => {
+                      const value = Number(val);
 
-                  <Tooltip content="Toggle dark mode">
+                      setScale(value);
+                    }}
+                  />
+
+                  <Tooltip
+                    content="Toggle dark mode"
+                    variant={darkModeEnabled ? 'dark' : 'light'}
+                  >
                     <Button
                       onClick={() => {
                         setDarkModeEnabled(!darkModeEnabled);
@@ -360,7 +506,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                       variant={darkModeEnabled ? 'dark' : 'white'}
                       iconOnly
                     >
-                      <Moon size={16} />
+                      {darkModeEnabled ? <Sun size={18} /> : <Moon size={18} />}
                     </Button>
                   </Tooltip>
                 </div>
@@ -382,9 +528,10 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         </main>
 
         <aside
-          className={`${
-            rightPanelVisible ? 'translate-x-0' : 'translate-x-full'
-          } absolute right-0 transition-transform bg-white h-full flex flex-col shrink-0 border-l border-gray-100 py-2 overflow-y-auto w-96`}
+          className={twJoin(
+            'absolute right-0 transition-transform bg-white h-full flex flex-col shrink-0 border-l border-gray-100 py-2 overflow-y-auto w-96',
+            rightPanelVisible ? 'translate-x-0' : 'translate-x-full',
+          )}
         >
           <Tabs
             tabs={tabs}

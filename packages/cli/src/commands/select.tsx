@@ -1,17 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { render, Text } from "ink";
-import { config } from "~/config";
-import { ExtractedApiError, extractApiError, useApiSdk } from "~/lib/api";
-import { StoresQuery, UserWithOrgsQuery } from "~/lib/api/sdk";
-import { CommandModule } from "yargs";
-import { SelectInput, Item } from "~/components";
+import React, { useEffect, useState } from 'react';
+import { render, Text } from 'ink';
+import { CommandModule } from 'yargs';
+import { SelectInput, Item } from '~/components';
+import { config } from '~/config';
+import { ExtractedApiError, extractApiError, useApiSdk } from '~/lib/api';
+import { StoresQuery, UserWithOrgsQuery } from '~/lib/api/sdk';
 
 export const Switch = () => {
   const apiSdk = useApiSdk();
 
   const [organizations, setOrganizations] =
-    useState<UserWithOrgsQuery["me"]["organizations"]>();
-  const [stores, setStores] = useState<StoresQuery["stores"]>();
+    useState<UserWithOrgsQuery['me']['organizations']>();
+  const [stores, setStores] = useState<StoresQuery['stores']>();
   const [selectedOrganization, setSelectedOrganization] =
     useState<Item<string>>();
   const [selectedStore, setSelectedStore] = useState<Item<string>>();
@@ -29,7 +29,7 @@ export const Switch = () => {
     if (selectedOrganization) {
       apiSdk
         .stores(undefined, {
-          "x-instant-organization": selectedOrganization.value,
+          'x-instant-organization': selectedOrganization.value,
         })
         .then((res) => setStores(res.stores))
         .catch((err) => setErrorStores(extractApiError(err)));
@@ -37,12 +37,12 @@ export const Switch = () => {
   }, [selectedOrganization]);
 
   const handleOrgSelect = (item: Item<string>) => {
-    config.set("organization", item.value);
+    config.set('organization', item.value);
     setSelectedOrganization(item);
   };
 
   const handleStoreSelect = (item: Item<string>) => {
-    config.set("storeId", item.value);
+    config.set('storeId', item.value);
     setSelectedStore(item);
   };
 
@@ -100,8 +100,8 @@ export const Switch = () => {
 };
 
 export const select: CommandModule = {
-  command: "select",
-  describe: "Select organization and store",
+  command: 'select',
+  describe: 'Select organization and store',
   handler: () => {
     render(<Switch />);
   },

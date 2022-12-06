@@ -10,6 +10,7 @@ type Option = {
 };
 
 interface SelectProps extends SelectPrimitive.SelectProps {
+  itemClassName?: string;
   options: (Option | string)[] | (Option | string)[][];
   placeholder?: string;
   variant?: 'dark' | 'light';
@@ -20,6 +21,7 @@ export const Select = ({
   className,
   wrapperClassName,
   labelClassName,
+  itemClassName,
   options,
   placeholder,
   variant = 'light',
@@ -80,7 +82,7 @@ export const Select = ({
         >
           <button
             className={twMerge(
-              `text-sm font-medium flex items-center gap-2 p-2 border rounded w-full h-8 content-between [&_span]:text-ellipsis [&_span]:overflow-hidden [&_span]:whitespace-nowrap shadow-sm`,
+              `text-xs font-medium flex items-center gap-2 p-2 border rounded w-full h-8 content-between [&_span]:text-ellipsis [&_span]:overflow-hidden [&_span]:whitespace-nowrap shadow-sm`,
               triggerStylesByVariant[variant],
               className,
             )}
@@ -123,6 +125,7 @@ export const Select = ({
                         className={twMerge(
                           'text-xs hover:outline-none focus:outline-none focus:font-medium px-2 py-1.5 cursor-pointer radix-disabled:opacity-50 select-none',
                           textStylesByVariant[variant],
+                          itemClassName,
                         )}
                       >
                         <SelectPrimitive.ItemText>
@@ -135,7 +138,12 @@ export const Select = ({
                   </SelectPrimitive.Group>
 
                   {idx < groups?.length - 1 && (
-                    <SelectPrimitive.Separator className="w-full h-[1px] bg-gray-200 my-2" />
+                    <SelectPrimitive.Separator
+                      className={twMerge(
+                        'w-full h-[1px] my-2',
+                        variant === 'light' ? 'bg-gray-200' : 'bg-gray-600',
+                      )}
+                    />
                   )}
                 </Fragment>
               ))}

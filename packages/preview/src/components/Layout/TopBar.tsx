@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import {
   ArrowCounterClockwise,
+  ArrowRight,
   ArrowSquareOut,
   Faders,
   Star,
@@ -42,23 +43,35 @@ export const TopBar = () => {
         <div className="flex items-center">
           <Logo />
 
-          <div className="w-[1px] bg-gray-200 mr-2 h-6 my-auto ml-5" />
+          {!!availableStores ? (
+            <>
+              <div className="w-[1px] bg-gray-200 mr-2 h-6 my-auto ml-5" />
 
-          {!!selectedStore && !!availableStores && (
-            <Select
-              className="border-none"
-              options={availableStores}
-              value={selectedStore.hostname}
-              onValueChange={(value) => {
-                const store = window.__INSTANT_STORES__?.find(
-                  ({ hostname }) => hostname === value,
-                );
+              <Select
+                className="text-[13px] border-none shadow-none"
+                itemClassName="text-[13px]"
+                options={availableStores}
+                value={selectedStore?.hostname}
+                onValueChange={(value) => {
+                  const store = window.__INSTANT_STORES__?.find(
+                    ({ hostname }) => hostname === value,
+                  );
 
-                if (store) {
-                  setSelectedStore(store);
-                }
-              }}
-            />
+                  if (store) {
+                    setSelectedStore(store);
+                  }
+                }}
+              />
+            </>
+          ) : (
+            <Button
+              href="http://docs.instantcommerce.io/"
+              variant="warning"
+              className="h-7 ml-4 px-2 gap-[6px]"
+            >
+              Login to access your store
+              <ArrowRight size={16} />
+            </Button>
           )}
         </div>
 
@@ -71,7 +84,7 @@ export const TopBar = () => {
               onClick={() => updateBookmarks(blockName)}
             >
               <Star
-                size={14}
+                size={16}
                 weight={bookmarks?.includes(blockName) ? 'fill' : 'regular'}
               />
             </Button>
@@ -80,7 +93,7 @@ export const TopBar = () => {
 
         <div className="flex gap-1.5">
           <Button iconOnly onClick={reloadPreview}>
-            <ArrowCounterClockwise size={16} />
+            <ArrowCounterClockwise size={18} />
           </Button>
 
           <Button
@@ -89,7 +102,7 @@ export const TopBar = () => {
             target="_blank"
             rel="noopener noreferrer"
           >
-            <ArrowSquareOut size={16} />
+            <ArrowSquareOut size={18} />
           </Button>
 
           <Button
@@ -98,7 +111,7 @@ export const TopBar = () => {
               setRightPanelVisible(!rightPanelVisible);
             }}
           >
-            {rightPanelVisible ? <XCircle size={16} /> : <Faders size={16} />}
+            {rightPanelVisible ? <XCircle size={18} /> : <Faders size={18} />}
           </Button>
         </div>
       </div>

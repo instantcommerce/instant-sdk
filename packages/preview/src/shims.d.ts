@@ -14,4 +14,10 @@ declare interface Window {
     name: string;
     hostname: string;
   }>;
+  __INITIAL_USER_CONFIG__?: {
+    leftPanel: boolean;
+    rightPanel: boolean;
+    darkMode: boolean;
+    scale: number;
+  };
 }

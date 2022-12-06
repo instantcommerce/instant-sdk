@@ -1,4 +1,4 @@
-import { defineBlock } from 'instant-client';
+import { defineBlock } from 'instant-client/src';
 import { CustomBlock } from './block';
 import '../test.css';
 import './styles.css';
@@ -15,21 +15,37 @@ export default defineBlock({
   },
   contentSchema: {
     fields: [
+      { type: 'text', name: 'title', preview: 'Title' },
       {
-        type: 'text',
-        name: 'title',
-        label: 'Title',
-        isTranslatable: true,
-        isRequired: true,
-        preview: 'Placeholder',
+        type: 'select',
+        name: 'select',
+        preview: 'value1',
+        options: [
+          { value: 'value1', label: 'Option 1' },
+          { value: 'value2', label: 'Option 2' },
+        ],
+      },
+      {
+        type: 'date',
+        name: 'date',
+        preview: '2022-12-12',
+      },
+      {
+        type: 'image',
+        name: 'image',
+        preview:
+          'https://images.unsplash.com/photo-1669962367460-00b711b2e3f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=80',
+      },
+      {
+        type: 'link',
+        name: 'link',
+        preview: 'https://google.com',
       },
       {
         type: 'richText',
-        name: 'description',
-        label: 'Description',
-        isTranslatable: true,
-        isRequired: false,
-        toolbar: ['bold', 'italic', 'underline', 'link'],
+        name: 'richText',
+        preview: 'Rich text',
+        toolbar: [],
       },
       {
         type: 'subSchema',
@@ -47,60 +63,6 @@ export default defineBlock({
             },
           },
           { name: 'Button' },
-        ],
-      },
-      {
-        type: 'image',
-        name: 'background',
-        label: 'Background',
-        isTranslatable: false,
-        isRequired: true,
-      },
-    ],
-    subschemas: [
-      {
-        name: 'Button',
-        fields: [
-          {
-            type: 'text',
-            name: 'text',
-            label: 'Text',
-            isTranslatable: true,
-            isRequired: true,
-            maxLength: 40,
-          },
-          {
-            type: 'link',
-            name: 'link',
-            label: 'Link',
-            isTranslatable: true,
-            isRequired: true,
-          },
-        ],
-      },
-      {
-        name: 'HeroContent',
-        fields: [
-          {
-            type: 'image',
-            name: 'heroContentImage',
-            label: 'Image',
-            isRequired: true,
-          },
-          {
-            type: 'text',
-            name: 'heroContentTitle',
-            label: 'Title',
-            isTranslatable: true,
-            isRequired: true,
-          },
-          {
-            type: 'subSchema',
-            name: 'heroContentButtons',
-            label: 'Buttons',
-            isRequired: false,
-            allowed: ['Button'],
-          },
         ],
       },
     ],

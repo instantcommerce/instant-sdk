@@ -294,7 +294,7 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
       try {
         worker.render(receiver.receive, {
           content: contentData,
-          customizations: customizerData,
+          customizer: customizerData,
           instantObject: (window as any).Instant,
           store: store || {
             storefront: {
@@ -338,15 +338,18 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
         }
       }
     }
-  }, [isRegistered, contentData, customizerData, receiver, worker]);
+  }, [isRegistered, contentData, customizerData, worker]);
 
-  const onMessage = useCallback((message: MessageEvent<any>) => {
-    if (message.isTrusted) {
-      if (message.data?.type === 'updatePreviewValues') {
-        setPreviewValues(message.data.previewValues);
+  const onMessage = useCallback(
+    (message: MessageEvent<any>) => {
+      if (message.isTrusted) {
+        if (message.data?.type === 'updatePreviewValues') {
+          setPreviewValues(message.data.previewValues);
+        }
       }
-    }
-  }, []);
+    },
+    [setPreviewValues],
+  );
 
   useEffect(() => {
     window.addEventListener('message', onMessage);
@@ -354,7 +357,7 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
     return () => {
       window.removeEventListener('message', onMessage);
     };
-  });
+  }, [onMessage]);
 
   if (error) {
     return (

@@ -5,7 +5,7 @@ import {
   ContentSchemaRichTextField,
   ContentSchemaSelectField,
   ContentSchemaTextField,
-  ContentSchemaUrlField,
+  ContentSchemaLinkField,
   ContentSubschemaInput,
   ContentSchemaField,
   CustomizerSchemaSelectField,
@@ -13,22 +13,28 @@ import {
   CustomizerSchemaField,
 } from './api';
 
-type EnhancedContentSchemaField<T extends ContentSchemaField, Type> = Partial<
-  Pick<T, 'isRequired' | 'isTranslatable'>
-> &
+type EnhancedContentSchemaField<
+  T extends Omit<ContentSchemaField, 'withTime'>,
+  Type,
+> = Partial<Pick<T, 'isRequired' | 'isTranslatable'>> &
   Omit<T, '__typename' | 'isRequired' | 'isTranslatable'> & {
     preview?: string;
     type: Type;
   };
 
 type ContentDateField = EnhancedContentSchemaField<
-  ContentSchemaDateField,
+  Omit<ContentSchemaDateField, 'withTime'> & { withTime?: boolean },
   'date'
 >;
 
 type ContentImageField = EnhancedContentSchemaField<
   ContentSchemaImageField,
   'image'
+>;
+
+type ContentLinkField = EnhancedContentSchemaField<
+  ContentSchemaLinkField,
+  'link'
 >;
 
 type ContentRichTextField = EnhancedContentSchemaField<
@@ -46,15 +52,13 @@ type ContentTextField = EnhancedContentSchemaField<
   'text'
 >;
 
-type ContentUrlField = EnhancedContentSchemaField<ContentSchemaUrlField, 'url'>;
-
 type ContentSchemaInputField =
   | ContentDateField
   | ContentImageField
   | ContentRichTextField
   | ContentSelectField
   | ContentTextField
-  | ContentUrlField;
+  | ContentLinkField;
 
 type ContentSubschema = Pick<ContentSubschemaInput, 'displayName' | 'name'> & {
   fields: Array<ContentSchemaInputField>;

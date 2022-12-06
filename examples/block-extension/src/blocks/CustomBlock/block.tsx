@@ -7,7 +7,7 @@ import {
   useShopifyClient,
   useTheme,
   useToast,
-} from 'instant-client';
+} from 'instant-client/src';
 
 const Box = ({
   children,
@@ -30,7 +30,7 @@ interface Products {
 }
 
 export const CustomBlock = () => {
-  const { content, customizations } = useBlockState();
+  const { content, customizer } = useBlockState();
   const { colors } = useTheme();
   const shopifyClient = useShopifyClient();
   const toast = useToast();
@@ -38,63 +38,74 @@ export const CustomBlock = () => {
 
   const [products, setProducts] = useState<ProductsConnection>();
 
-  const onAddToCart = useCallback((ev: any) => {
-    console.log(ev);
-  }, []);
+  // const onAddToCart = useCallback((ev: any) => {
+  //   console.log(ev);
+  // }, []);
 
-  useEventListener('addToCart', onAddToCart, {
-    preventDefault: true,
-  });
+  // useEventListener('addToCart', onAddToCart, {
+  //   preventDefault: true,
+  // });
 
-  const loadProducts = async () => {
-    try {
-      const result = await shopifyClient.request<Products>(gql`
-        query products {
-          products(first: 10) {
-            edges {
-              node {
-                id
-                title
-              }
-            }
-          }
-        }
-      `);
+  // const loadProducts = async () => {
+  //   try {
+  //     const result = await shopifyClient.request<Products>(gql`
+  //       query products {
+  //         products(first: 10) {
+  //           edges {
+  //             node {
+  //               id
+  //               title
+  //             }
+  //           }
+  //         }
+  //       }
+  //     `);
 
-      setProducts(result.products);
-    } catch (e) {
-      console.log(e);
-    }
-  };
+  //     setProducts(result.products);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
 
-  useEffect(() => {
-    loadProducts();
+  // useEffect(() => {
+  //   loadProducts();
 
-    toast.create({ message: 'Test' });
-  }, []);
+  //   toast.create({ message: 'Test' });
+  // }, []);
 
-  if (!products) {
-    return <></>;
-  }
+  // if (!products) {
+  //   return <></>;
+  // }
 
   return (
     <Box className="shadow-lg text-orange-600">
       Title: <b style={{ color: colors.primary.s700 }}>{content.title}</b>
       <a href="https://google.com">Google</a>
       Locale: {request.locale}
-      <Box className="mt-4" style={{ color: customizations.textColor }}>
+      <Box className="mt-4" style={{ color: customizer.textColor }}>
         <h1 className="text-lg">Products</h1>
 
-        {products?.edges?.map(({ node }) => (
+        {/* {products?.edges?.map(({ node }) => (
           <Box key={node.id}>{node.title}</Box>
-        ))}
-
-        <button onClick={console.log}>Test</button>
+        ))} */}
 
         {content?.buttons?.map((btn) => (
           <button>{btn.text}</button>
         ))}
+        <button
+          type="button"
+          onClick={() => {
+            toast.create({ message: 'Test' });
+          }}
+        >
+          Test
+        </button>
       </Box>
+      <Box className="mt-4">{content.date}</Box>
+      <Box className="mt-4">{content.select}</Box>
+      <Box className="mt-4">{content.link}</Box>
+      <Box className="mt-4">{content.richText}</Box>
+      <img alt="test" src={content.image} />
     </Box>
   );
 };

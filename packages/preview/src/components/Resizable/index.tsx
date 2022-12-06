@@ -1,5 +1,6 @@
-import { ReactNode, useEffect, useLayoutEffect, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Resizable as ResizableComponent, ResizableProps } from 're-resizable';
+import { useConfig } from '../ConfigProvider';
 import { Handle } from './Handle';
 
 export type SizeProp = {
@@ -21,39 +22,51 @@ export const Resizable = ({
   darkMode?: boolean;
   onSizeChange?(values: SizeProp): void;
 } & ResizableProps) => {
+  const isInitialSizing = useRef(true);
   const [size, setSize] = useState(defaultSize);
+  const { setWidth, setHeight } = useConfig();
 
   const getMaxWidth = () =>
-    (document.querySelector('#preview-wrapper')?.getBoundingClientRect?.()
-      ?.width || 0) - 16;
+    Math.floor(
+      (document.querySelector('#preview-wrapper')?.getBoundingClientRect?.()
+        ?.width || 0) - 24,
+    );
 
   const getMaxHeight = () =>
-    (document.querySelector('#preview-wrapper')?.getBoundingClientRect?.()
-      ?.height || 0) -
-    (document.querySelector('#preview-top-bar')?.getBoundingClientRect?.()
-      ?.height || 0) -
-    16;
-
-  useLayoutEffect(() => {
-    if (!sizeProp) {
-      const width = getMaxWidth();
-      const height = getMaxHeight();
-
-      if (width && height) {
-        setSize({ width, height });
-      }
-    }
-  }, []);
+    Math.floor(
+      (document.querySelector('#preview-wrapper')?.getBoundingClientRect?.()
+        ?.height || 0) -
+        (document.querySelector('#preview-top-bar')?.getBoundingClientRect?.()
+          ?.height || 0) -
+        16,
+    );
 
   useEffect(() => {
     if (sizeProp) {
-      setSize(sizeProp);
+      if (
+        isInitialSizing.current &&
+        size.height === IFRAME_DEFAULT_SIZE.height &&
+        size.width === IFRAME_DEFAULT_SIZE.width
+      ) {
+        isInitialSizing.current = false;
+
+        const width = getMaxWidth();
+        const height = getMaxHeight();
+
+        if (width && height) {
+          setSize({ width, height });
+          setWidth(`${width}`);
+          setHeight(`${height}`);
+        }
+      } else {
+        setSize(sizeProp);
+      }
     }
   }, [sizeProp?.width, sizeProp?.height]);
 
   const handleClassName = darkMode
-    ? 'bg-gray-700 hover:bg-gray-600'
-    : undefined;
+    ? 'bg-white opacity-30 transition-opacity group-hover:opacity-60 group-active:opacity-60'
+    : 'bg-gray-400 transition-colors group-hover:bg-gray-600 group-active:bg-gray-600';
 
   return (
     <ResizableComponent
@@ -139,7 +152,7 @@ export const Resizable = ({
         bottomLeft: false,
         topLeft: false,
       }}
-      resizeRatio={2}
+      resizeRatio={{ x: 2 }}
       {...props}
     >
       {children}

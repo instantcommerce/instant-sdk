@@ -1,10 +1,10 @@
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import vm from 'node:vm';
 import * as babel from '@babel/core';
 import glob from 'glob';
 import Hashids from 'hashids';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import { ModuleNode, Plugin, PluginOption } from 'vite';
-import vm from 'vm';
 import {
   addRefreshWrapper,
   isRefreshBoundary,

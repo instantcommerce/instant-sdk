@@ -9,6 +9,7 @@
   ],
   "scripts": {
     "build": "turbo run build",
+    "build:cli": "turbo run build --filter=instant-cli",
     "codegen": "graphql-codegen -r dotenv/config",
     "commit": "npx git-emoji-cli",
     "dev": "concurrently \"FORCE_DIR=./../../../examples/block-extension npm run dev:cli dev\" \"npm run dev:preview\"",
@@ -56,10 +57,9 @@
     "turbo": "1.4.5"
   },
   "resolutions": {
-    "@remote-ui/core": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/core?build-react-18",
-    "@remote-ui/react": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/react?build-react-18",
+    "@remote-ui/core": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/core?build",
+    "@remote-ui/react": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/react?8a375d4",
     "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "react-reconciler": "0.29.0"
+    "react-dom": "18.2.0"
   }
 }

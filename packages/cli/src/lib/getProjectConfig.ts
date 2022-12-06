@@ -1,24 +1,22 @@
-import Conf from "conf";
+import Conf from 'conf';
 
 interface ProjectConfigData {
   organization?: string;
-  previewStoreId?: string;
   blocks: Record<string, { id: string }>;
 }
 
 export const getProjectConfig = (path: string) =>
   new Conf<ProjectConfigData>({
     cwd: path,
-    configName: "instant.config",
+    configName: 'instant.config',
     schema: {
-      organization: { type: "string" },
-      previewStoreId: { type: "string" },
+      organization: { type: 'string' },
       blocks: {
-        type: "object",
+        type: 'object',
         additionalProperties: {
-          type: "object",
+          type: 'object',
           properties: {
-            id: { type: "string" },
+            id: { type: 'string' },
           },
         },
       },

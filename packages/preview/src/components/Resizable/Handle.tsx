@@ -11,10 +11,7 @@ export const Handle = ({ position, className, ...props }: HandleProps) => (
     {...props}
   >
     <div
-      className={twMerge(
-        'bg-gray-400 rounded-full group-hover:bg-gray-600 group-active:bg-gray-600 transition-colors',
-        className,
-      )}
+      className={twMerge('rounded-full', className)}
       style={{
         ...(position === 'left' || position === 'right'
           ? {

@@ -43,46 +43,63 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
   >({});
   const isPreviewValuesDirty = useRef(false);
 
-  const onMessage = useCallback((message: MessageEvent<any>) => {
-    if (message.isTrusted) {
-      if (message.data?.type === 'addSchemas') {
-        if (message.data?.block in blocksManifest) {
-          const newBlocksManifest = {
-            ...blocksManifest,
-            [message.data.block]: {
-              ...blocksManifest[message.data.block],
-              contentSchema: message.data.contentSchema,
-              customizerSchema: message.data.customizerSchema,
-            },
-          };
+  const sendPreviewValuesUpdate = useCallback(() => {
+    if (previewRef.current?.contentWindow && selectedBlock) {
+      previewRef.current.contentWindow.postMessage({
+        type: 'updatePreviewValues',
+        previewValues: previewValues[selectedBlock],
+      });
+    }
+  }, [previewRef, selectedBlock, previewValues]);
 
-          setBlocksManifest(newBlocksManifest);
-
-          if (!isPreviewValuesDirty.current) {
-            setPreviewValues({
-              ...previewValues,
+  const onMessage = useCallback(
+    (message: MessageEvent<any>) => {
+      if (message.isTrusted) {
+        if (message.data?.type === 'addSchemas') {
+          if (message.data?.block in blocksManifest) {
+            const newBlocksManifest = {
+              ...blocksManifest,
               [message.data.block]: {
-                content: message.data.contentSchema?.fields?.reduce(
-                  (all: any, current: DefineContentSchema['fields'][0]) => {
-                    all[current.name] = current.preview;
-                    return all;
-                  },
-                  {} as any,
-                ),
-                customizer: message.data.customizerSchema?.fields?.reduce(
-                  (all: any, current: DefineCustomizerSchema['fields'][0]) => {
-                    all[current.name] = current.preview;
-                    return all;
-                  },
-                  {} as any,
-                ),
+                ...blocksManifest[message.data.block],
+                contentSchema: message.data.contentSchema,
+                customizerSchema: message.data.customizerSchema,
               },
-            });
+            };
+
+            setBlocksManifest(newBlocksManifest);
+
+            if (!isPreviewValuesDirty.current) {
+              setPreviewValues({
+                ...previewValues,
+                [message.data.block]: {
+                  content: message.data.contentSchema?.fields?.reduce(
+                    (all: any, current: DefineContentSchema['fields'][0]) => {
+                      all[current.name] = current.preview;
+                      return all;
+                    },
+                    {} as any,
+                  ),
+                  customizer: message.data.customizerSchema?.fields?.reduce(
+                    (
+                      all: any,
+                      current: DefineCustomizerSchema['fields'][0],
+                    ) => {
+                      all[current.name] = current.preview;
+                      return all;
+                    },
+                    {} as any,
+                  ),
+                },
+              });
+            } else {
+              sendPreviewValuesUpdate();
+            }
           }
         }
       }
-    }
-  }, []);
+    },
+    [previewValues, sendPreviewValuesUpdate],
+  );
 
   useEffect(() => {
     window.addEventListener('message', onMessage);
@@ -90,7 +107,7 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
     return () => {
       window.removeEventListener('message', onMessage);
     };
-  }, []);
+  }, [onMessage]);
 
   const reloadPreview = useCallback(() => {
     if (previewRef.current) {
@@ -98,34 +115,8 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [previewRef, previewValues, selectedBlock]);
 
-  const sendPreviewValuesUpdate = useCallback(() => {
-    if (previewRef.current?.contentWindow && selectedBlock) {
-      previewRef.current.contentWindow.postMessage({
-        type: 'updatePreviewValues',
-        previewValues: previewValues[selectedBlock],
-      });
-      // THIS DOESNT WORK
-      // previewRef.current.contentWindow.postMessage({
-      //   type: 'addSchemas',
-      //   block: selectedBlock,
-      //   contentSchema: {
-      //     ...blocksManifest[selectedBlock]?.contentSchema,
-      //     fields: blocksManifest[selectedBlock]?.contentSchema?.fields?.map(
-      //       (field) => ({
-      //         ...field,
-      //         preview: previewValues[selectedBlock]?.content[field.name],
-      //       }),
-      //     ),
-      //   },
-      //   customizerSchema: blocksManifest[selectedBlock]?.customizationSchema,
-      // });
-    }
-  }, [previewRef, previewValues, selectedBlock]);
-
   const onPreviewRef = useCallback((node: HTMLIFrameElement) => {
     previewRef.current = node;
-
-    sendPreviewValuesUpdate();
   }, []) as unknown as typeof previewRef;
 
   const setPreviewValue = useCallback(

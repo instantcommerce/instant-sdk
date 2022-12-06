@@ -1,11 +1,12 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Box, render, Static, Text, useApp, useInput, useStdout } from "ink";
-import { CommandModule } from "yargs";
-import { existsSync } from "fs";
-import { useApiSdk } from "~/lib/api";
-import { getProjectConfig } from "~/lib/getProjectConfig";
-import { getBlockFiles } from "~/lib/getBlockFiles";
-import { dirname } from "~/config";
+/* eslint-disable jsx-a11y/accessible-emoji */
+import fs from 'fs';
+import React, { useEffect, useRef, useState } from 'react';
+import { Box, render, Static, Text, useApp, useInput, useStdout } from 'ink';
+import { CommandModule } from 'yargs';
+import { dirname, config as userConfig } from '~/config';
+import { useApiSdk } from '~/lib/api';
+import { getBlockFiles } from '~/lib/getBlockFiles';
+import { getProjectConfig } from '~/lib/getProjectConfig';
 
 const AskDeploy = ({
   blocks,
@@ -17,7 +18,7 @@ const AskDeploy = ({
   const { exit } = useApp();
 
   useInput((input) => {
-    if (input === "y") {
+    if (input === 'y') {
       onDeploy();
     } else {
       exit();
@@ -27,7 +28,7 @@ const AskDeploy = ({
   return (
     <Text>
       Set up blocks? [y/n]
-      <Text dimColor> {blocks.join(", ")}</Text>
+      <Text dimColor> {blocks.join(', ')}</Text>
     </Text>
   );
 };
@@ -60,7 +61,14 @@ export const Add = ({
     for (const blockName of blocks) {
       try {
         const createdBlock = await apiSdk
-          .createOneBlock({ input: { block: { name: blockName } } })
+          .createOneBlock(
+            { input: { block: { name: blockName } } },
+            // @ts-ignore
+            {
+              'x-instant-organization': config.current!.get('organization')!,
+              'x-instant-store-id': undefined,
+            },
+          )
           .then((res) => res.createOneBlock);
 
         config.current!.set(`blocks.${blockName}`, {
@@ -73,7 +81,7 @@ export const Add = ({
         ]);
       } catch (err: any) {
         setError(
-          `Error setting up block "${blockName}" (${err?.toString?.()})`
+          `Error setting up block "${blockName}" (${err?.toString?.()})`,
         );
         return;
       }
@@ -89,16 +97,29 @@ export const Add = ({
   }, [doDeploy]);
 
   useEffect(() => {
-    if (process.env["FORCE_DIR"]) {
+    if (process.env['FORCE_DIR']) {
       process.chdir(dirname);
     }
 
-    if (!existsSync("./instant.config.json")) {
-      setError(`No "instant.config.json" file found.`);
+    if (!userConfig.get('organization')) {
+      setError(`No organization selected, run the \`select\` command first`);
       return;
     }
 
-    config.current = getProjectConfig("./");
+    if (!fs.existsSync('./instant.config.json')) {
+      fs.writeFileSync(
+        './instant.config.json',
+        JSON.stringify(
+          {
+            organization: userConfig.get('organization'),
+          },
+          undefined,
+          2,
+        ),
+      );
+    }
+
+    config.current = getProjectConfig('./');
 
     const blockNames = getBlockFiles().filter((blockName) => {
       if (providedBlockNames && !providedBlockNames.includes(blockName)) {
@@ -155,7 +176,7 @@ export const Add = ({
           {(createdBlock) => (
             <Box key={createdBlock.id}>
               <Text>
-                ✅{"  "}
+                ✅{'  '}
                 {createdBlock.name}
               </Text>
             </Box>
@@ -165,7 +186,7 @@ export const Add = ({
         <Box marginTop={1}>
           <Text>
             Setting up...
-            {blocks ? `(${createdBlocks.length}/${blocks.length})` : ""}
+            {blocks ? `(${createdBlocks.length}/${blocks.length})` : ''}
           </Text>
         </Box>
       </>
@@ -174,17 +195,17 @@ export const Add = ({
 
   return (
     <Text color="green">
-      {createdBlocks.length} block{createdBlocks.length === 1 ? "" : "s"} added
+      {createdBlocks.length} block{createdBlocks.length === 1 ? '' : 's'} added
       successfully
     </Text>
   );
 };
 
 export const add: CommandModule = {
-  command: "add [blocknames..]",
+  command: 'add [blocknames..]',
   describe:
-    "Add block(s) to the platform, comma-separated list of blocknames to limit",
+    'Add block(s) to the platform, comma-separated list of blocknames to limit',
   handler: (argv) => {
-    render(<Add blockNames={argv["blocknames"] as string[]} />);
+    render(<Add blockNames={argv['blocknames'] as string[]} />);
   },
 };

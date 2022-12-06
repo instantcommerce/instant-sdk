@@ -1,16 +1,17 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Box, render, Static, Text } from "ink";
-import { CommandModule } from "yargs";
-import { build } from "vite";
-import path from "path";
-import { createReadStream, existsSync } from "fs";
-import { extractApiError, useApiSdk } from "~/lib/api";
-import { getProjectConfig } from "~/lib/getProjectConfig";
-import { BlockFragmentFragment } from "~/lib/api/sdk";
-import { getBlockNameFromPath } from "~/lib/getBlockNameFromPath";
-import { getBlockFiles } from "~/lib/getBlockFiles";
-import { dirname } from "~/config";
-import { getViteConfig } from "~/lib/getViteConfig";
+/* eslint-disable jsx-a11y/accessible-emoji */
+import { createReadStream, existsSync } from 'fs';
+import path from 'path';
+import React, { useEffect, useRef, useState } from 'react';
+import { Box, render, Static, Text } from 'ink';
+import { build } from 'vite';
+import { CommandModule } from 'yargs';
+import { dirname } from '~/config';
+import { extractApiError, useApiSdk } from '~/lib/api';
+import { BlockFragmentFragment } from '~/lib/api/sdk';
+import { getBlockFiles } from '~/lib/getBlockFiles';
+import { getBlockNameFromPath } from '~/lib/getBlockNameFromPath';
+import { getProjectConfig } from '~/lib/getProjectConfig';
+import { getViteConfig } from '~/lib/getViteConfig';
 
 export const Publish = ({
   blockNames: providedBlockNames,
@@ -32,19 +33,19 @@ export const Publish = ({
   const buildBlocks = async () => {
     const output = await build(
       await getViteConfig(
-        "production",
+        'production',
         {
-          logLevel: "silent",
+          logLevel: 'silent',
           build: {
-            outDir: "dist",
+            outDir: 'dist',
           },
         },
-        config.current!.get(`blocks`)
-      )
+        config.current!.get(`blocks`),
+      ),
     );
 
-    if (!("output" in output)) {
-      throw new Error("No build output found");
+    if (!('output' in output)) {
+      throw new Error('No build output found');
     }
 
     return output.output;
@@ -65,23 +66,23 @@ export const Publish = ({
 
     try {
       const manifestRaw = buildOutput.find(
-        ({ fileName }) => fileName === "manifest.json"
+        ({ fileName }) => fileName === 'manifest.json',
       );
 
       if (!manifestRaw) {
-        throw new Error("No manifest found");
+        throw new Error('No manifest found');
       }
 
       manifest = JSON.parse(
         // @ts-ignore
-        manifestRaw.source
+        manifestRaw.source,
       );
     } catch (err: any) {
       setError(err?.toString?.());
       return;
     }
 
-    for (const [_, entry] of Object.entries(manifest) as any) {
+    for (const [, entry] of Object.entries(manifest) as any) {
       if (entry.isEntry) {
         const blockDir = path.dirname(entry.file);
         const blockName = getBlockNameFromPath(entry.file);
@@ -95,35 +96,40 @@ export const Publish = ({
           const customizerSchema = JSON.parse(
             buildOutput.find(
               ({ fileName }) =>
-                fileName === path.join(blockDir, "customizerSchema.json")
+                fileName === path.join(blockDir, 'customizerSchema.json'),
               // @ts-ignore
-            )?.source
+            )?.source,
           );
           const contentSchema = JSON.parse(
             buildOutput.find(
               ({ fileName }) =>
-                fileName === path.join(blockDir, "contentSchema.json")
+                fileName === path.join(blockDir, 'contentSchema.json'),
               // @ts-ignore
-            )?.source
+            )?.source,
           );
           const blockFile = createReadStream(
-            path.join(dirname, "dist", entry.file)
+            path.join(dirname, 'dist', entry.file),
           );
 
           const existingBlockConfig = config.current!.get(
-            `blocks.${blockName}`
+            `blocks.${blockName}`,
           ) as { id: string };
 
           blockIdToUpdate = existingBlockConfig.id;
 
-          const publishedBlock = await apiSdk.publishBlockVersion({
-            input: {
-              id: blockIdToUpdate,
-              code: blockFile,
-              contentSchema,
-              customizerSchema,
+          const publishedBlock = await apiSdk.publishBlockVersion(
+            {
+              input: {
+                id: blockIdToUpdate,
+                code: blockFile,
+                contentSchema,
+                customizerSchema,
+              },
             },
-          });
+            {
+              'x-instant-organization': config.current!.get('organization')!,
+            },
+          );
 
           setUploadedBlocks((previous) => [
             ...previous,
@@ -144,7 +150,7 @@ export const Publish = ({
           }
 
           setError(
-            `Error publishing block "${blockName}" (${err?.toString?.()})`
+            `Error publishing block "${blockName}" (${err?.toString?.()})`,
           );
           return;
         }
@@ -161,16 +167,25 @@ export const Publish = ({
   }, [blocks]);
 
   useEffect(() => {
-    if (process.env["FORCE_DIR"]) {
+    if (process.env['FORCE_DIR']) {
       process.chdir(dirname);
     }
 
-    if (!existsSync("./instant.config.json")) {
-      setError(`No "instant.config.json" file found.`);
+    if (!existsSync('./instant.config.json')) {
+      setError(
+        `No "instant.config.json" file found, please run the \`add\` command first.`,
+      );
       return;
     }
 
-    config.current = getProjectConfig("./");
+    config.current = getProjectConfig('./');
+
+    if (!config.current.get('organization')) {
+      setError(
+        `Project not linked to an organization, please run the \`add\` command first.`,
+      );
+      return;
+    }
 
     const blockNames = getBlockFiles().filter((blockName) => {
       if (providedBlockNames && !providedBlockNames.includes(blockName)) {
@@ -179,7 +194,7 @@ export const Publish = ({
 
       if (!config.current!.get(`blocks.${blockName}`)) {
         setError(
-          `Block not added: "${blockName}", please run the add command first`
+          `Block not added: "${blockName}", please run the \`add\` command first`,
         );
         return false;
       }
@@ -223,12 +238,12 @@ export const Publish = ({
             <Box key={uploadedBlock.id}>
               {uploadedBlock.isUnchanged ? (
                 <Text dimColor>
-                  ⏭️{"  "}
+                  ⏭️{'  '}
                   {uploadedBlock.name} (unchanged)
                 </Text>
               ) : (
                 <Text color="green">
-                  ✅{"  "}
+                  ✅{'  '}
                   {uploadedBlock.name} (v{uploadedBlock.version?.tag})
                 </Text>
               )}
@@ -239,7 +254,7 @@ export const Publish = ({
         <Box marginTop={1}>
           <Text>
             Publishing...
-            {blocks ? `(${uploadedBlocks.length}/${blocks.length})` : ""}
+            {blocks ? `(${uploadedBlocks.length}/${blocks.length})` : ''}
           </Text>
         </Box>
       </>
@@ -250,10 +265,10 @@ export const Publish = ({
 };
 
 export const publish: CommandModule = {
-  command: "publish [blocknames..]",
+  command: 'publish [blocknames..]',
   describe:
-    "Publish new version of block(s), comma-separated list of blocknames to limit",
+    'Publish new version of block(s), comma-separated list of blocknames to limit',
   handler: (argv) => {
-    render(<Publish blockNames={argv["blocknames"] as string[]} />);
+    render(<Publish blockNames={argv['blocknames'] as string[]} />);
   },
 };

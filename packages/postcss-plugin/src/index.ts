@@ -1,4 +1,4 @@
-import { PluginCreator, Rule } from 'postcss';
+import type { PluginCreator, Rule } from 'postcss';
 import selectorParser from 'postcss-selector-parser';
 
 const processedRules = new WeakSet<Rule>();

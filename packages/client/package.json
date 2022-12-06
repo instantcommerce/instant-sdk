@@ -3,14 +3,29 @@
   "version": "0.0.1",
   "private": true,
   "type": "module",
-  "main": "./src/index.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./src": {
+      "import": "./src/index.ts"
+    }
+  },
+  "main": "./dist/index.cjs",
+  "types": "./dist/index.d.ts",
   "sideEffects": false,
   "engines": {
     "node": ">=16"
   },
-  "scripts": {},
+  "scripts": {
+    "build": "tsup"
+  },
   "dependencies": {
     "@remote-ui/react": "4.5.12",
+    "graphql": "16.6.0",
+    "graphql-tag": "2.12.6",
+    "graphql-request": "5.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "tsconfig": "*",
@@ -20,6 +35,7 @@
     "@types/react": "18.0.5",
     "@types/react-dom": "18.0.1",
     "@vitejs/plugin-react": "2.0.0",
+    "tsup": "6.5.0",
     "typescript": "4.3.5"
   }
 }

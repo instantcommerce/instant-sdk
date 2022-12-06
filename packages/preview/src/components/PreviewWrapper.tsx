@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { ResizableProps } from 're-resizable';
-import { twJoin, twMerge } from 'tailwind-merge';
-import { Resizable, useConfig, SizeProp } from '../components';
+import { twMerge } from 'tailwind-merge';
+import { scales, Resizable, useConfig, SizeProp } from '.';
 
 export const PreviewWrapper = ({
   children,
@@ -13,18 +13,17 @@ export const PreviewWrapper = ({
   const { darkModeEnabled, scale, iframeWidth, iframeHeight } = useConfig();
 
   return (
-    <div
-      className={twJoin(
-        scale ? 'scale-50' : '',
-        'flex flex-col flex-1 min-w-0',
-      )}
-    >
-      <div className="w-full h-full mx-0 my-4 max-w-full overflow-auto px-2">
+    <div className={twMerge('flex flex-col flex-1 min-w-0')}>
+      <div className="w-full h-full mx-0 max-w-full overflow-auto pr-2">
         <Resizable
-          size={{
-            width: iframeWidth || 300,
-            height: iframeHeight || 200,
-          }}
+          size={
+            iframeWidth && iframeHeight
+              ? {
+                  width: iframeWidth,
+                  height: iframeHeight,
+                }
+              : undefined
+          }
           darkMode={darkModeEnabled}
           {...props}
         >
@@ -32,6 +31,7 @@ export const PreviewWrapper = ({
             className={twMerge(
               'h-full overflow-auto border bg-white',
               darkModeEnabled ? 'border-gray-700' : 'border-gray-100',
+              scales.find((s) => s.value === `${scale}`)?.className,
             )}
           >
             {children}
