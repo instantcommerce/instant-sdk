@@ -1,7 +1,13 @@
 import { ChangeEvent, ReactNode, useEffect, useState } from 'react';
 import { useMemo } from 'react';
+import { PlusIcon } from '@heroicons/react/outline';
 import humanizeString from 'humanize-string';
-import { ArrowsInSimple, CaretCircleDoubleLeft, Moon } from 'phosphor-react';
+import {
+  ArrowsInSimple,
+  CaretCircleDoubleLeft,
+  Moon,
+  PencilSimple,
+} from 'phosphor-react';
 import { twJoin } from 'tailwind-merge';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import {
@@ -19,6 +25,7 @@ import {
   RichText,
   PreviewWrapper,
   IFRAME_DEFAULT_SIZE,
+  Modal,
 } from '..';
 import { SchemaTypes } from '../BlocksProvider/context';
 import { SideBar } from './SideBar';
@@ -38,6 +45,9 @@ const tabs = [
 export const Layout = ({ children }: { children: ReactNode }) => {
   const { selectedBlock, blocksManifest, setPreviewValue } = useBlocks();
   const [iframeSize, setIframeSize] = useState(IFRAME_DEFAULT_SIZE);
+  const [addFieldModalOpen, setAddFieldModalOpen] = useState(false);
+  const [subSchema, setSubschema] = useState(null);
+  const [allowedSchemas, setAllowedSchemas] = useState([]);
 
   const {
     rightPanelVisible,
@@ -61,11 +71,29 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     setIframeSize({ width: iframeWidth, height: iframeHeight });
   }, [iframeWidth, iframeHeight]);
 
+  const subschemas = blocksManifest?.[
+    selectedBlock
+  ]?.contentSchema?.subschemas?.reduce((acc, curr) => {
+    acc[curr.name] = curr.fields;
+
+    return acc;
+  }, {});
+
+  const subschemaOptions = useMemo(
+    () =>
+      blocksManifest?.[selectedBlock]?.contentSchema?.subschemas?.filter(
+        (item) =>
+          !allowedSchemas?.length || allowedSchemas?.includes(item.name),
+      ),
+    [allowedSchemas, selectedBlock, blocksManifest],
+  );
+
   const renderField = (
     schema: SchemaTypes,
     field:
       | DefineContentSchema['fields'][0]
       | DefineCustomizerSchema['fields'][0],
+    layer: number = 1,
   ) => {
     const baseProps = {
       label: field.label || humanizeString(field.name),
@@ -79,13 +107,13 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 
     switch (field.type) {
       case 'text':
-        return <Input {...baseProps} direction="row" />;
+        return <Input {...baseProps} direction={layer <= 1 ? 'row' : 'col'} />;
 
       // case 'color':
       //   return (
       //     <ColorInput
       //       {...baseProps}
-      //       direction="row"
+      //       direction={layer <= 1 ? "row" : 'col'}
       //       onChange={(value: string) => {
       //         setPreviewValue(schema, field.name, value);
       //       }}
@@ -97,7 +125,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           <Select
             {...baseProps}
             options={field.options || []}
-            direction="row"
+            direction={layer <= 1 ? 'row' : 'col'}
             onChange={(value: string) => {
               setPreviewValue(schema, field.name, value);
             }}
@@ -105,30 +133,106 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         );
 
       case 'image':
-        return <ImageInput {...baseProps} direction="row" />;
+      case 'link':
+        return (
+          <ImageInput {...baseProps} direction={layer <= 1 ? 'row' : 'col'} />
+        );
 
       case 'date':
-        return <Input type="date" {...baseProps} direction="row" />;
+        return (
+          <Input
+            type="date"
+            {...baseProps}
+            direction={layer <= 1 ? 'row' : 'col'}
+          />
+        );
 
       case 'richText':
         return <RichText {...baseProps} direction="col" />;
+
+      case 'subSchema':
+        return (
+          <div className="flex flex-col gap-1.5">
+            <div className="w-full flex justify-between items-center gap-1.5">
+              <span className="text-xs text-gray-500 font-medium">
+                {field.name}
+              </span>
+
+              <Button
+                iconOnly
+                variant="unstyled"
+                onClick={() => {
+                  setSubschema(field.name);
+                  setAllowedSchemas(field.allowed);
+                }}
+              >
+                <PencilSimple weight="fill" size={16} color="#2E90FA" />
+              </Button>
+            </div>
+
+            <div
+              className={twJoin(
+                'flex flex-col gap-2',
+                'rounded p-2 border border-gray-300',
+              )}
+            >
+              {field?.preview?.map((f) => (
+                <Button variant="gray">{f.name}</Button>
+              ))}
+            </div>
+          </div>
+        );
 
       default:
         return null;
     }
   };
 
+  console.log(blocksManifest?.[selectedBlock], subschemas, subSchema);
+
   const contentSchema = useMemo(() => {
     if (selectedBlock) {
       return (
-        <div className="px-3 py-6">
-          {blocksManifest?.[selectedBlock]?.contentSchema?.fields?.map(
-            (field) => renderField('content', field),
+        <div className="flex flex-col px-3 py-6 gap-5">
+          {subSchema ? (
+            <div className="text-xs">
+              <div className="mb-5">{subSchema}</div>
+
+              <div className="text-gray-500 mb-3">{subSchema}</div>
+
+              <div className="bg-gray-100 rounded-xl p-2 flex flex-col gap-2">
+                {blocksManifest?.[selectedBlock]?.contentSchema?.fields
+                  ?.find((f) => f.name === subSchema)
+                  ?.preview?.map((item) => (
+                    <div className="bg-white flex flex-col gap-2 p-2 rounded-lg border border-gray-300">
+                      <div className="text-gray-500">{item?.name}</div>
+
+                      {subschemas[item.name]?.map((f) =>
+                        renderField('content', f, 2),
+                      )}
+                    </div>
+                  ))}
+
+                <Button
+                  variant="secondary"
+                  className="bg-primary-100 border-primary-300 text-primary-500 flex items-center justify-center mt-2"
+                  onClick={() => {
+                    setAddFieldModalOpen(true);
+                  }}
+                >
+                  + Element
+                </Button>
+              </div>
+            </div>
+          ) : (
+            blocksManifest?.[selectedBlock]?.contentSchema?.fields?.map(
+              (field) => renderField('content', field),
+            )
           )}
         </div>
       );
     }
-  }, [selectedBlock, blocksManifest]);
+  }, [selectedBlock, blocksManifest, subSchema]);
 
   const customizerSchema = useMemo(() => {
     if (selectedBlock) {
@@ -148,6 +252,25 @@ export const Layout = ({ children }: { children: ReactNode }) => {
     <div className="h-full w-full">{children}</div>
   ) : (
     <div className="flex flex-1 flex-col w-full h-full">
+      <Modal
+        open={addFieldModalOpen}
+        title="Insert element"
+        onOpenChange={setAddFieldModalOpen}
+      >
+        {subschemaOptions?.map((field) => (
+          <Button
+            onClick={() =>
+              setPreviewValue('content', 'buttons', [
+                { name: field.name, schema: subschemas?.[field.name] },
+              ])
+            }
+            variant="unstyled"
+            className="p-3 text-sm text-gray-700 rounded border border-gray-300 shadow-sm h-auto font-medium hover:text-primary-700 hover:bg-primary-100 hover:border-primary-500 transition-colors"
+          >
+            {field.name}
+          </Button>
+        ))}
+      </Modal>
       <TopBar />
 
       <div className="flex flex-row flex-1 relative h-full min-h-0">

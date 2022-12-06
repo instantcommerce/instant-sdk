@@ -104,6 +104,21 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
         type: 'updatePreviewValues',
         previewValues: previewValues[selectedBlock],
       });
+      // THIS DOESNT WORK
+      // previewRef.current.contentWindow.postMessage({
+      //   type: 'addSchemas',
+      //   block: selectedBlock,
+      //   contentSchema: {
+      //     ...blocksManifest[selectedBlock]?.contentSchema,
+      //     fields: blocksManifest[selectedBlock]?.contentSchema?.fields?.map(
+      //       (field) => ({
+      //         ...field,
+      //         preview: previewValues[selectedBlock]?.content[field.name],
+      //       }),
+      //     ),
+      //   },
+      //   customizerSchema: blocksManifest[selectedBlock]?.customizationSchema,
+      // });
     }
   }, [previewRef, previewValues, selectedBlock]);
 

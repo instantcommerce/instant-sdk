@@ -90,6 +90,10 @@ export const CustomBlock = () => {
         ))}
 
         <button onClick={console.log}>Test</button>
+
+        {content?.buttons?.map((btn) => (
+          <button>{btn.text}</button>
+        ))}
       </Box>
     </Box>
   );

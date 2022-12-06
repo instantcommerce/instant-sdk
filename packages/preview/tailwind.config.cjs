@@ -4,7 +4,7 @@ const primaryColors = {
   50: '#FFF2B9',
   100: '#EFF8FF', //
   200: '#D1E9FF', //
-  300: '#FFE053',
+  300: '#84CAFF',
   400: '#FFD82A',
   500: '#2E90FA', //
   600: '#1570EF', //
@@ -61,6 +61,27 @@ module.exports = {
       },
       space: {
         1.5: '0.375rem',
+      },
+      // modal animations
+      keyframes: {
+        overlayShow: {
+          from: { opacity: 0 },
+          to: { opacity: 0.4 },
+        },
+        contentShow: {
+          from: {
+            opacity: 0,
+            transform: 'translate(-50%, -48%) scale(0.96)',
+          },
+          to: {
+            opacity: 1,
+            transform: 'translate(-50%, -50%) scale(1)',
+          },
+        },
+      },
+      animation: {
+        overlayShow: 'overlayShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
+        contentShow: 'contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1)',
       },
     },
   },
