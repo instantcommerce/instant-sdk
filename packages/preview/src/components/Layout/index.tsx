@@ -13,7 +13,7 @@ import {
   Sun,
   WarningCircle,
 } from 'phosphor-react';
-import { twJoin } from 'tailwind-merge';
+import { twJoin, twMerge } from 'tailwind-merge';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import {
   Button,
@@ -39,12 +39,12 @@ import { TopBar } from './TopBar';
 
 const tabs = [
   {
-    title: 'Content',
-    value: 'contentSchema',
-  },
-  {
     title: 'Customizer',
     value: 'customizerSchema',
+  },
+  {
+    title: 'Content',
+    value: 'contentSchema',
   },
 ];
 
@@ -307,9 +307,9 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         type: 'content',
         emptyMessage: (
           <StatusMessage
-            icon={Faders}
-            title="No customizer schema found"
-            description="Props of exported .tsx elements from your blocks will appear here."
+            icon={Image}
+            title="No CMS schema found"
+            description="Storyblok schema and sub-schema fields will appear here."
             button={{
               href: 'https://docs.instantcommerce.io',
               text: 'Learn more',
@@ -326,9 +326,9 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         type: 'customizer',
         emptyMessage: (
           <StatusMessage
-            icon={Image}
-            title="No CMS schema found"
-            description="Storyblok schema and sub-schema fields will appear here."
+            icon={Faders}
+            title="No customizer schema found"
+            description="Props of exported .tsx elements from your blocks will appear here."
             button={{
               href: 'https://docs.instantcommerce.io',
               text: 'Learn more',
