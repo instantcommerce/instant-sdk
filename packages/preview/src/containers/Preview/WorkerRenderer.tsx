@@ -338,7 +338,7 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
         }
       }
     }
-  }, [isRegistered, contentData, customizerData, receiver, worker]);
+  }, [isRegistered, contentData, customizerData, worker]);
 
   const onMessage = useCallback(
     (message: MessageEvent<any>) => {

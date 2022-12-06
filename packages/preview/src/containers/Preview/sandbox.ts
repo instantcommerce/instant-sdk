@@ -93,6 +93,7 @@ export async function render(
   if (!root) {
     root = createRemoteRoot(channel, {
       components: [],
+      strict: false,
       strictComponents: false,
     });
 

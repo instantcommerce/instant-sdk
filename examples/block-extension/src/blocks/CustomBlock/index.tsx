@@ -31,11 +31,6 @@ export default defineBlock({
         preview: '2022-12-12',
       },
       {
-        type: 'date',
-        name: 'date',
-        preview: '2022-12-12',
-      },
-      {
         type: 'image',
         name: 'image',
         preview:

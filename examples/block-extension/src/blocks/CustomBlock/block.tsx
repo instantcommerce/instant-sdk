@@ -89,7 +89,14 @@ export const CustomBlock = () => {
           <Box key={node.id}>{node.title}</Box>
         ))} */}
 
-        <button onClick={console.log}>Test</button>
+        <button
+          type="button"
+          onClick={() => {
+            toast.create({ message: 'Test' });
+          }}
+        >
+          Test
+        </button>
       </Box>
       <Box className="mt-4">{content.date}</Box>
       <Box className="mt-4">{content.select}</Box>
