@@ -67,4 +67,51 @@ export default defineBlock({
       },
     ],
   },
+  subschemas: [
+    {
+      name: 'Button',
+      fields: [
+        {
+          type: 'text',
+          name: 'text',
+          label: 'Text',
+          isTranslatable: true,
+          isRequired: true,
+          maxLength: 40,
+        },
+        {
+          type: 'link',
+          name: 'link',
+          label: 'Link',
+          isTranslatable: true,
+          isRequired: true,
+        },
+      ],
+    },
+    {
+      name: 'HeroContent',
+      fields: [
+        {
+          type: 'image',
+          name: 'heroContentImage',
+          label: 'Image',
+          isRequired: true,
+        },
+        {
+          type: 'text',
+          name: 'heroContentTitle',
+          label: 'Title',
+          isTranslatable: true,
+          isRequired: true,
+        },
+        {
+          type: 'subSchema',
+          name: 'heroContentButtons',
+          label: 'Buttons',
+          isRequired: false,
+          allowed: ['Button'],
+        },
+      ],
+    },
+  ],
 });
