@@ -1,0 +1,9 @@
+node_modules/*
+public/*
+dist
+
+packages/types/api.ts
+
+**/*/hooks.ts
+**/*/sdk.ts
+**/*/schema.json

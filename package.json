@@ -20,7 +20,17 @@
   "eslintConfig": {
     "extends": [
       "@storyofams/eslint-config-ams/web"
-    ]
+    ],
+    "settings": {
+      "import/resolver": {
+        "alias": [
+          [
+            "instant-client",
+            "./packages/client/src"
+          ]
+        ]
+      }
+    }
   },
   "devDependencies": {
     "@commitlint/cli": "17.1.2",

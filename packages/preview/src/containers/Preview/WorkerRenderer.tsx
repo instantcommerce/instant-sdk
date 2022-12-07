@@ -21,7 +21,7 @@ import {
 } from '@remote-ui/rpc';
 import { createWorkerFactory, expose, terminate } from '@shopify/web-worker';
 import equal from 'fast-deep-equal';
-import { BlockContextValue } from 'instant-client/src/BlockProvider/context';
+import { BlockContextValue } from 'instant-client/BlockProvider/context';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import { SchemaTypes } from '../../components/BlocksProvider/context';
 
