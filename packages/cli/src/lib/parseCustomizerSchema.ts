@@ -17,7 +17,9 @@ export const parseCustomizerSchema = (
   input: DefineCustomizerSchema,
 ): CustomizerSchemaInput => {
   try {
-    const fields = input.fields.map(formatField);
+    const fields = Object.entries(input.fields).map(([name, field]: any) =>
+      formatField({ ...field, name }),
+    );
 
     /** @todo remove when API type is correct */
     // @ts-ignore

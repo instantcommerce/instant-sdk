@@ -67,7 +67,7 @@
     "turbo": "1.4.5"
   },
   "resolutions": {
-    "@remote-ui/core": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/core?build",
+    "@remote-ui/core": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/core?8a375d4",
     "@remote-ui/react": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/react?8a375d4",
     "react": "18.2.0",
     "react-dom": "18.2.0"

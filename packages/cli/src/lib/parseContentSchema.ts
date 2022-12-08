@@ -23,10 +23,14 @@ export const parseContentSchema = (
   input: DefineContentSchema,
 ): ContentSchemaInput => {
   try {
-    const fields = input.fields.map(formatField);
+    const fields = Object.entries(input.fields).map(([name, field]: any) =>
+      formatField({ ...field, name }),
+    );
     const subschemas = input.subschemas?.map((subschema) => ({
       ...subschema,
-      fields: subschema.fields.map(formatField),
+      fields: Object.entries(subschema.fields).map(([name, field]: any) =>
+        formatField({ ...field, name }),
+      ),
     }));
 
     /** @todo remove when API type is correct */

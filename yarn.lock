@@ -2146,9 +2146,9 @@
   dependencies:
     "@remote-ui/rpc" "^1.3.4"
 
-"@remote-ui/core@^2.1.16", "@remote-ui/core@https://gitpkg.now.sh/instantcommerce/remote-ui/packages/core?build":
+"@remote-ui/core@^2.1.16", "@remote-ui/core@https://gitpkg.now.sh/instantcommerce/remote-ui/packages/core?8a375d4":
   version "2.1.16"
-  resolved "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/core?build#8d0c94f5929df487518869df273e8056d0c3f823"
+  resolved "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/core?8a375d4#f323431c783164484391daafd71308788e074b01"
   dependencies:
     "@remote-ui/rpc" "^1.3.4"
     "@remote-ui/types" "^1.1.2"
