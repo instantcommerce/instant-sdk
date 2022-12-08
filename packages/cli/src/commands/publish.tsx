@@ -12,6 +12,8 @@ import { getBlockFiles } from '~/lib/getBlockFiles';
 import { getBlockNameFromPath } from '~/lib/getBlockNameFromPath';
 import { getProjectConfig } from '~/lib/getProjectConfig';
 import { getViteConfig } from '~/lib/getViteConfig';
+import { parseContentSchema } from '~/lib/parseContentSchema';
+import { parseCustomizerSchema } from '~/lib/parseCustomizerSchema';
 
 export const Publish = ({
   blockNames: providedBlockNames,
@@ -93,19 +95,23 @@ export const Publish = ({
         }
 
         try {
-          const customizerSchema = JSON.parse(
-            buildOutput.find(
-              ({ fileName }) =>
-                fileName === path.join(blockDir, 'customizerSchema.json'),
-              // @ts-ignore
-            )?.source,
+          const customizerSchema = parseCustomizerSchema(
+            JSON.parse(
+              buildOutput.find(
+                ({ fileName }) =>
+                  fileName === path.join(blockDir, 'customizerSchema.json'),
+                // @ts-ignore
+              )?.source,
+            ),
           );
-          const contentSchema = JSON.parse(
-            buildOutput.find(
-              ({ fileName }) =>
-                fileName === path.join(blockDir, 'contentSchema.json'),
-              // @ts-ignore
-            )?.source,
+          const contentSchema = parseContentSchema(
+            JSON.parse(
+              buildOutput.find(
+                ({ fileName }) =>
+                  fileName === path.join(blockDir, 'contentSchema.json'),
+                // @ts-ignore
+              )?.source,
+            ),
           );
           const blockFile = createReadStream(
             path.join(dirname, 'dist', entry.file),

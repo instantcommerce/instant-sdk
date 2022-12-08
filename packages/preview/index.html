@@ -5,6 +5,14 @@
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>DEV: Instant Block Extensions</title>
+
+    <script>
+      try {
+        window.__INITIAL_USER_CONFIG__ = JSON.parse(
+          localStorage.getItem("userConfig") || "{}"
+        );
+      } catch (err) {}
+    </script>
   </head>
   <body class="h-full overflow-hidden">
     <div id="root" class="flex flex-col h-full relative"></div>

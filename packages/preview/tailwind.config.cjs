@@ -39,6 +39,32 @@ const neutralColors = {
   900: '#18181B',
 };
 
+const warningColors = {
+  50: '#FFFAEB',
+  100: '#FEEFC7',
+  200: '#FEDF89',
+  300: '#FEC84B',
+  400: '#FDB022',
+  500: '#F79009',
+  600: '#DC6803',
+  700: '#B54708',
+  800: '#93370D',
+  900: '#792E0D',
+};
+
+const errorColors = {
+  50: '#FEF2F2',
+  100: '#FEE2E2',
+  200: '#FECACA',
+  300: '#FCA5A5',
+  400: '#F87171',
+  500: '#EF4444',
+  600: '#DC2626',
+  700: '#B91C1C',
+  800: '#991B1B',
+  900: '#7F1D1D',
+};
+
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
@@ -52,6 +78,8 @@ module.exports = {
         primary: primaryColors,
         secondary: secondaryColors,
         gray: neutralColors,
+        error: errorColors,
+        warning: warningColors,
       },
       width: {
         50: '12.5rem',

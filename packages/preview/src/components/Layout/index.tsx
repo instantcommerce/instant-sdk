@@ -2,21 +2,23 @@ import { ChangeEvent, ReactNode, useEffect, useState } from 'react';
 import { useMemo } from 'react';
 import humanizeString from 'humanize-string';
 import {
-  ArrowsInSimple,
   CaretCircleDoubleLeft,
   CaretCircleDoubleRight,
+  Faders,
+  Image,
   Moon,
   Sun,
+  WarningCircle,
 } from 'phosphor-react';
 import { twJoin, twMerge } from 'tailwind-merge';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import {
   Button,
   ColorInput,
+  StatusMessage,
   useConfig,
   ImageInput,
   Input,
-  InputGroup,
   Select,
   Tabs,
   Tooltip,
@@ -27,6 +29,7 @@ import {
   IFRAME_DEFAULT_SIZE,
 } from '..';
 import { SchemaTypes } from '../BlocksProvider/context';
+import { scales } from '../ConfigProvider';
 import { SideBar } from './SideBar';
 import { TopBar } from './TopBar';
 
@@ -87,13 +90,12 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 
     switch (field.type) {
       case 'text':
-        return <Input {...baseProps} direction="row" />;
+        return <Input {...baseProps} />;
 
       // case 'color':
       //   return (
       //     <ColorInput
       //       {...baseProps}
-      //       direction="row"
       //       onChange={(value: string) => {
       //         setPreviewValue(schema, field.name, value);
       //       }}
@@ -105,7 +107,6 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           <Select
             {...baseProps}
             options={field.options || []}
-            direction="row"
             onChange={(value: string) => {
               setPreviewValue(schema, field.name, value);
             }}
@@ -114,42 +115,117 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 
       case 'image':
       case 'link':
-        return <ImageInput {...baseProps} direction="row" />;
+        return <ImageInput {...baseProps} />;
 
       case 'date':
-        return <Input type="date" {...baseProps} direction="row" />;
+        return <Input type="date" {...baseProps} />;
 
       case 'richText':
-        return <RichText {...baseProps} direction="col" />;
+        return <RichText {...baseProps} />;
 
       default:
         return null;
     }
   };
 
-  const contentSchema = useMemo(() => {
+  const renderSchema = ({
+    type,
+    emptyMessage,
+  }: {
+    type: SchemaTypes;
+    emptyMessage: ReactNode;
+  }) => {
     if (selectedBlock) {
-      return (
-        <div className="flex flex-col gap-4 px-3 py-6">
-          {blocksManifest?.[selectedBlock]?.contentSchema?.fields?.map(
-            (field) => renderField('content', field),
-          )}
-        </div>
-      );
-    }
-  }, [selectedBlock, blocksManifest]);
+      let content = null;
+      const schema =
+        blocksManifest?.[selectedBlock]?.[
+          type === 'content' ? 'contentSchema' : 'customizerSchema'
+        ];
 
-  const customizerSchema = useMemo(() => {
-    if (selectedBlock) {
-      return (
-        <div className="flex flex-col gap-4 px-3 py-6">
-          {blocksManifest?.[selectedBlock]?.customizerSchema?.fields?.map(
-            (field) => renderField('customizer', field),
-          )}
-        </div>
-      );
+      if (schema?.fields?.length) {
+        let hasDuplicateFieldNames: string | false = false;
+
+        for (
+          let i = 0;
+          i < schema.fields.length && !hasDuplicateFieldNames;
+          i += 1
+        ) {
+          for (
+            let j = 0;
+            j < schema.fields.length && !hasDuplicateFieldNames;
+            j += 1
+          ) {
+            if (i !== j && schema.fields[i].name === schema.fields[j].name) {
+              hasDuplicateFieldNames = schema.fields[j].name;
+            }
+          }
+        }
+
+        if (!hasDuplicateFieldNames) {
+          content = schema.fields.map((field) => renderField(type, field));
+        } else {
+          content = (
+            <StatusMessage
+              type="error"
+              icon={WarningCircle}
+              title="Schema field names should be unique"
+              description={`Check the schema definition for fields with name "${hasDuplicateFieldNames}".`}
+              button={{
+                href: 'https://docs.instantcommerce.io',
+                text: 'Learn more',
+              }}
+            />
+          );
+        }
+      } else {
+        content = emptyMessage;
+      }
+
+      if (content) {
+        return <div className="flex flex-col gap-4 px-3 py-6">{content}</div>;
+      }
     }
-  }, [selectedBlock, blocksManifest]);
+
+    return null;
+  };
+
+  const contentSchema = useMemo(
+    () =>
+      renderSchema({
+        type: 'content',
+        emptyMessage: (
+          <StatusMessage
+            icon={Faders}
+            title="No customizer schema found"
+            description="Props of exported .tsx elements from your blocks will appear here."
+            button={{
+              href: 'https://docs.instantcommerce.io',
+              text: 'Learn more',
+            }}
+          />
+        ),
+      }),
+    [selectedBlock, blocksManifest],
+  );
+
+  const customizerSchema = useMemo(
+    () =>
+      renderSchema({
+        type: 'customizer',
+        emptyMessage: (
+          <StatusMessage
+            icon={Image}
+            title="No CMS schema found"
+            description="Storyblok schema and sub-schema fields will appear here."
+            button={{
+              href: 'https://docs.instantcommerce.io',
+              text: 'Learn more',
+            }}
+          />
+        ),
+      }),
+    [selectedBlock, blocksManifest],
+  );
 
   return params?.viewMode === 'fullScreen' ? (
     <div className="h-full w-full">{children}</div>
@@ -159,16 +235,17 @@ export const Layout = ({ children }: { children: ReactNode }) => {
 
       <div className="flex flex-row flex-1 relative h-full min-h-0">
         <SideBar
-          className={`${
-            leftPanelVisible ? 'translate-x-0' : '-translate-x-full'
-          } absolute left-0 transition-transform`}
+          className={twJoin(
+            'absolute left-0 transition-transform',
+            leftPanelVisible ? 'translate-x-0' : '-translate-x-full',
+          )}
         />
 
         <main
           className={twJoin(
             darkModeEnabled ? 'bg-[#1E1E1E]' : 'bg-gray-50',
-            rightPanelVisible ? 'pr-96' : 'pr-4',
-            leftPanelVisible ? 'pl-[12.5rem]' : 'pl-4',
+            rightPanelVisible && 'pr-96',
+            leftPanelVisible && 'pl-[12.5rem]',
             'flex flex-row flex-1 min-w-0 ',
           )}
         >
@@ -268,13 +345,24 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                 </div>
 
                 <div className="flex gap-1.5">
-                  <Button
-                    onClick={() => setScale(scale ? undefined : 50)}
-                    variant={darkModeEnabled ? 'dark' : 'white'}
-                  >
-                    <ArrowsInSimple size={18} />
-                    {scale ? '100%' : '50%'}
-                  </Button>
+                  <Select
+                    className={twMerge(
+                      'text-xs text-[13px] h-[30px] shadow-none',
+                      darkModeEnabled
+                        ? 'border-gray-800 hover:border-gray-700 focus:border-gray-700'
+                        : 'border-white hover:border-primary-100 focus:border-gray-200',
+                    )}
+                    itemClassName="text-[13px]"
+                    options={scales}
+                    defaultValue={scales[0].value}
+                    value={`${scale}`}
+                    variant={darkModeEnabled ? 'dark' : 'light'}
+                    onValueChange={(val) => {
+                      const value = Number(val);
+
+                      setScale(value);
+                    }}
+                  />
 
                   <Tooltip
                     content="Toggle dark mode"
@@ -309,9 +397,10 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         </main>
 
         <aside
-          className={`${
-            rightPanelVisible ? 'translate-x-0' : 'translate-x-full'
-          } absolute right-0 transition-transform bg-white h-full flex flex-col shrink-0 border-l border-gray-100 py-2 overflow-y-auto w-96`}
+          className={twJoin(
+            'absolute right-0 transition-transform bg-white h-full flex flex-col shrink-0 border-l border-gray-100 py-2 overflow-y-auto w-96',
+            rightPanelVisible ? 'translate-x-0' : 'translate-x-full',
+          )}
         >
           <Tabs
             tabs={tabs}

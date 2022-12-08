@@ -6,4 +6,8 @@ export default defineConfig({
   clean: true,
   dts: false,
   format: ['esm', 'cjs'],
+  /** Fix for postcss plugin (which has to be cjs) */
+  banner: {
+    js: "import { createRequire } from 'module';const require = createRequire(import.meta.url);",
+  },
 });

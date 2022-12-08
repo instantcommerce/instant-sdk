@@ -38,6 +38,7 @@
     "react": "17.0.2",
     "serve-static": "1.15.0",
     "terminal-link": "3.0.0",
+    "types": "*",
     "vite": "3.2.3",
     "vite-plugin-instant-sdk": "*",
     "yargs": "17.6.0"
