@@ -64,9 +64,9 @@ export const previewSchema = (
   schema: any,
   previewValues?: Record<SchemaTypes, Record<string, string>>,
 ) =>
-  schema.fields.reduce((data: any, field: any) => {
-    data[field.name] =
-      previewValues?.[schemaType]?.[field.name] ||
+  Object.entries(schema.fields).reduce((data: any, [name, field]: any) => {
+    data[name] =
+      previewValues?.[schemaType]?.[name] ||
       FIELD_PREVIEWS[field.type as SchemaFieldType];
 
     return data;

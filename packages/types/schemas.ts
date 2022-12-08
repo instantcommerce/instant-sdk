@@ -17,7 +17,7 @@ type EnhancedContentSchemaField<
   T extends Omit<ContentSchemaField, 'withTime'>,
   Type,
 > = Partial<Pick<T, 'isRequired' | 'isTranslatable'>> &
-  Omit<T, '__typename' | 'isRequired' | 'isTranslatable'> & {
+  Omit<T, '__typename' | 'name' | 'isRequired' | 'isTranslatable'> & {
     preview?: string;
     type: Type;
   };
@@ -52,7 +52,7 @@ type ContentTextField = EnhancedContentSchemaField<
   'text'
 >;
 
-type ContentSchemaInputField =
+export type ContentSchemaInputField =
   | ContentDateField
   | ContentImageField
   | ContentRichTextField
@@ -61,11 +61,11 @@ type ContentSchemaInputField =
   | ContentLinkField;
 
 type ContentSubschema = Pick<ContentSubschemaInput, 'displayName' | 'name'> & {
-  fields: Array<ContentSchemaInputField>;
+  fields: Record<string, ContentSchemaInputField>;
 };
 
 export interface DefineContentSchema {
-  fields: Array<ContentSchemaInputField>;
+  fields: Record<string, ContentSchemaInputField>;
   subschemas?: InputMaybe<Array<ContentSubschema>>;
 }
 
@@ -73,7 +73,7 @@ type EnhancedCustomizerSchemaField<
   T extends CustomizerSchemaField,
   Type,
 > = Partial<Pick<T, 'isRequired'>> &
-  Omit<T, '__typename' | 'isRequired'> & {
+  Omit<T, '__typename' | 'name' | 'isRequired'> & {
     preview?: string;
     type: Type;
   };
@@ -88,8 +88,10 @@ type CustomizerTextField = EnhancedCustomizerSchemaField<
   'text'
 >;
 
-type CustomizerSchemaInputField = CustomizerSelectField | CustomizerTextField;
+export type CustomizerSchemaInputField =
+  | CustomizerSelectField
+  | CustomizerTextField;
 
 export interface DefineCustomizerSchema {
-  fields: Array<CustomizerSchemaInputField>;
+  fields: Record<string, CustomizerSchemaInputField>;
 }

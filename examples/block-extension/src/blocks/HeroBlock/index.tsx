@@ -1,7 +1,7 @@
 import { defineBlock, useBlockState } from 'instant-client/src';
 import './index.css';
 
-const HeroBlock = () => {
+const Hero = () => {
   const { content } = useBlockState();
 
   return (
@@ -11,14 +11,18 @@ const HeroBlock = () => {
   );
 };
 
-export default defineBlock({
-  component: HeroBlock,
+const HeroBlock = defineBlock({
+  component: Hero,
   customizerSchema: {
-    fields: [{ type: 'text', name: 'Test color' }],
+    fields: {
+      color: { type: 'text' },
+    },
   },
   contentSchema: {
-    fields: [
-      { type: 'text', name: 'title', label: 'Title', preview: 'Hero title' },
-    ],
+    fields: {
+      title: { type: 'text', label: 'Title', preview: 'Hero title' },
+    },
   },
 });
+
+export default HeroBlock;

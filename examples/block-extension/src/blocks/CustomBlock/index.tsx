@@ -11,42 +11,39 @@ export default defineBlock({
     ],
   },
   customizerSchema: {
-    fields: [{ type: 'text', name: 'textColor', preview: '#A020F0' }],
+    fields: {
+      textColor: { type: 'text', preview: '#A020F0' },
+    },
   },
   contentSchema: {
-    fields: [
-      { type: 'text', name: 'title', preview: 'Title' },
-      {
+    fields: {
+      title: { type: 'text', preview: 'Title' },
+      select: {
         type: 'select',
-        name: 'select',
         preview: 'value1',
         options: [
           { value: 'value1', label: 'Option 1' },
           { value: 'value2', label: 'Option 2' },
         ],
       },
-      {
+      date: {
         type: 'date',
-        name: 'date',
         preview: '2022-12-12',
       },
-      {
+      image: {
         type: 'image',
-        name: 'image',
         preview:
           'https://images.unsplash.com/photo-1669962367460-00b711b2e3f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=80',
       },
-      {
+      link: {
         type: 'link',
-        name: 'link',
         preview: 'https://google.com',
       },
-      {
+      richText: {
         type: 'richText',
-        name: 'richText',
         preview: 'Rich text',
         toolbar: [],
       },
-    ],
+    },
   },
 });

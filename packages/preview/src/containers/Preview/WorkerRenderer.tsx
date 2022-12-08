@@ -176,15 +176,15 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
             cleanup,
           ]);
 
-          window.dispatchEvent(
-            new CustomEvent('instantAddToCart', {
-              bubbles: false,
-              cancelable: false,
-              detail: {
-                test: true,
-              },
-            }),
-          );
+          // window.dispatchEvent(
+          //   new CustomEvent('instantAddToCart', {
+          //     bubbles: false,
+          //     cancelable: false,
+          //     detail: {
+          //       test: true,
+          //     },
+          //   }),
+          // );
         },
         removeInstantEventListener: (type, listener, options) => {
           const cleanupIdx = eventListeners.findIndex((l) =>

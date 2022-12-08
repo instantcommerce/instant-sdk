@@ -57,12 +57,31 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
       if (message.isTrusted) {
         if (message.data?.type === 'addSchemas') {
           if (message.data?.block in blocksManifest) {
+            const contentSchema = {
+              ...(message.data.contentSchema || {}),
+              fields: Object.entries(
+                message.data.contentSchema?.fields || {},
+              ).map(([name, field]: any) => ({
+                ...field,
+                name,
+              })),
+            };
+            const customizerSchema = {
+              ...(message.data.customizerSchema || {}),
+              fields: Object.entries(
+                message.data.customizerSchema?.fields || {},
+              ).map(([name, field]: any) => ({
+                ...field,
+                name,
+              })),
+            };
+
             const newBlocksManifest = {
               ...blocksManifest,
               [message.data.block]: {
                 ...blocksManifest[message.data.block],
-                contentSchema: message.data.contentSchema,
-                customizerSchema: message.data.customizerSchema,
+                contentSchema,
+                customizerSchema,
               },
             };
 
@@ -72,17 +91,24 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
               setPreviewValues({
                 ...previewValues,
                 [message.data.block]: {
-                  content: message.data.contentSchema?.fields?.reduce(
-                    (all: any, current: DefineContentSchema['fields'][0]) => {
+                  content: contentSchema?.fields?.reduce(
+                    (
+                      all: any,
+                      current: DefineContentSchema['fields'][0] & {
+                        name: string;
+                      },
+                    ) => {
                       all[current.name] = current.preview;
                       return all;
                     },
                     {} as any,
                   ),
-                  customizer: message.data.customizerSchema?.fields?.reduce(
+                  customizer: customizerSchema?.fields?.reduce(
                     (
                       all: any,
-                      current: DefineCustomizerSchema['fields'][0],
+                      current: DefineCustomizerSchema['fields'][0] & {
+                        name: string;
+                      },
                     ) => {
                       all[current.name] = current.preview;
                       return all;
