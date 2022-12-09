@@ -12,8 +12,8 @@
     "build:cli": "turbo run build --filter=instant-cli",
     "codegen": "graphql-codegen -r dotenv/config",
     "commit": "npx git-emoji-cli",
-    "dev": "concurrently \"FORCE_DIR=./../../../examples/block-extension npm run dev:cli dev\" \"npm run dev:preview\"",
-    "dev:cli": "turbo run dev --filter=instant-cli && packages/cli/dist/cli.js",
+    "dev": "concurrently \"npm run dev:cli dev\" \"npm run dev:preview\"",
+    "dev:cli": "turbo run dev --filter=instant-cli && FORCE_DIR=./../../../examples/block-extension packages/cli/dist/cli.js",
     "dev:preview": "turbo run dev --filter=instant-sdk-preview",
     "prepare": "husky install"
   },

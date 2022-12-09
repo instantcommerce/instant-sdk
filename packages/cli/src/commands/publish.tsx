@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import { createReadStream, existsSync } from 'fs';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, render, Static, Text } from 'ink';
 import { build } from 'vite';
@@ -32,17 +33,19 @@ export const Publish = ({
 
   const config = useRef<ReturnType<typeof getProjectConfig>>();
 
-  const buildBlocks = async () => {
+  const buildBlocks = async (entry: string) => {
     const output = await build(
       await getViteConfig(
         'production',
         {
           logLevel: 'silent',
           build: {
-            outDir: 'dist',
+            outDir: `dist/blocks/${entry}`,
+            manifest: true,
           },
         },
         config.current!.get(`blocks`),
+        entry,
       ),
     );
 
@@ -54,111 +57,116 @@ export const Publish = ({
   };
 
   const buildAndPublish = async () => {
-    let buildOutput: Awaited<ReturnType<typeof buildBlocks>>;
+    let buildOutputs: Awaited<ReturnType<typeof buildBlocks>>[] = [];
 
-    try {
-      buildOutput = await buildBlocks();
-      setBuildSuccess(true);
-    } catch (err: any) {
-      setError(err?.toString?.());
-      return;
-    }
+    const entries = getBlockFiles();
 
-    let manifest;
-
-    try {
-      const manifestRaw = buildOutput.find(
-        ({ fileName }) => fileName === 'manifest.json',
-      );
-
-      if (!manifestRaw) {
-        throw new Error('No manifest found');
+    for (let i = 0; i < entries.length; i += 1) {
+      try {
+        buildOutputs.push(await buildBlocks(entries[i]!));
+      } catch (err: any) {
+        setError(err?.toString?.());
+        return;
       }
-
-      manifest = JSON.parse(
-        // @ts-ignore
-        manifestRaw.source,
-      );
-    } catch (err: any) {
-      setError(err?.toString?.());
-      return;
     }
 
-    for (const [, entry] of Object.entries(manifest) as any) {
-      if (entry.isEntry) {
-        const blockDir = path.dirname(entry.file);
-        const blockName = getBlockNameFromPath(entry.file);
-        let blockIdToUpdate: string;
+    setBuildSuccess(true);
 
-        if (!blocks?.includes(blockName)) {
-          continue;
+    for (let i = 0; i < buildOutputs.length; i += 1) {
+      const buildOutput = buildOutputs[i]!;
+      let manifest;
+
+      try {
+        const manifestRaw = buildOutput.find(
+          ({ fileName }) => fileName === 'manifest.json',
+        );
+
+        if (!manifestRaw) {
+          throw new Error('No manifest found');
         }
 
-        try {
-          const customizerSchema = parseCustomizerSchema(
-            JSON.parse(
-              buildOutput.find(
-                ({ fileName }) =>
-                  fileName === path.join(blockDir, 'customizerSchema.json'),
-                // @ts-ignore
-              )?.source,
-            ),
-          );
-          const contentSchema = parseContentSchema(
-            JSON.parse(
-              buildOutput.find(
-                ({ fileName }) =>
-                  fileName === path.join(blockDir, 'contentSchema.json'),
-                // @ts-ignore
-              )?.source,
-            ),
-          );
-          const blockFile = createReadStream(
-            path.join(dirname, 'dist', entry.file),
-          );
+        manifest = JSON.parse(
+          // @ts-ignore
+          manifestRaw.source,
+        );
+      } catch (err: any) {
+        setError(err?.toString?.());
+        return;
+      }
 
-          const existingBlockConfig = config.current!.get(
-            `blocks.${blockName}`,
-          ) as { id: string };
+      for (const [, entry] of Object.entries(manifest) as any) {
+        if (entry.isEntry) {
+          const blockName = getBlockNameFromPath(entry.src);
+          let blockIdToUpdate: string;
 
-          blockIdToUpdate = existingBlockConfig.id;
-
-          const publishedBlock = await apiSdk.publishBlockVersion(
-            {
-              input: {
-                id: blockIdToUpdate,
-                code: blockFile,
-                contentSchema,
-                customizerSchema,
-              },
-            },
-            {
-              'x-instant-organization': config.current!.get('organization')!,
-            },
-          );
-
-          setUploadedBlocks((previous) => [
-            ...previous,
-            publishedBlock.publishBlockVersion,
-          ]);
-        } catch (err: any) {
-          /** No changes to block detected */
-          if (extractApiError(err)?.code === 422) {
-            setUploadedBlocks((previous) => [
-              ...previous,
-              {
-                id: blockIdToUpdate,
-                name: blockName,
-                isUnchanged: true,
-              },
-            ]);
+          if (!blocks?.includes(blockName)) {
             continue;
           }
 
-          setError(
-            `Error publishing block "${blockName}" (${err?.toString?.()})`,
-          );
-          return;
+          try {
+            const customizerSchema = parseCustomizerSchema(
+              JSON.parse(
+                buildOutput.find(
+                  ({ fileName }) => fileName === 'customizerSchema.json',
+                  // @ts-ignore
+                )?.source,
+              ),
+            );
+            const contentSchema = parseContentSchema(
+              JSON.parse(
+                buildOutput.find(
+                  ({ fileName }) => fileName === 'contentSchema.json',
+                  // @ts-ignore
+                )?.source,
+              ),
+            );
+            const blockFile = createReadStream(
+              path.join(dirname, 'dist/blocks', blockName, entry.file),
+            );
+
+            const existingBlockConfig = config.current!.get(
+              `blocks.${blockName}`,
+            ) as { id: string };
+
+            blockIdToUpdate = existingBlockConfig.id;
+
+            const publishedBlock = await apiSdk.publishBlockVersion(
+              {
+                input: {
+                  id: blockIdToUpdate,
+                  code: blockFile,
+                  contentSchema,
+                  customizerSchema,
+                },
+              },
+              {
+                'x-instant-organization': config.current!.get('organization')!,
+              },
+            );
+
+            setUploadedBlocks((previous) => [
+              ...previous,
+              publishedBlock.publishBlockVersion,
+            ]);
+          } catch (err: any) {
+            /** No changes to block detected */
+            if (extractApiError(err)?.code === 422) {
+              setUploadedBlocks((previous) => [
+                ...previous,
+                {
+                  id: blockIdToUpdate,
+                  name: blockName,
+                  isUnchanged: true,
+                },
+              ]);
+              continue;
+            }
+
+            setError(
+              `Error publishing block "${blockName}" (${err?.toString?.()})`,
+            );
+            return;
+          }
         }
       }
     }
@@ -207,6 +215,10 @@ export const Publish = ({
 
       return true;
     });
+
+    if (error) {
+      return;
+    }
 
     if (providedBlockNames) {
       for (const providedBlockName of providedBlockNames) {
