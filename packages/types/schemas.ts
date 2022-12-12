@@ -11,6 +11,8 @@ import {
   CustomizerSchemaSelectField,
   CustomizerSchemaTextField,
   CustomizerSchemaField,
+  CustomizerSchemaNumberField,
+  CustomizerSchemaColorField,
 } from './api';
 
 type EnhancedContentSchemaField<
@@ -70,13 +72,23 @@ export interface DefineContentSchema {
 }
 
 type EnhancedCustomizerSchemaField<
-  T extends CustomizerSchemaField,
+  T extends Omit<CustomizerSchemaField, 'decimals'>,
   Type,
 > = Partial<Pick<T, 'isRequired'>> &
   Omit<T, '__typename' | 'name' | 'isRequired'> & {
     preview?: string;
     type: Type;
   };
+
+type CustomizerColorField = EnhancedCustomizerSchemaField<
+  CustomizerSchemaColorField,
+  'color'
+>;
+
+type CustomizerNumberField = EnhancedCustomizerSchemaField<
+  Omit<CustomizerSchemaNumberField, 'decimals'> & { decimals?: number },
+  'number'
+>;
 
 type CustomizerSelectField = EnhancedCustomizerSchemaField<
   CustomizerSchemaSelectField,
@@ -89,6 +101,8 @@ type CustomizerTextField = EnhancedCustomizerSchemaField<
 >;
 
 export type CustomizerSchemaInputField =
+  | CustomizerColorField
+  | CustomizerNumberField
   | CustomizerSelectField
   | CustomizerTextField;
 

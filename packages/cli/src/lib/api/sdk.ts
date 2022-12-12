@@ -260,6 +260,7 @@ export type Block = {
   name: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   version?: Maybe<BlockVersion>;
+  /** Does not support pagination currently. */
   versions: Array<BlockVersion>;
 };
 
@@ -1161,10 +1162,30 @@ export type CustomizerSchema = {
   fields: Array<CustomizerSchemaField>;
 };
 
-export type CustomizerSchemaField = CustomizerSchemaSelectField | CustomizerSchemaTextField;
+export type CustomizerSchemaColorField = {
+  __typename?: 'CustomizerSchemaColorField';
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+};
+
+export type CustomizerSchemaField = CustomizerSchemaColorField | CustomizerSchemaNumberField | CustomizerSchemaSelectField | CustomizerSchemaTextField;
 
 export type CustomizerSchemaInput = {
   fields: Array<Scalars['Object']>;
+};
+
+export type CustomizerSchemaNumberField = {
+  __typename?: 'CustomizerSchemaNumberField';
+  /** Allowed number of decimals. */
+  decimals: Scalars['Float'];
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  max?: Maybe<Scalars['Float']>;
+  min?: Maybe<Scalars['Float']>;
+  name: Scalars['String'];
 };
 
 export type CustomizerSchemaSelectField = {
@@ -3801,11 +3822,11 @@ export type PublicStore = {
 };
 
 export type PublishBlockVersionInput = {
+  /** ID of the block */
+  blockId: Scalars['String'];
   code: Scalars['Upload'];
   contentSchema: ContentSchemaInput;
   customizerSchema: CustomizerSchemaInput;
-  /** ID of the block */
-  id: Scalars['String'];
 };
 
 export type Query = {

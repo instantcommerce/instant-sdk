@@ -78,7 +78,12 @@ export const CustomBlock = () => {
   // }
 
   return (
-    <Box className="shadow-lg text-orange-600">
+    <Box
+      className={[
+        'shadow-lg text-orange-600',
+        customizer.padding === 'lg' ? 'p-10' : 'p-3',
+      ].join(' ')}
+    >
       Title: <b style={{ color: colors.primary.s700 }}>{content.title}</b>
       <a href="https://google.com">Google</a>
       Locale: {request.locale}

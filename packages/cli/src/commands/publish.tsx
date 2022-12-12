@@ -133,7 +133,7 @@ export const Publish = ({
             const publishedBlock = await apiSdk.publishBlockVersion(
               {
                 input: {
-                  id: blockIdToUpdate,
+                  blockId: blockIdToUpdate,
                   code: blockFile,
                   contentSchema,
                   customizerSchema,

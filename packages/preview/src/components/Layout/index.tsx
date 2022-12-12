@@ -11,7 +11,6 @@ import {
   WarningCircle,
 } from 'phosphor-react';
 import { twJoin, twMerge } from 'tailwind-merge';
-import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import {
   Button,
   ColorInput,
@@ -28,7 +27,11 @@ import {
   PreviewWrapper,
   IFRAME_DEFAULT_SIZE,
 } from '..';
-import { SchemaTypes } from '../BlocksProvider/context';
+import {
+  BlockContentSchema,
+  BlockCustomizerSchema,
+  SchemaTypes,
+} from '../BlocksProvider/context';
 import { scales } from '../ConfigProvider';
 import { SideBar } from './SideBar';
 import { TopBar } from './TopBar';
@@ -73,8 +76,8 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   const renderField = (
     schema: SchemaTypes,
     field:
-      | DefineContentSchema['fields'][0]
-      | DefineCustomizerSchema['fields'][0],
+      | BlockContentSchema['fields'][number]
+      | BlockCustomizerSchema['fields'][number],
   ) => {
     const baseProps = {
       label: field.label || humanizeString(field.name),
@@ -83,24 +86,28 @@ export const Layout = ({ children }: { children: ReactNode }) => {
       name: field.name,
       defaultValue: field.preview,
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
-        console.log(e.target.value);
         setPreviewValue(schema, field.name, e.target.value);
       },
     };
 
     switch (field.type) {
       case 'text':
-        return <Input {...baseProps} />;
+        return (
+          <Input
+            {...baseProps}
+            maxLength={field.maxLength !== null ? field.maxLength : undefined}
+          />
+        );
 
-      // case 'color':
-      //   return (
-      //     <ColorInput
-      //       {...baseProps}
-      //       onChange={(value: string) => {
-      //         setPreviewValue(schema, field.name, value);
-      //       }}
-      //     />
-      //   );
+      case 'color':
+        return (
+          <ColorInput
+            {...baseProps}
+            onChange={(value: string) => {
+              setPreviewValue(schema, field.name, value);
+            }}
+          />
+        );
 
       case 'select':
         return (
@@ -118,7 +125,23 @@ export const Layout = ({ children }: { children: ReactNode }) => {
         return <ImageInput {...baseProps} />;
 
       case 'date':
-        return <Input type="date" {...baseProps} />;
+        return (
+          <Input
+            type={field.withTime ? 'datetime-local' : 'date'}
+            {...baseProps}
+          />
+        );
+
+      case 'number':
+        return (
+          <Input
+            type="number"
+            {...baseProps}
+            min={field.min !== null ? field.min : undefined}
+            max={field.max !== null ? field.max : undefined}
+            decimals={field.decimals}
+          />
+        );
 
       case 'richText':
         return <RichText {...baseProps} />;

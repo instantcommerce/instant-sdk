@@ -12,7 +12,17 @@ export default defineBlock({
   },
   customizerSchema: {
     fields: {
-      textColor: { type: 'text', preview: '#A020F0' },
+      number: { type: 'number', min: 2, max: 80, decimals: 3 },
+      padding: {
+        type: 'select',
+        options: [
+          { label: 'Small', value: 'sm' },
+          { label: 'Large', value: 'lg' },
+        ],
+        preview: 'sm',
+      },
+      textColor: { type: 'color', preview: '#A020F0' },
+      text: { type: 'text', maxLength: 1 },
     },
   },
   contentSchema: {
@@ -28,7 +38,8 @@ export default defineBlock({
       },
       date: {
         type: 'date',
-        preview: '2022-12-12',
+        preview: '2022-12-12 08:12',
+        withTime: true,
       },
       image: {
         type: 'image',
