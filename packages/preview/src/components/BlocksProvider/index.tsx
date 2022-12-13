@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import set from 'lodash/set';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import { useConfig } from '../ConfigProvider';
 
@@ -126,16 +127,22 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
           isPreviewValuesDirty.current = true;
         }
 
-        setPreviewValues((currentPreviewValues) => ({
-          ...currentPreviewValues,
-          [selectedBlock]: {
-            ...(currentPreviewValues[selectedBlock] || {}),
-            [schema]: {
-              ...(currentPreviewValues[selectedBlock]?.[schema] || {}),
-              [name]: value,
+        setPreviewValues((currentPreviewValues) => {
+          const obj = currentPreviewValues[selectedBlock]?.[schema] || {};
+          set(obj, name, value);
+
+          const previewValuesCopy = {
+            ...currentPreviewValues,
+            [selectedBlock]: {
+              ...(currentPreviewValues[selectedBlock] || {}),
+              [schema]: {
+                ...obj,
+              },
             },
-          },
-        }));
+          };
+
+          return previewValuesCopy;
+        });
       }
     },
     [selectedBlock],
@@ -153,6 +160,7 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
       selectedBlock,
       setSelectedBlock,
       setPreviewValue,
+      previewValues,
     };
   }, [
     blocksManifest,
@@ -161,6 +169,7 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
     selectedBlock,
     setSelectedBlock,
     setPreviewValue,
+    previewValues,
   ]);
 
   return (

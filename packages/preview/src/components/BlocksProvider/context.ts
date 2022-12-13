@@ -17,7 +17,8 @@ export interface BlocksContextValue {
   reloadPreview(): void;
   selectedBlock: string | null;
   setSelectedBlock(block: string): void;
-  setPreviewValue(schema: SchemaTypes, name: string, value: string): void;
+  setPreviewValue(schema: SchemaTypes, name: string, value: any): void;
+  previewValues: Record<string, Record<SchemaTypes, Record<string, string>>>;
 }
 
 export const BlocksContext = createContext<BlocksContextValue | null>(null);

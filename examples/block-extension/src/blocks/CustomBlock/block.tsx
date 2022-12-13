@@ -77,6 +77,8 @@ export const CustomBlock = () => {
   //   return <></>;
   // }
 
+  console.log(content, 'cont');
+
   return (
     <Box className="shadow-lg text-orange-600">
       Title: <b style={{ color: colors.primary.s700 }}>{content.title}</b>
@@ -89,9 +91,6 @@ export const CustomBlock = () => {
           <Box key={node.id}>{node.title}</Box>
         ))} */}
 
-        {content?.buttons?.map((btn) => (
-          <button>{btn.text}</button>
-        ))}
         <button
           type="button"
           onClick={() => {
@@ -106,6 +105,41 @@ export const CustomBlock = () => {
       <Box className="mt-4">{content.link}</Box>
       <Box className="mt-4">{content.richText}</Box>
       <img alt="test" src={content.image} />
+      <div className="flex flex-col gap-5 p-5">
+        {content?.cards?.map(({ preview }) => (
+          <div className="bg-white w-full rounded shadow-lg overflow-hidden">
+            {!!preview?.cardImage && <img src={preview?.cardImage} />}
+
+            <div className="bg-white p-5 flex flex-col gap-6">
+              {!!preview?.cardTitle && (
+                <h3 className="text-purple-700 text-md font-bold">
+                  {preview?.cardTitle}
+                </h3>
+              )}
+
+              {!!preview?.cardButtons?.length && (
+                <div className="bg-white flex flex-wrap gap-3">
+                  {preview?.cardButtons?.map(
+                    ({
+                      preview: buttonPreview,
+                    }: {
+                      preview: { link: string; text: string };
+                    }) =>
+                      buttonPreview?.link || buttonPreview?.text ? (
+                        <a
+                          className="bg-purple-300 text-purple-800 text-xs px-5 py-3 no-underline"
+                          href={buttonPreview?.link}
+                        >
+                          {buttonPreview?.text}
+                        </a>
+                      ) : null,
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
     </Box>
   );
 };

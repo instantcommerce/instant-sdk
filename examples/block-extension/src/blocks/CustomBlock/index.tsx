@@ -49,69 +49,80 @@ export default defineBlock({
       },
       {
         type: 'subSchema',
-        name: 'heroSlider',
-        label: 'Hero slider',
-        allowed: ['HeroContent', 'Button'],
+        name: 'cards',
+        label: 'Cards',
+        allowed: ['Card'],
         isTranslatable: true,
         isRequired: false,
-        max: 2,
+        max: 3,
         preview: [
           {
-            name: 'HeroContent',
+            name: 'Card',
             preview: {
-              heroContentTitle: 'title',
+              cardTitle: 'Card title',
+              cardImage:
+                'https://a.storyblok.com/f/145828/5000x3333/564e281ca1/force-majeure-du8abwm5z2g-unsplash.jpg',
+              cardButtons: [
+                {
+                  name: 'Button',
+                  preview: {
+                    text: 'Button',
+                    link: 'https://a.storyblok.com/f/145828/5000x3333/564e281ca1/force-majeure-du8abwm5z2g-unsplash.jpg',
+                  },
+                },
+              ],
             },
           },
-          { name: 'Button' },
+        ],
+      },
+    ],
+    subschemas: [
+      {
+        name: 'Button',
+        fields: [
+          {
+            type: 'text',
+            name: 'text',
+            label: 'Text',
+            isTranslatable: true,
+            isRequired: true,
+            maxLength: 40,
+          },
+          {
+            type: 'link',
+            name: 'link',
+            label: 'Link',
+            isTranslatable: true,
+            isRequired: true,
+          },
+        ],
+      },
+      {
+        name: 'Card',
+        fields: [
+          {
+            type: 'image',
+            name: 'cardImage',
+            label: 'Image',
+            isRequired: true,
+          },
+          {
+            type: 'text',
+            name: 'cardTitle',
+            label: 'Title',
+            isTranslatable: true,
+            isRequired: true,
+          },
+          {
+            type: 'subSchema',
+            name: 'cardButtons',
+            label: 'Buttons',
+            isRequired: false,
+            max: 2,
+            allowed: ['Button'],
+          },
         ],
       },
     ],
   },
-  subschemas: [
-    {
-      name: 'Button',
-      fields: [
-        {
-          type: 'text',
-          name: 'text',
-          label: 'Text',
-          isTranslatable: true,
-          isRequired: true,
-          maxLength: 40,
-        },
-        {
-          type: 'link',
-          name: 'link',
-          label: 'Link',
-          isTranslatable: true,
-          isRequired: true,
-        },
-      ],
-    },
-    {
-      name: 'HeroContent',
-      fields: [
-        {
-          type: 'image',
-          name: 'heroContentImage',
-          label: 'Image',
-          isRequired: true,
-        },
-        {
-          type: 'text',
-          name: 'heroContentTitle',
-          label: 'Title',
-          isTranslatable: true,
-          isRequired: true,
-        },
-        {
-          type: 'subSchema',
-          name: 'heroContentButtons',
-          label: 'Buttons',
-          isRequired: false,
-          allowed: ['Button'],
-        },
-      ],
-    },
-  ],
 });

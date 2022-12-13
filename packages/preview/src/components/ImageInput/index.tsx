@@ -7,6 +7,7 @@ export const ImageInput = ({
   labelClassName,
   onChange,
   defaultValue,
+  value,
   id,
   name,
   ...props
@@ -32,6 +33,7 @@ export const ImageInput = ({
           type="url"
           className="w-full h-full appearance-none px-2 focus:outline-none"
           defaultValue={defaultValue}
+          value={value}
           onChange={onChange}
         />
       </div>
