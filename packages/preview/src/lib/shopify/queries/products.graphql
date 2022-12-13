@@ -1,0 +1,43 @@
+query products(
+  $first: Int!
+  $last: Int
+  $before: String
+  $after: String
+  $sortKey: ProductSortKeys = BEST_SELLING
+  $reverse: Boolean
+  $query: String
+) {
+  products(
+    first: $first
+    last: $last
+    before: $before
+    after: $after
+    sortKey: $sortKey
+    reverse: $reverse
+    query: $query
+  ) {
+    edges {
+      cursor
+      node {
+        id
+        title
+        handle
+        images(first: 1) {
+          edges {
+            node {
+              id
+              url
+              altText
+              width
+              height
+            }
+          }
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+    }
+  }
+}

@@ -1,5 +1,5 @@
 projects:
-  default:
+  cli:
     schema:
       - http://localhost:4000/graphql
     documents: "./packages/cli/src/lib/api/**/*.graphql"
@@ -22,3 +22,31 @@ projects:
               - typescript-graphql-request
             config:
               useTypeImports: true
+
+  preview:
+    schema:
+      - https://${VITE_SAMPLE_SHOPIFY_SHOP_ORIGIN}/api/2022-07/graphql.json:
+          headers:
+            X-Shopify-Storefront-Access-Token: ${VITE_SAMPLE_SHOPIFY_STOREFRONT_ACCESS_TOKEN}
+    documents: ./packages/preview/src/lib/shopify/**/*.graphql
+    extensions:
+      codegen:
+        require:
+          - dotenv/config
+        generates:
+          ./packages/preview/src/lib/shopify/schema.json:
+            plugins:
+              - introspection
+            config:
+              minify: true
+          ./packages/preview/src/lib/shopify/hooks.ts:
+            plugins:
+              - typescript
+              - typescript-operations
+              - typescript-react-query
+            config:
+              exposeQueryKeys: true
+              exposeFetcher: true
+              fetcher:
+                func: "./fetcher#useShopifyFetcher"
+                isReactHook: true

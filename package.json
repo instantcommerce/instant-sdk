@@ -10,7 +10,9 @@
   "scripts": {
     "build": "turbo run build",
     "build:cli": "turbo run build --filter=instant-cli",
-    "codegen": "graphql-codegen -r dotenv/config",
+    "codegen": "npm run codegen:cli && npm run codegen:preview",
+    "codegen:cli": "graphql-codegen -r dotenv/config --project cli",
+    "codegen:preview": "cross-env DOTENV_CONFIG_PATH=packages/preview/.env.local graphql-codegen -r dotenv/config --project preview",
     "commit": "npx git-emoji-cli",
     "dev": "concurrently \"npm run dev:cli dev\" \"npm run dev:preview\"",
     "dev:cli": "turbo run dev --filter=instant-cli && FORCE_DIR=./../../../examples/block-extension packages/cli/dist/cli.js",
@@ -47,6 +49,7 @@
     "@typescript-eslint/eslint-plugin": "5.17.0",
     "@typescript-eslint/parser": "5.17.0",
     "concurrently": "7.6.0",
+    "cross-env": "7.0.3",
     "css-mediaquery": "^0.1.2",
     "dotenv": "^16.0.3",
     "eslint": "^8.28.0",
