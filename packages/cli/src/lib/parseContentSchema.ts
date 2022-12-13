@@ -1,10 +1,11 @@
 import type { ContentSchemaInput } from 'types/api';
 import type { DefineContentSchema } from 'types/schemas';
+import { schemaFieldTypeMapping } from './schemaFieldTypeMapping';
 
 const formatField = (field: DefineContentSchema['fields'][number]) => ({
   ...field,
   preview: undefined,
-  type: field.type.toUpperCase(),
+  type: schemaFieldTypeMapping[field.type],
   /** Set optional booleans */
   isRequired: !!field.isRequired,
   isTranslatable: !!field.isTranslatable,
@@ -21,6 +22,7 @@ const formatField = (field: DefineContentSchema['fields'][number]) => ({
  */
 export const parseContentSchema = (
   input: DefineContentSchema,
+  blockName: string,
 ): ContentSchemaInput => {
   try {
     const fields = Object.entries(input.fields).map(([name, field]: any) =>
@@ -36,6 +38,7 @@ export const parseContentSchema = (
     /** @todo remove when API type is correct */
     // @ts-ignore
     return {
+      name: blockName,
       ...input,
       fields,
       subschemas,

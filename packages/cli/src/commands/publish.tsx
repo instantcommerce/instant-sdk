@@ -119,6 +119,7 @@ export const Publish = ({
                   // @ts-ignore
                 )?.source,
               ),
+              blockName,
             );
             const blockFile = createReadStream(
               path.join(dirname, 'dist/blocks', blockName, entry.file),

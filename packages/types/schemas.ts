@@ -109,3 +109,16 @@ export type CustomizerSchemaInputField =
 export interface DefineCustomizerSchema {
   fields: Record<string, CustomizerSchemaInputField>;
 }
+
+/** @todo get from codegen backend */
+export enum SchemaFieldType {
+  COLOR = 'COLOR',
+  DATE = 'DATE',
+  IMAGE = 'IMAGE',
+  LINK = 'LINK',
+  NUMBER = 'NUMBER',
+  RICH_TEXT = 'RICH_TEXT',
+  SELECT = 'SELECT',
+  SUBSCHEMA = 'SUBSCHEMA',
+  TEXT = 'TEXT',
+}

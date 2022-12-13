@@ -1,10 +1,11 @@
 import type { CustomizerSchemaInput } from 'types/api';
 import type { DefineCustomizerSchema } from 'types/schemas';
+import { schemaFieldTypeMapping } from './schemaFieldTypeMapping';
 
 const formatField = (field: DefineCustomizerSchema['fields'][number]) => ({
   ...field,
   preview: undefined,
-  type: field.type.toUpperCase(),
+  type: schemaFieldTypeMapping[field.type],
   /** Set optional booleans */
   isRequired: !!field.isRequired,
 });
