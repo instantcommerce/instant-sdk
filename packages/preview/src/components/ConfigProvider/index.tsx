@@ -66,10 +66,14 @@ export const scales = [
 
 export const ConfigProvider = ({ children }: { children: ReactNode }) => {
   const [leftPanelVisible, setLeftPanelVisible] = useState(
-    !!window.__INITIAL_USER_CONFIG__?.leftPanel,
+    typeof window.__INITIAL_USER_CONFIG__?.leftPanel !== 'undefined'
+      ? !!window.__INITIAL_USER_CONFIG__?.leftPanel
+      : true,
   );
   const [rightPanelVisible, setRightPanelVisible] = useState(
-    !!window.__INITIAL_USER_CONFIG__?.rightPanel,
+    typeof window.__INITIAL_USER_CONFIG__?.rightPanel !== 'undefined'
+      ? !!window.__INITIAL_USER_CONFIG__?.rightPanel
+      : true,
   );
   const [darkModeEnabled, setDarkModeEnabled] = useState(
     !!window.__INITIAL_USER_CONFIG__?.darkMode,

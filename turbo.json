@@ -18,7 +18,8 @@
       "dependsOn": [
         "postcss-plugin-instant-sdk#build",
         "vite-plugin-instant-sdk#build",
-        "instant-sdk-preview#build"
+        "instant-sdk-preview#build",
+        "instant-client#build"
       ]
     }
   }

@@ -10,7 +10,7 @@ import {
 } from '../Input/InputWrapper';
 
 interface ColorInputProps {
-  defaultValue: string;
+  defaultValue?: string;
   onChange(value: string): void;
 }
 
@@ -64,11 +64,6 @@ export const ColorInput = ({
           onFocus={() => {
             if (!showPicker) {
               setShowPicker(true);
-            }
-          }}
-          onBlur={() => {
-            if (showPicker) {
-              setShowPicker(false);
             }
           }}
           className={twMerge(

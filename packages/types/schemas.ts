@@ -11,13 +11,16 @@ import {
   CustomizerSchemaSelectField,
   CustomizerSchemaTextField,
   CustomizerSchemaField,
+  CustomizerSchemaNumberField,
+  CustomizerSchemaColorField,
+  ContentSchemaSubschemaField,
 } from './api';
 
 type EnhancedContentSchemaField<
   T extends Omit<ContentSchemaField, 'withTime'>,
   Type,
 > = Partial<Pick<T, 'isRequired' | 'isTranslatable'>> &
-  Omit<T, '__typename' | 'isRequired' | 'isTranslatable'> & {
+  Omit<T, '__typename' | 'name' | 'isRequired' | 'isTranslatable'> & {
     preview?: string;
     type: Type;
   };
@@ -47,36 +50,52 @@ type ContentSelectField = EnhancedContentSchemaField<
   'select'
 >;
 
+type ContentSubSchemaField = EnhancedContentSchemaField<
+  ContentSchemaSubschemaField,
+  'subSchema'
+>;
+
 type ContentTextField = EnhancedContentSchemaField<
   ContentSchemaTextField,
   'text'
 >;
 
-type ContentSchemaInputField =
+export type ContentSchemaInputField =
   | ContentDateField
   | ContentImageField
   | ContentRichTextField
   | ContentSelectField
+  | ContentSubSchemaField
   | ContentTextField
   | ContentLinkField;
 
 type ContentSubschema = Pick<ContentSubschemaInput, 'displayName' | 'name'> & {
-  fields: Array<ContentSchemaInputField>;
+  fields: Record<string, ContentSchemaInputField>;
 };
 
 export interface DefineContentSchema {
-  fields: Array<ContentSchemaInputField>;
+  fields: Record<string, ContentSchemaInputField>;
   subschemas?: InputMaybe<Array<ContentSubschema>>;
 }
 
 type EnhancedCustomizerSchemaField<
-  T extends CustomizerSchemaField,
+  T extends Omit<CustomizerSchemaField, 'decimals'>,
   Type,
 > = Partial<Pick<T, 'isRequired'>> &
-  Omit<T, '__typename' | 'isRequired'> & {
+  Omit<T, '__typename' | 'name' | 'isRequired'> & {
     preview?: string;
     type: Type;
   };
+
+type CustomizerColorField = EnhancedCustomizerSchemaField<
+  CustomizerSchemaColorField,
+  'color'
+>;
+
+type CustomizerNumberField = EnhancedCustomizerSchemaField<
+  Omit<CustomizerSchemaNumberField, 'decimals'> & { decimals?: number },
+  'number'
+>;
 
 type CustomizerSelectField = EnhancedCustomizerSchemaField<
   CustomizerSchemaSelectField,
@@ -88,8 +107,25 @@ type CustomizerTextField = EnhancedCustomizerSchemaField<
   'text'
 >;
 
-type CustomizerSchemaInputField = CustomizerSelectField | CustomizerTextField;
+export type CustomizerSchemaInputField =
+  | CustomizerColorField
+  | CustomizerNumberField
+  | CustomizerSelectField
+  | CustomizerTextField;
 
 export interface DefineCustomizerSchema {
-  fields: Array<CustomizerSchemaInputField>;
+  fields: Record<string, CustomizerSchemaInputField>;
+}
+
+/** @todo get from codegen backend */
+export enum SchemaFieldType {
+  COLOR = 'COLOR',
+  DATE = 'DATE',
+  IMAGE = 'IMAGE',
+  LINK = 'LINK',
+  NUMBER = 'NUMBER',
+  RICH_TEXT = 'RICH_TEXT',
+  SELECT = 'SELECT',
+  SUBSCHEMA = 'SUBSCHEMA',
+  TEXT = 'TEXT',
 }
