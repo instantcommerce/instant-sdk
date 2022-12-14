@@ -47,9 +47,13 @@ export const RightPanel = () => {
 
   const { rightPanelVisible } = useConfig();
 
-  const blockSubschemas = selectedBlock
-    ? blocksManifest?.[selectedBlock]?.contentSchema?.subschemas
-    : [];
+  const blockSubschemas = useMemo(
+    () =>
+      selectedBlock
+        ? blocksManifest?.[selectedBlock]?.contentSchema?.subschemas
+        : [],
+    [selectedBlock, blocksManifest],
+  );
 
   const subschemas = useMemo(
     () =>
@@ -58,7 +62,7 @@ export const RightPanel = () => {
 
         return acc;
       }, {}),
-    [blocksManifest, selectedBlock],
+    [blockSubschemas],
   );
 
   const subschemaOptions = useMemo(
@@ -67,7 +71,7 @@ export const RightPanel = () => {
         (item) =>
           !allowedSchemas?.length || allowedSchemas?.includes(item.name),
       ),
-    [allowedSchemas, selectedBlock, blocksManifest, subSchema],
+    [allowedSchemas, blockSubschemas],
   );
 
   const previewContent = get(
@@ -104,6 +108,15 @@ export const RightPanel = () => {
       }
     }
   };
+
+  console.log(
+    previewValues,
+    subschemaOptions,
+    subschemas,
+    subSchema,
+    breadCrumbs,
+    'EVERYTHING',
+  );
 
   const renderField = (
     schema: SchemaTypes,
@@ -177,6 +190,8 @@ export const RightPanel = () => {
         const fieldPreview = selectedBlock
           ? get(previewValues?.[selectedBlock]?.content, field.name, [])
           : [];
+
+        console.log(fieldPreview, field.name, 'NAME');
 
         return (
           <div className="flex flex-col gap-1.5">

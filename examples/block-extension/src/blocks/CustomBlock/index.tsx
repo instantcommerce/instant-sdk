@@ -49,25 +49,32 @@ export default defineBlock({
       },
       {
         type: 'subSchema',
-        name: 'cards',
-        label: 'Cards',
-        allowed: ['Card'],
+        name: 'cardsGrid',
+        label: 'Cards grid',
+        allowed: ['Cards'],
         isTranslatable: true,
         isRequired: false,
         max: 3,
         preview: [
           {
-            name: 'Card',
+            name: 'Cards',
             preview: {
-              cardTitle: 'Card title',
-              cardImage:
-                'https://a.storyblok.com/f/145828/5000x3333/564e281ca1/force-majeure-du8abwm5z2g-unsplash.jpg',
-              cardButtons: [
+              cardItems: [
                 {
-                  name: 'Button',
+                  name: 'Card',
                   preview: {
-                    text: 'Button',
-                    link: 'https://a.storyblok.com/f/145828/5000x3333/564e281ca1/force-majeure-du8abwm5z2g-unsplash.jpg',
+                    cardTitle: 'Card title',
+                    cardImage:
+                      'https://a.storyblok.com/f/145828/5000x3333/564e281ca1/force-majeure-du8abwm5z2g-unsplash.jpg',
+                    cardButtons: [
+                      {
+                        name: 'Button',
+                        preview: {
+                          text: 'Button',
+                          link: 'https://a.storyblok.com/f/145828/5000x3333/564e281ca1/force-majeure-du8abwm5z2g-unsplash.jpg',
+                        },
+                      },
+                    ],
                   },
                 },
               ],
@@ -120,6 +127,19 @@ export default defineBlock({
             isRequired: false,
             max: 2,
             allowed: ['Button'],
+          },
+        ],
+      },
+      {
+        name: 'Cards',
+        fields: [
+          {
+            type: 'subSchema',
+            name: 'cardItems',
+            label: 'Cards',
+            isRequired: false,
+            max: 3,
+            allowed: ['Card'],
           },
         ],
       },

@@ -129,6 +129,7 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
 
         setPreviewValues((currentPreviewValues) => {
           const obj = currentPreviewValues[selectedBlock]?.[schema] || {};
+          console.log(obj, name, value, 'stuffff');
           set(obj, name, value);
 
           const previewValuesCopy = {
