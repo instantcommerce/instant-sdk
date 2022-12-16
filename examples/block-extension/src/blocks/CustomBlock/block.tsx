@@ -77,8 +77,6 @@ export const CustomBlock = () => {
   //   return <></>;
   // }
 
-  console.log(content, 'cont');
-
   return (
     <Box
       className={[
