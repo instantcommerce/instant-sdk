@@ -7,12 +7,12 @@ import {
 } from './InputWrapper';
 
 export type InputProps = InputHTMLAttributes<HTMLInputElement> &
-  InputWrapperProps & { decimals?: number };
+  InputWrapperProps & { fractionDigits?: number };
 
 export const inputBaseStyles =
   'rounded flex items-center transition-colors text-xs text-gray-800 h-8 px-3 border border-gray-200 w-full';
 
-export const Input = ({ className, decimals, ...props }: InputProps) => {
+export const Input = ({ className, fractionDigits, ...props }: InputProps) => {
   const generatedId = useId();
   const id = props?.id || generatedId;
   const { wrapperProps, inputProps } = splitInputProps({ ...props, id });
@@ -32,11 +32,11 @@ export const Input = ({ className, decimals, ...props }: InputProps) => {
               newValue = Math.min(Number(inputProps.max), newValue);
             }
 
-            const valueAsString = newValue.toFixed(decimals || 0);
+            const valueAsString = newValue.toFixed(fractionDigits || 0);
 
             setValue(valueAsString);
           },
-          step: decimals ? 0.1 ** decimals : 1,
+          step: fractionDigits ? 0.1 ** fractionDigits : 1,
           value,
         }
       : {};
