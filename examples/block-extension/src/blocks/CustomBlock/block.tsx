@@ -109,31 +109,40 @@ export const CustomBlock = () => {
       {/* <Box className="mt-4">{content.richText}</Box> */}
       <img alt="test" src={content.image?.filename} />
       <div className="flex flex-col gap-5 p-5">
-        {content?.cards?.map(({ preview }) => (
-          <div className="bg-white w-full rounded shadow-lg overflow-hidden">
-            {!!preview?.cardImage && <img src={preview?.cardImage?.filename} />}
+        {content?.cards?.map(({ value }: any, idx: number) => (
+          <div
+            key={idx}
+            className="bg-white w-full rounded shadow-lg overflow-hidden"
+          >
+            {!!value?.cardImage && (
+              <img src={value?.cardImage?.filename} alt="" />
+            )}
 
             <div className="bg-white p-5 flex flex-col gap-6">
-              {!!preview?.cardTitle && (
+              {!!value?.cardTitle && (
                 <h3 className="text-purple-700 text-md font-bold">
-                  {preview?.cardTitle}
+                  {value?.cardTitle}
                 </h3>
               )}
 
-              {!!preview?.cardButtons?.length && (
+              {!!value?.cardButtons?.length && (
                 <div className="bg-white flex flex-wrap gap-3">
-                  {preview?.cardButtons?.map(
-                    ({
-                      preview: buttonPreview,
-                    }: {
-                      preview: { link: string; text: string };
-                    }) =>
-                      buttonPreview?.link || buttonPreview?.text ? (
+                  {value?.cardButtons?.map(
+                    (
+                      {
+                        value: button,
+                      }: {
+                        value: { link: any; text: string };
+                      },
+                      jdx: number,
+                    ) =>
+                      button?.link || button?.text ? (
                         <a
+                          key={jdx}
                           className="bg-purple-300 text-purple-800 text-xs px-5 py-3 no-underline"
-                          href={buttonPreview?.link}
+                          href={button?.link?.url}
                         >
-                          {buttonPreview?.text}
+                          {button?.text}
                         </a>
                       ) : null,
                   )}

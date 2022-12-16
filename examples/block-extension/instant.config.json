@@ -3,10 +3,10 @@
 	"organization": "acme-corporation",
 	"blocks": {
 		"CustomBlock": {
-			"id": "2a1beddf-74ec-45d7-b0a6-da29f43dc8fb"
+			"id": "c230b892-3278-4410-af5d-0b409d12c3db"
 		},
 		"HeroBlock": {
-			"id": "928858a5-e9a1-46f0-a4ca-703427082529"
+			"id": "a3463dec-48d4-442c-aab0-6d2657a9010a"
 		}
 	}
 }

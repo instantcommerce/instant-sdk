@@ -1,5 +1,4 @@
 import {
-  InputMaybe,
   ContentSchemaDateField,
   ContentSchemaImageField,
   ContentSchemaRichTextField,
@@ -68,13 +67,13 @@ export type ContentSchemaInputField =
   | ContentTextField
   | ContentLinkField;
 
-type ContentSubschema = Pick<ContentSubschemaInput, 'displayName' | 'name'> & {
+type ContentSubschema = Pick<ContentSubschemaInput, 'displayName'> & {
   fields: Record<string, ContentSchemaInputField>;
 };
 
 export interface DefineContentSchema {
   fields: Record<string, ContentSchemaInputField>;
-  subschemas?: InputMaybe<Array<ContentSubschema>>;
+  subschemas?: Record<string, ContentSubschema>;
 }
 
 type EnhancedCustomizerSchemaField<

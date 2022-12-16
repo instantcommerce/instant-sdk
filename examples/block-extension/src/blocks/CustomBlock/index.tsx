@@ -55,34 +55,23 @@ export default defineBlock({
         preview: 'Rich text',
         toolbar: [],
       },
-      Cards: {
+      cards: {
         type: 'subschema',
-        name: 'cardsGrid',
-        label: 'Cards grid',
-        allowed: ['Cards'],
-        isTranslatable: true,
-        isRequired: false,
+        allowed: ['card'],
         max: 3,
         preview: [
           {
-            name: 'Cards',
-            preview: {
-              cardItems: [
+            subschema: 'card',
+            value: {
+              cardTitle: 'Card title',
+              cardImage:
+                'https://a.storyblok.com/f/145828/5000x3333/564e281ca1/force-majeure-du8abwm5z2g-unsplash.jpg',
+              cardButtons: [
                 {
-                  name: 'Card',
-                  preview: {
-                    cardTitle: 'Card title',
-                    cardImage:
-                      'https://a.storyblok.com/f/145828/5000x3333/564e281ca1/force-majeure-du8abwm5z2g-unsplash.jpg',
-                    cardButtons: [
-                      {
-                        name: 'Button',
-                        preview: {
-                          text: 'Button',
-                          link: 'https://a.storyblok.com/f/145828/5000x3333/564e281ca1/force-majeure-du8abwm5z2g-unsplash.jpg',
-                        },
-                      },
-                    ],
+                  subschema: 'button',
+                  value: {
+                    text: 'Button',
+                    link: 'https://a.storyblok.com/f/145828/5000x3333/564e281ca1/force-majeure-du8abwm5z2g-unsplash.jpg',
                   },
                 },
               ],
@@ -91,9 +80,8 @@ export default defineBlock({
         ],
       },
     },
-    subschemas: [
-      {
-        name: 'Button',
+    subschemas: {
+      button: {
         fields: {
           text: {
             type: 'text',
@@ -110,8 +98,7 @@ export default defineBlock({
           },
         },
       },
-      {
-        name: 'Card',
+      card: {
         fields: {
           cardImage: {
             type: 'image',
@@ -129,23 +116,10 @@ export default defineBlock({
             label: 'Buttons',
             isRequired: false,
             max: 2,
-            allowed: ['Button'],
+            allowed: ['button'],
           },
         },
       },
-      {
-        name: 'Cards',
-        fields: [
-          {
-            type: 'subschema',
-            name: 'cardItems',
-            label: 'Cards',
-            isRequired: false,
-            max: 3,
-            allowed: ['Card'],
-          },
-        ],
-      },
-    ],
+    },
   },
 });

@@ -5,8 +5,20 @@ export type SchemaTypes = 'customizer' | 'content';
 
 type ValueOf<T> = T[keyof T];
 
-export type BlockContentSchema = Omit<DefineContentSchema, 'fields'> & {
+type Subschemas = ValueOf<NonNullable<DefineContentSchema['subschemas']>>;
+
+export type BlockContentSchema = Omit<
+  DefineContentSchema,
+  'fields' | 'subschemas'
+> & {
   fields: (ValueOf<DefineContentSchema['fields']> & {
+    name: string;
+  })[];
+  subschemas?: (Omit<Subschemas, 'fields'> & {
+    fields: (ValueOf<Subschemas['fields']> & {
+      name: string;
+    })[];
+  } & {
     name: string;
   })[];
 };
@@ -30,7 +42,10 @@ export interface BlocksContextValue {
   selectedBlock: string | null;
   setSelectedBlock(block: string): void;
   setPreviewValue(schema: SchemaTypes, name: string, value: any): void;
-  previewValues: Record<string, Record<SchemaTypes, Record<string, string>>>;
+  previewValues: Record<
+    string,
+    Record<SchemaTypes, Record<string, string | any[]>>
+  >;
 }
 
 export const BlocksContext = createContext<BlocksContextValue | null>(null);

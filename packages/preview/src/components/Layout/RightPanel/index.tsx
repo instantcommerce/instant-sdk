@@ -1,14 +1,8 @@
-import { ChangeEvent, Fragment, ReactNode, useEffect, useState } from 'react';
+import { ChangeEvent, Fragment, ReactNode, useState } from 'react';
 import { useMemo } from 'react';
 import humanizeString from 'humanize-string';
 import get from 'lodash/get';
-import {
-  PencilSimple,
-  Faders,
-  Image,
-  WarningCircle,
-  Minus,
-} from 'phosphor-react';
+import { Faders, Image, WarningCircle, Trash, Plus } from 'phosphor-react';
 import { twJoin } from 'tailwind-merge';
 import {
   Button,
@@ -46,8 +40,6 @@ export const RightPanel = () => {
     useBlocks();
   const [addFieldModalOpen, setAddFieldModalOpen] = useState(false);
   const [subschema, setSubschema] = useState<string | null>(null);
-  const [allowedSchemas, setAllowedSchemas] = useState<string[]>([]);
-  const [breadCrumbs, setBreadCrumbs] = useState<string[]>([]);
 
   const { rightPanelVisible } = useConfig();
 
@@ -62,53 +54,68 @@ export const RightPanel = () => {
   const subschemas = useMemo(
     () =>
       blockSubschemas?.reduce((acc, curr) => {
-        acc[curr.name] = curr.fields;
+        acc[curr.name] = curr;
 
         return acc;
-      }, {}),
+      }, {} as any),
     [blockSubschemas],
   );
 
-  const subschemaOptions = useMemo(
-    () =>
-      blockSubschemas?.filter(
-        (item) =>
-          !allowedSchemas?.length || allowedSchemas?.includes(item.name),
-      ),
-    [allowedSchemas, blockSubschemas],
-  );
+  const getSubschemaDisplayName = (subschema: string) =>
+    subschemas?.[subschema]?.displayName || humanizeString(subschema);
 
-  const previewContent = get(
-    previewValues?.[selectedBlock]?.content,
-    subschema || '',
-  );
-
-  useEffect(() => {
-    const a = blocksManifest?.[selectedBlock].contentSchema?.fields?.find(
-      (f) => f.name === subschema,
+  const getPreviewContent = (subschemaField: string) =>
+    get(
+      selectedBlock ? previewValues?.[selectedBlock]?.content : {},
+      subschemaField || '',
     );
 
-    if (a) {
-      setAllowedSchemas(a.allowed);
+  const breadCrumbs = useMemo(() => {
+    const paths = subschema?.split('.');
+    const breadCrumbs: { label: string; value: string }[] = [];
+
+    if (paths) {
+      for (let i = 0; i < paths.length; i += 1) {
+        const label = getSubschemaDisplayName(
+          (getPreviewContent(paths.slice(0, i + 2).join('.')) as any)
+            ?.subschema,
+        );
+
+        if (i === paths.length - 2) {
+          breadCrumbs.push({
+            label,
+            value: paths[i],
+          });
+          i += 1;
+        } else {
+          breadCrumbs.push({
+            label,
+            value: paths[i],
+          });
+          i += 2;
+        }
+      }
     }
+
+    return breadCrumbs;
   }, [subschema]);
 
-  const addPreviewItem = ({ name }: { name: string }) => {
-    if (subschema) {
-      setPreviewValue('content', `${subschema}`, [
-        ...(previewContent || []),
-        { name },
+  const addPreviewItem = (subschemaField: string, item: string) => {
+    if (subschemaField) {
+      setPreviewValue('content', subschemaField, [
+        ...(getPreviewContent(subschemaField) || []),
+        { subschema: item },
       ]);
     }
   };
 
-  const removePreviewItem = (idx: number) => {
-    if (subschema) {
-      const currentValues = [...(previewContent || [])];
+  const removePreviewItem = (subschemaField: string, idx: number) => {
+    if (subschemaField) {
+      const currentValues = [...(getPreviewContent(subschemaField) || [])];
 
       if (currentValues?.length) {
         currentValues.splice(idx, 1);
-        setPreviewValue('content', `${subschema}`, currentValues);
+        setPreviewValue('content', subschemaField, currentValues);
       }
     }
   };
@@ -201,34 +208,20 @@ export const RightPanel = () => {
         return <RichText {...baseProps} />;
 
       case 'subschema': {
-        const fieldPreview = selectedBlock
-          ? get(previewValues?.[selectedBlock]?.content, field.name, [])
+        const fieldPreview: any[] = selectedBlock
+          ? (get(
+              previewValues?.[selectedBlock]?.content,
+              field.name,
+              [],
+            ) as any[])
           : [];
 
         return (
           <div className="flex flex-col gap-1.5">
             <div className="w-full flex justify-between items-center gap-1.5">
               <span className="text-xs text-gray-500 font-medium">
-                {fieldName}
+                {baseProps.label}
               </span>
-
-              <Button
-                iconOnly
-                variant="unstyled"
-                onClick={() => {
-                  setSubschema(field.name);
-                  setAllowedSchemas(field.allowed);
-                  setBreadCrumbs(
-                    field.name
-                      .split('.')
-                      .filter(
-                        (item) => item !== 'preview' && isNaN(Number(item)),
-                      ),
-                  );
-                }}
-              >
-                <PencilSimple weight="fill" size={16} color="#2E90FA" />
-              </Button>
             </div>
 
             <div
@@ -238,16 +231,54 @@ export const RightPanel = () => {
               )}
             >
               {fieldPreview.length ? (
-                fieldPreview.map((f) => (
-                  <div
-                    key={f.name}
-                    className="bg-gray-100 text-gray-900 h-[30px] px-1.5 rounded flex items-center text-xs"
-                  >
-                    {f.name}
-                  </div>
-                ))
+                fieldPreview.map((f, idx) => {
+                  const renderedSubschema = subschemas?.[f.subschema];
+
+                  return (
+                    <Button
+                      key={`${idx}-${f.name}`}
+                      variant="unstyled"
+                      className="bg-gray-100 text-gray-900 h-[30px] px-1.5 rounded flex items-center justify-between text-xs"
+                      onClick={() => {
+                        setSubschema(`${field.name}.${idx}`);
+                      }}
+                    >
+                      {renderedSubschema.displayName ||
+                        humanizeString(renderedSubschema.name)}
+
+                      <Button
+                        variant="unstyled"
+                        iconOnly
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removePreviewItem(field.name, idx);
+                        }}
+                      >
+                        <Trash size={16} />
+                      </Button>
+                    </Button>
+                  );
+                })
               ) : (
                 <div>No items</div>
+              )}
+
+              {(!fieldPreview?.length ||
+                !field.max ||
+                fieldPreview.length < field.max) && (
+                <Button
+                  variant="secondary"
+                  className="bg-primary-100 border-primary-300 text-primary-500 flex items-center justify-center mt-2"
+                  onClick={() => {
+                    if (field.allowed.length === 1) {
+                      addPreviewItem(field.name, field.allowed[0]);
+                    } else {
+                      setAddFieldModalOpen(true);
+                    }
+                  }}
+                >
+                  <Plus size={14} /> Element
+                </Button>
               )}
             </div>
           </div>
@@ -293,83 +324,51 @@ export const RightPanel = () => {
         }
 
         if (!hasDuplicateFieldNames) {
-          const subschemaPreviewValues = subschema
-            ? get(previewValues?.[selectedBlock]?.content, subschema, [])
-            : [];
+          const subschemaPreviewValue = get(
+            previewValues?.[selectedBlock]?.content,
+            subschema!,
+            '',
+          ) as any;
+          const currentSubschema =
+            subschemas?.[subschemaPreviewValue.subschema];
 
-          const currentSubschema = blocksManifest[
-            selectedBlock
-          ]?.contentSchema?.fields?.find((f) => f.name === subschema);
+          content =
+            type === 'content' && subschema && currentSubschema ? (
+              <div className="text-xs">
+                <BreadCrumbs
+                  blockName={blocksManifest?.[selectedBlock]?.name}
+                  breadCrumbs={breadCrumbs}
+                  subschema={subschema}
+                  setSubschema={setSubschema}
+                />
 
-          content = subschema ? (
-            <div className="text-xs">
-              <BreadCrumbs
-                blockName={blocksManifest?.[selectedBlock]?.name}
-                breadCrumbs={breadCrumbs}
-                setBreadCrumbs={setBreadCrumbs}
-                subschema={subschema}
-                setSubschema={setSubschema}
-              />
+                <div className="text-gray-500 mb-3">
+                  {breadCrumbs[breadCrumbs.length - 1].label}
+                </div>
 
-              <div className="text-gray-500 mb-3">
-                {breadCrumbs[breadCrumbs.length - 1]}
-              </div>
-
-              <div className="bg-gray-100 rounded-xl p-2 flex flex-col gap-2">
-                {subschemaPreviewValues?.map((item, idx) => (
-                  <div
-                    key={item?.name}
-                    className="bg-white flex flex-col gap-2 p-2 rounded-lg border border-gray-300"
-                  >
-                    <div className="flex w-full items-center justify-between">
-                      <div className="text-gray-500">{item?.name}</div>
-
-                      <Button
-                        variant="unstyled"
-                        iconOnly
-                        onClick={() => removePreviewItem(idx)}
-                      >
-                        <Minus size={16} weight="fill" color="#2E90FA" />
-                      </Button>
-                    </div>
-
-                    {subschemas?.[item.name]?.map((f) => (
+                <div className="bg-white rounded-lg border border-gray-300 p-2 flex flex-col gap-4">
+                  {currentSubschema?.fields.map((f: any) => {
+                    return (
                       <Fragment key={f.name}>
                         {renderField(
                           'content',
                           {
                             ...f,
-                            name: [subschema, idx, 'preview', f.name].join('.'),
-                            preview: item.preview,
+                            name: [subschema, 'value', f.name].join('.'),
+                            preview: subschemaPreviewValue.value?.[f.name],
                           },
                           2,
                         )}
                       </Fragment>
-                    ))}
-                  </div>
-                ))}
-
-                {(!subschemaPreviewValues?.length ||
-                  subschemaPreviewValues?.length < currentSubschema?.max) && (
-                  <Button
-                    variant="secondary"
-                    className="bg-primary-100 border-primary-300 text-primary-500 flex items-center justify-center mt-2"
-                    onClick={() => {
-                      subschemaOptions?.length === 1
-                        ? addPreviewItem(subschemaOptions[0])
-                        : setAddFieldModalOpen(true);
-                    }}
-                  >
-                    + Element
-                  </Button>
-                )}
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ) : (
-            schema?.fields?.map((field) => (
-              <Fragment key={field.name}>{renderField(type, field)}</Fragment>
-            ))
-          );
+            ) : (
+              schema?.fields?.map((field) => (
+                <Fragment key={field.name}>{renderField(type, field)}</Fragment>
+              ))
+            );
         } else {
           content = (
             <StatusMessage
@@ -412,14 +411,7 @@ export const RightPanel = () => {
           />
         ),
       }),
-    [
-      selectedBlock,
-      blocksManifest,
-      subschema,
-      allowedSchemas,
-      subschemaOptions,
-      previewValues,
-    ],
+    [selectedBlock, blocksManifest, subschema, previewValues],
   );
 
   const customizerSchema = useMemo(
@@ -438,7 +430,7 @@ export const RightPanel = () => {
           />
         ),
       }),
-    [selectedBlock, blocksManifest],
+    [selectedBlock, blocksManifest, subschema, previewValues],
   );
 
   return (
@@ -448,7 +440,7 @@ export const RightPanel = () => {
         title="Insert element"
         onOpenChange={setAddFieldModalOpen}
       >
-        {subschemaOptions?.map((field, i) => (
+        {/* {subschemaOptions?.map((field, i) => (
           <Button
             key={`${field.name}-${i}`}
             onClick={() => {
@@ -460,7 +452,7 @@ export const RightPanel = () => {
           >
             {field.name}
           </Button>
-        ))}
+        ))} */}
       </Modal>
 
       <aside

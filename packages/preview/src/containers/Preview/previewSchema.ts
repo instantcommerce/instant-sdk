@@ -42,7 +42,7 @@ const FIELD_PREVIEWS: Record<FieldType, any> = {
     ],
   },
   select: 'Lorem',
-  subschema: {},
+  subschema: [],
   text: 'Lorem ipsum dolor sit amet',
 };
 

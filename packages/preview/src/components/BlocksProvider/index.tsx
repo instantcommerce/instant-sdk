@@ -25,6 +25,12 @@ if (import.meta.env.DEV) {
   };
 }
 
+const objectToNamedArray = (obj: any) =>
+  Object.entries(obj || {}).map(([name, field]: any) => ({
+    ...field,
+    name,
+  }));
+
 export const BlocksProvider = ({ children }: { children: ReactNode }) => {
   const { params } = useConfig();
   const previewRef = useRef<HTMLIFrameElement | null>(null);
@@ -60,33 +66,17 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
           if (message.data?.block in blocksManifest) {
             const contentSchema = {
               ...(message.data.contentSchema || {}),
-              fields: Object.entries(
-                message.data.contentSchema?.fields || {},
-              ).map(([name, field]: any) => ({
-                ...field,
-                name,
+              fields: objectToNamedArray(message.data.contentSchema?.fields),
+              subschemas: objectToNamedArray(
+                message.data.contentSchema?.subschemas,
+              )?.map((subschema: any) => ({
+                ...(subschema || {}),
+                fields: objectToNamedArray(subschema?.fields),
               })),
-              subschemas:
-                message.data.contentSchema?.subschemas?.map(
-                  (subschema: any) => ({
-                    ...(subschema || {}),
-                    fields: Object.entries(subschema?.fields || {}).map(
-                      ([name, field]: any) => ({
-                        ...field,
-                        name,
-                      }),
-                    ),
-                  }),
-                ) || [],
             };
             const customizerSchema = {
               ...(message.data.customizerSchema || {}),
-              fields: Object.entries(
-                message.data.customizerSchema?.fields || {},
-              ).map(([name, field]: any) => ({
-                ...field,
-                name,
-              })),
+              fields: objectToNamedArray(message.data.customizerSchema?.fields),
             };
 
             const newBlocksManifest = {
