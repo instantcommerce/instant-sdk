@@ -106,11 +106,17 @@ type CustomizerTextField = EnhancedCustomizerSchemaField<
   'text'
 >;
 
+type CustomizerToggleField = EnhancedCustomizerSchemaField<
+  CustomizerSchemaTextField,
+  'toggle'
+>;
+
 export type CustomizerSchemaInputField =
   | CustomizerColorField
   | CustomizerNumberField
   | CustomizerSelectField
-  | CustomizerTextField;
+  | CustomizerTextField
+  | CustomizerToggleField;
 
 export interface DefineCustomizerSchema {
   fields: Record<string, CustomizerSchemaInputField>;
@@ -127,4 +133,5 @@ export enum SchemaFieldType {
   SELECT = 'SELECT',
   SUBSCHEMA = 'SUBSCHEMA',
   TEXT = 'TEXT',
+  TOGGLE = 'TOGGLE',
 }

@@ -44,6 +44,7 @@ const FIELD_PREVIEWS: Record<FieldType, any> = {
   select: 'Lorem',
   subschema: [],
   text: 'Lorem ipsum dolor sit amet',
+  toggle: true,
 };
 
 const formatFieldValue = (type: FieldType, value: any) => {
@@ -79,10 +80,13 @@ export const previewSchema = (
   previewValues?: Record<SchemaTypes, Record<string, string>>,
 ) =>
   Object.entries(schema.fields).reduce((data: any, [name, field]: any) => {
+    const value = previewValues?.[schemaType]?.[name];
+
     data[name] = formatFieldValue(
       field.type as FieldType,
-      previewValues?.[schemaType]?.[name] ||
-        FIELD_PREVIEWS[field.type as FieldType],
+      typeof value !== 'undefined'
+        ? value
+        : FIELD_PREVIEWS[field.type as FieldType],
     );
 
     return data;

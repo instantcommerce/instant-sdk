@@ -1199,7 +1199,7 @@ export type CustomizerSchemaColorField = {
   preview?: Maybe<Scalars['Object']>;
 };
 
-export type CustomizerSchemaField = CustomizerSchemaColorField | CustomizerSchemaNumberField | CustomizerSchemaSelectField | CustomizerSchemaTextField;
+export type CustomizerSchemaField = CustomizerSchemaColorField | CustomizerSchemaNumberField | CustomizerSchemaSelectField | CustomizerSchemaTextField | CustomizerSchemaToggleField;
 
 export type CustomizerSchemaInput = {
   fields: Array<Scalars['Object']>;
@@ -1234,6 +1234,15 @@ export type CustomizerSchemaTextField = {
   isRequired: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   maxLength?: Maybe<Scalars['Float']>;
+  name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
+};
+
+export type CustomizerSchemaToggleField = {
+  __typename?: 'CustomizerSchemaToggleField';
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   preview?: Maybe<Scalars['Object']>;
 };

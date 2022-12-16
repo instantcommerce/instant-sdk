@@ -23,6 +23,7 @@ export default defineBlock({
       },
       textColor: { type: 'color', preview: '#A020F0' },
       text: { type: 'text', maxLength: 1 },
+      toggle: { type: 'toggle', preview: true },
     },
   },
   contentSchema: {

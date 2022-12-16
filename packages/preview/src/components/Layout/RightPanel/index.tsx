@@ -16,6 +16,7 @@ import {
   RichText,
   Modal,
   ColorInput,
+  Toggle,
 } from '../..';
 import {
   BlockContentSchema,
@@ -173,6 +174,20 @@ export const RightPanel = () => {
             direction={layer <= 1 ? 'row' : 'col'}
             onChange={(value: string) => {
               setPreviewValue(schema, field.name, value);
+            }}
+          />
+        );
+
+      case 'toggle':
+        return (
+          <Toggle
+            {...baseProps}
+            defaultValue={undefined}
+            onChange={undefined}
+            direction={layer <= 1 ? 'row' : 'col'}
+            defaultChecked={baseProps.defaultValue}
+            onCheckedChange={(checked) => {
+              setPreviewValue(schema, field.name, checked);
             }}
           />
         );

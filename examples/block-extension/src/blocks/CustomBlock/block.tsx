@@ -103,6 +103,7 @@ export const CustomBlock = () => {
           Test
         </button>
       </Box>
+      <Box className="mt-4">Toggle: {`${customizer.toggle}`}</Box>
       <Box className="mt-4">{content.date}</Box>
       <Box className="mt-4">{content.select}</Box>
       <Box className="mt-4">{content.link?.url}</Box>
