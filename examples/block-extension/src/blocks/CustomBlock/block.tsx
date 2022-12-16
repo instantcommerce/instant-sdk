@@ -103,11 +103,56 @@ export const CustomBlock = () => {
           Test
         </button>
       </Box>
+      <Box className="mt-4">Toggle: {`${customizer.toggle}`}</Box>
       <Box className="mt-4">{content.date}</Box>
       <Box className="mt-4">{content.select}</Box>
-      <Box className="mt-4">{content.link}</Box>
-      <Box className="mt-4">{content.richText}</Box>
-      <img alt="test" src={content.image} />
+      <Box className="mt-4">{content.link?.url}</Box>
+      {/* <Box className="mt-4">{content.richText}</Box> */}
+      <img alt="test" src={content.image?.filename} />
+      <div className="flex flex-col gap-5 p-5">
+        {content?.cards?.map(({ value }: any, idx: number) => (
+          <div
+            key={idx}
+            className="bg-white w-full rounded shadow-lg overflow-hidden"
+          >
+            {!!value?.cardImage && (
+              <img src={value?.cardImage?.filename} alt="" />
+            )}
+
+            <div className="bg-white p-5 flex flex-col gap-6">
+              {!!value?.cardTitle && (
+                <h3 className="text-purple-700 text-md font-bold">
+                  {value?.cardTitle}
+                </h3>
+              )}
+
+              {!!value?.cardButtons?.length && (
+                <div className="bg-white flex flex-wrap gap-3">
+                  {value?.cardButtons?.map(
+                    (
+                      {
+                        value: button,
+                      }: {
+                        value: { link: any; text: string };
+                      },
+                      jdx: number,
+                    ) =>
+                      button?.link || button?.text ? (
+                        <a
+                          key={jdx}
+                          className="bg-purple-300 text-purple-800 text-xs px-5 py-3 no-underline"
+                          href={button?.link?.url}
+                        >
+                          {button?.text}
+                        </a>
+                      ) : null,
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
     </Box>
   );
 };

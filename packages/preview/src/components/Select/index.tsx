@@ -28,10 +28,12 @@ export const Select = ({
   direction,
   label,
   onChange,
+  id: idProp,
   ...props
 }: SelectProps & InputWrapperProps) => {
   const [open, setOpen] = useState(!!props?.defaultOpen);
-  const id = useId();
+  const generatedId = useId();
+  const id = idProp || generatedId;
 
   const triggerStylesByVariant = {
     light:
@@ -68,6 +70,7 @@ export const Select = ({
       label={label}
       labelClassName={labelClassName}
       direction={direction}
+      id={id}
     >
       <SelectPrimitive.Root
         open={open}
@@ -78,7 +81,8 @@ export const Select = ({
       >
         <SelectPrimitive.Trigger
           asChild
-          aria-label={label || 'Select one option'}
+          aria-label={label || 'Select an option'}
+          id={id}
         >
           <button
             className={twMerge(

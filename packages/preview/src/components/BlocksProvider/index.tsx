@@ -6,6 +6,7 @@ import {
   useRef,
   useState,
 } from 'react';
+import set from 'lodash/set';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import { useConfig } from '../ConfigProvider';
 
@@ -23,6 +24,12 @@ if (import.meta.env.DEV) {
     },
   };
 }
+
+const objectToNamedArray = (obj: any) =>
+  Object.entries(obj || {}).map(([name, field]: any) => ({
+    ...field,
+    name,
+  }));
 
 export const BlocksProvider = ({ children }: { children: ReactNode }) => {
   const { params } = useConfig();
@@ -59,21 +66,17 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
           if (message.data?.block in blocksManifest) {
             const contentSchema = {
               ...(message.data.contentSchema || {}),
-              fields: Object.entries(
-                message.data.contentSchema?.fields || {},
-              ).map(([name, field]: any) => ({
-                ...field,
-                name,
+              fields: objectToNamedArray(message.data.contentSchema?.fields),
+              subschemas: objectToNamedArray(
+                message.data.contentSchema?.subschemas,
+              )?.map((subschema: any) => ({
+                ...(subschema || {}),
+                fields: objectToNamedArray(subschema?.fields),
               })),
             };
             const customizerSchema = {
               ...(message.data.customizerSchema || {}),
-              fields: Object.entries(
-                message.data.customizerSchema?.fields || {},
-              ).map(([name, field]: any) => ({
-                ...field,
-                name,
-              })),
+              fields: objectToNamedArray(message.data.customizerSchema?.fields),
             };
 
             const newBlocksManifest = {
@@ -152,16 +155,22 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
           isPreviewValuesDirty.current = true;
         }
 
-        setPreviewValues((currentPreviewValues) => ({
-          ...currentPreviewValues,
-          [selectedBlock]: {
-            ...(currentPreviewValues[selectedBlock] || {}),
-            [schema]: {
-              ...(currentPreviewValues[selectedBlock]?.[schema] || {}),
-              [name]: value,
+        setPreviewValues((currentPreviewValues) => {
+          const obj = currentPreviewValues[selectedBlock]?.[schema] || {};
+          set(obj, name, value);
+
+          const previewValuesCopy = {
+            ...currentPreviewValues,
+            [selectedBlock]: {
+              ...(currentPreviewValues[selectedBlock] || {}),
+              [schema]: {
+                ...obj,
+              },
             },
-          },
-        }));
+          };
+
+          return previewValuesCopy;
+        });
       }
     },
     [selectedBlock],
@@ -179,6 +188,7 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
       selectedBlock,
       setSelectedBlock,
       setPreviewValue,
+      previewValues,
     };
   }, [
     blocksManifest,
@@ -187,6 +197,7 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
     selectedBlock,
     setSelectedBlock,
     setPreviewValue,
+    previewValues,
   ]);
 
   return (

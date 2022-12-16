@@ -6,6 +6,7 @@ export * from './ImageInput';
 export * from './Input';
 export * from './InputGroup';
 export * from './Layout';
+export * from './Modal';
 export * from './PreviewFrame';
 export * from './PreviewWrapper';
 export * from './Resizable';

@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, ReactNode } from 'react';
+import { HTMLProps, InputHTMLAttributes, ReactNode } from 'react';
 import { LabelProps } from '@radix-ui/react-label';
 import cx from 'classnames';
 import { twMerge } from 'tailwind-merge';
@@ -7,6 +7,7 @@ import { Label } from './Label';
 export type InputWrapperProps = {
   wrapperClassName?: string;
   labelClassName?: string;
+  labelProps?: HTMLProps<HTMLLabelElement>;
   label?: string;
   direction?: 'col' | 'row';
   info?: string;
@@ -19,6 +20,7 @@ export const splitInputProps = (
   const {
     wrapperClassName,
     labelClassName,
+    labelProps,
     label,
     direction,
     info,
@@ -28,6 +30,7 @@ export const splitInputProps = (
   const wrapperProps = {
     wrapperClassName,
     labelClassName,
+    labelProps,
     label,
     direction,
     info,
@@ -40,6 +43,7 @@ export const InputWrapper = ({
   wrapperClassName,
   className,
   labelClassName,
+  labelProps,
   label,
   direction = 'col',
   info,
@@ -60,7 +64,11 @@ export const InputWrapper = ({
         )}
       >
         {!!label && (
-          <Label className={twMerge('flex-1', labelClassName)} htmlFor={id}>
+          <Label
+            className={twMerge('flex-1', labelClassName)}
+            htmlFor={id}
+            {...labelProps}
+          >
             {label}
           </Label>
         )}

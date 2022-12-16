@@ -1,5 +1,4 @@
 import {
-  InputMaybe,
   ContentSchemaDateField,
   ContentSchemaImageField,
   ContentSchemaRichTextField,
@@ -13,6 +12,7 @@ import {
   CustomizerSchemaField,
   CustomizerSchemaNumberField,
   CustomizerSchemaColorField,
+  ContentSchemaSubschemaField,
 } from './api';
 
 type EnhancedContentSchemaField<
@@ -48,6 +48,11 @@ type ContentSelectField = EnhancedContentSchemaField<
   'select'
 >;
 
+type ContentSubschemaField = EnhancedContentSchemaField<
+  ContentSchemaSubschemaField,
+  'subschema'
+>;
+
 type ContentTextField = EnhancedContentSchemaField<
   ContentSchemaTextField,
   'text'
@@ -58,16 +63,17 @@ export type ContentSchemaInputField =
   | ContentImageField
   | ContentRichTextField
   | ContentSelectField
+  | ContentSubschemaField
   | ContentTextField
   | ContentLinkField;
 
-type ContentSubschema = Pick<ContentSubschemaInput, 'displayName' | 'name'> & {
+type ContentSubschema = Pick<ContentSubschemaInput, 'displayName'> & {
   fields: Record<string, ContentSchemaInputField>;
 };
 
 export interface DefineContentSchema {
   fields: Record<string, ContentSchemaInputField>;
-  subschemas?: InputMaybe<Array<ContentSubschema>>;
+  subschemas?: Record<string, ContentSubschema>;
 }
 
 type EnhancedCustomizerSchemaField<
@@ -100,11 +106,17 @@ type CustomizerTextField = EnhancedCustomizerSchemaField<
   'text'
 >;
 
+type CustomizerToggleField = EnhancedCustomizerSchemaField<
+  CustomizerSchemaTextField,
+  'toggle'
+>;
+
 export type CustomizerSchemaInputField =
   | CustomizerColorField
   | CustomizerNumberField
   | CustomizerSelectField
-  | CustomizerTextField;
+  | CustomizerTextField
+  | CustomizerToggleField;
 
 export interface DefineCustomizerSchema {
   fields: Record<string, CustomizerSchemaInputField>;
@@ -121,4 +133,5 @@ export enum SchemaFieldType {
   SELECT = 'SELECT',
   SUBSCHEMA = 'SUBSCHEMA',
   TEXT = 'TEXT',
+  TOGGLE = 'TOGGLE',
 }

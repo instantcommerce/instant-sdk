@@ -50,9 +50,9 @@ export const Button = forwardRef(
         ref={ref as any}
         className={twMerge(
           twJoin(
-            stylesByVariant[variant],
             iconOnly && 'w-[30px] justify-center',
             'h-[30px] px-1.5 rounded flex items-center gap-[2px] transition-colors text-xs',
+            stylesByVariant[variant],
           ),
           className,
         )}

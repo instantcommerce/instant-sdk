@@ -1,54 +1,26 @@
-import { ChangeEvent, ReactNode, useEffect, useState } from 'react';
-import { useMemo } from 'react';
-import humanizeString from 'humanize-string';
+import { ReactNode, useEffect, useState } from 'react';
 import {
   CaretCircleDoubleLeft,
-  CaretCircleDoubleRight,
-  Faders,
-  Image,
   Moon,
+  CaretCircleDoubleRight,
   Sun,
-  WarningCircle,
 } from 'phosphor-react';
 import { twJoin, twMerge } from 'tailwind-merge';
 import {
   Button,
-  ColorInput,
-  StatusMessage,
   useConfig,
-  ImageInput,
-  Input,
   Select,
-  Tabs,
   Tooltip,
-  useBlocks,
   screenSizes,
-  RichText,
   PreviewWrapper,
   IFRAME_DEFAULT_SIZE,
 } from '..';
-import {
-  BlockContentSchema,
-  BlockCustomizerSchema,
-  SchemaTypes,
-} from '../BlocksProvider/context';
 import { scales } from '../ConfigProvider';
+import { RightPanel } from './RightPanel';
 import { SideBar } from './SideBar';
 import { TopBar } from './TopBar';
 
-const tabs = [
-  {
-    title: 'Content',
-    value: 'contentSchema',
-  },
-  {
-    title: 'Customizer',
-    value: 'customizerSchema',
-  },
-];
-
 export const Layout = ({ children }: { children: ReactNode }) => {
-  const { selectedBlock, blocksManifest, setPreviewValue } = useBlocks();
   const [iframeSize, setIframeSize] = useState(IFRAME_DEFAULT_SIZE);
 
   const {
@@ -72,183 +44,6 @@ export const Layout = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     setIframeSize({ width: iframeWidth, height: iframeHeight });
   }, [iframeWidth, iframeHeight]);
-
-  const renderField = (
-    schema: SchemaTypes,
-    field:
-      | BlockContentSchema['fields'][number]
-      | BlockCustomizerSchema['fields'][number],
-  ) => {
-    const baseProps = {
-      label: field.label || humanizeString(field.name),
-      key: field.name,
-      id: field.name,
-      name: field.name,
-      defaultValue: field.preview,
-      onChange: (e: ChangeEvent<HTMLInputElement>) => {
-        setPreviewValue(schema, field.name, e.target.value);
-      },
-    };
-
-    switch (field.type) {
-      case 'text':
-        return (
-          <Input
-            {...baseProps}
-            maxLength={field.maxLength !== null ? field.maxLength : undefined}
-          />
-        );
-
-      case 'color':
-        return (
-          <ColorInput
-            {...baseProps}
-            onChange={(value: string) => {
-              setPreviewValue(schema, field.name, value);
-            }}
-          />
-        );
-
-      case 'select':
-        return (
-          <Select
-            {...baseProps}
-            options={field.options || []}
-            onChange={(value: string) => {
-              setPreviewValue(schema, field.name, value);
-            }}
-          />
-        );
-
-      case 'image':
-      case 'link':
-        return <ImageInput {...baseProps} />;
-
-      case 'date':
-        return (
-          <Input
-            type={field.withTime ? 'datetime-local' : 'date'}
-            {...baseProps}
-          />
-        );
-
-      case 'number':
-        return (
-          <Input
-            type="number"
-            {...baseProps}
-            min={field.min !== null ? field.min : undefined}
-            max={field.max !== null ? field.max : undefined}
-            fractionDigits={field.fractionDigits}
-          />
-        );
-
-      case 'richText':
-        return <RichText {...baseProps} />;
-
-      default:
-        return null;
-    }
-  };
-
-  const renderSchema = ({
-    type,
-    emptyMessage,
-  }: {
-    type: SchemaTypes;
-    emptyMessage: ReactNode;
-  }) => {
-    if (selectedBlock) {
-      let content = null;
-      const schema =
-        blocksManifest?.[selectedBlock]?.[
-          type === 'content' ? 'contentSchema' : 'customizerSchema'
-        ];
-
-      if (schema?.fields?.length) {
-        let hasDuplicateFieldNames: string | false = false;
-
-        for (
-          let i = 0;
-          i < schema.fields.length && !hasDuplicateFieldNames;
-          i += 1
-        ) {
-          for (
-            let j = 0;
-            j < schema.fields.length && !hasDuplicateFieldNames;
-            j += 1
-          ) {
-            if (i !== j && schema.fields[i].name === schema.fields[j].name) {
-              hasDuplicateFieldNames = schema.fields[j].name;
-            }
-          }
-        }
-
-        if (!hasDuplicateFieldNames) {
-          content = schema.fields.map((field) => renderField(type, field));
-        } else {
-          content = (
-            <StatusMessage
-              type="error"
-              icon={WarningCircle}
-              title="Schema field names should be unique"
-              description={`Check the schema definition for fields with name "${hasDuplicateFieldNames}".`}
-              button={{
-                href: 'https://docs.instantcommerce.io',
-                text: 'Learn more',
-              }}
-            />
-          );
-        }
-      } else {
-        content = emptyMessage;
-      }
-
-      if (content) {
-        return <div className="flex flex-col gap-4 px-3 py-6">{content}</div>;
-      }
-    }
-
-    return null;
-  };
-
-  const contentSchema = useMemo(
-    () =>
-      renderSchema({
-        type: 'content',
-        emptyMessage: (
-          <StatusMessage
-            icon={Faders}
-            title="No customizer schema found"
-            description="Props of exported .tsx elements from your blocks will appear here."
-            button={{
-              href: 'https://docs.instantcommerce.io',
-              text: 'Learn more',
-            }}
-          />
-        ),
-      }),
-    [selectedBlock, blocksManifest],
-  );
-
-  const customizerSchema = useMemo(
-    () =>
-      renderSchema({
-        type: 'customizer',
-        emptyMessage: (
-          <StatusMessage
-            icon={Image}
-            title="No CMS schema found"
-            description="Storyblok schema and sub-schema fields will appear here."
-            button={{
-              href: 'https://docs.instantcommerce.io',
-              text: 'Learn more',
-            }}
-          />
-        ),
-      }),
-    [selectedBlock, blocksManifest],
-  );
 
   return params?.viewMode === 'fullScreen' ? (
     <div className="h-full w-full">{children}</div>
@@ -348,6 +143,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
                   >
                     x
                   </span>
+
                   <input
                     className={twMerge(
                       'w-[38px] text-center bg-transparent outline-none rounded focus:ring-1 px-[3px] py-px [-moz-appearance]-none',
@@ -419,20 +215,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
           </div>
         </main>
 
-        <aside
-          className={twJoin(
-            'absolute right-0 transition-transform bg-white h-full flex flex-col shrink-0 border-l border-gray-100 py-2 overflow-y-auto w-96',
-            rightPanelVisible ? 'translate-x-0' : 'translate-x-full',
-          )}
-        >
-          <Tabs
-            tabs={tabs}
-            content={{
-              contentSchema,
-              customizerSchema,
-            }}
-          />
-        </aside>
+        <RightPanel />
       </div>
     </div>
   );
