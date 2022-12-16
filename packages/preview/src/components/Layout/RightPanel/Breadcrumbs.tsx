@@ -6,7 +6,7 @@ interface BreadcrumbsProps {
   blockName?: string;
   breadCrumbs: string[];
   setBreadCrumbs(val: string[]): void;
-  subSchema?: string;
+  subschema?: string;
   setSubschema(val: string | null): void;
 }
 
@@ -14,7 +14,7 @@ export const BreadCrumbs = ({
   blockName,
   breadCrumbs = [],
   setBreadCrumbs,
-  subSchema,
+  subschema,
   setSubschema,
 }: BreadcrumbsProps) => {
   return (
@@ -31,7 +31,7 @@ export const BreadCrumbs = ({
             <Button
               variant="unstyled"
               onClick={() => {
-                const schemaPath = subSchema?.split('.') || [];
+                const schemaPath = subschema?.split('.') || [];
                 const idx = schemaPath.findIndex((a) => a === item);
                 const newSchema = schemaPath.slice(0, idx + 1);
 
@@ -45,7 +45,7 @@ export const BreadCrumbs = ({
             <CaretRight size={12} />
           </Fragment>
         ) : (
-          <span>{item}</span>
+          <span key={`${item}-${idx}`}>{item}</span>
         ),
       )}
     </div>

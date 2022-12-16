@@ -16,6 +16,7 @@ export const ImageInput = ({
     <InputWrapper
       {...props}
       labelClassName={twMerge('text-left', labelClassName)}
+      id={id}
     >
       <div
         className={twMerge(
@@ -23,7 +24,10 @@ export const ImageInput = ({
           'overflow-hidden px-0 focus-within:outline focus-within:outline-2 focus-within:outline-primary-700 focus-within:border-transparent',
         )}
       >
-        <span className="flex items-center justify-center px-3 h-full bg-gray-50 text-gray-500">
+        <span
+          className="flex items-center justify-center px-3 h-full bg-gray-50 text-gray-500 select-none"
+          id={`${id}-prefix`}
+        >
           URL
         </span>
 
@@ -35,6 +39,7 @@ export const ImageInput = ({
           defaultValue={defaultValue}
           value={value}
           onChange={onChange}
+          aria-describedby={`${id}-prefix`}
         />
       </div>
     </InputWrapper>

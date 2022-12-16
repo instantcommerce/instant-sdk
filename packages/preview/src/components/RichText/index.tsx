@@ -23,15 +23,24 @@ export const RichText = ({
   });
 
   return (
-    <InputWrapper {...props} direction="col">
+    <InputWrapper
+      {...props}
+      direction="col"
+      labelProps={{
+        onClick: () => {
+          editor?.commands.focus();
+        },
+      }}
+    >
       <MenuBar editor={editor} />
 
       <EditorContent
+        id={props.id}
         editor={editor}
         className={twJoin(
           'min-h-[200px] w-full p-3 border border-gray-200 rounded',
           '[&_.ProseMirror]:w-full [&_.ProseMirror]:h-full [&_.ProseMirror-focused]:outline-none',
-          'focus-within:outline focus-within:outline-2 focus-within:outline-primary-700 focus-within:border-transparent',
+          'focus-within:outline focus-within:outline-1 focus-within:outline-primary-700 focus-within:border-primary-700',
         )}
       />
     </InputWrapper>

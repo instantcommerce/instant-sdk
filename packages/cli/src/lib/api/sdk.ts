@@ -696,89 +696,6 @@ export type ChangeAuth0PasswordInput = {
   oldPassword: Scalars['String'];
 };
 
-export type Checklist = {
-  __typename?: 'Checklist';
-  checklistStep: ChecklistStep;
-  createdAt: Scalars['DateTime'];
-  id: Scalars['UUID'];
-  isSkipped: Scalars['Boolean'];
-  updatedAt: Scalars['DateTime'];
-};
-
-export type ChecklistAggregateGroupBy = {
-  __typename?: 'ChecklistAggregateGroupBy';
-  createdAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-};
-
-export type ChecklistConnection = {
-  __typename?: 'ChecklistConnection';
-  /** Array of edges. */
-  edges: Array<ChecklistEdge>;
-  /** Paging information */
-  pageInfo: PageInfo;
-};
-
-export type ChecklistCountAggregate = {
-  __typename?: 'ChecklistCountAggregate';
-  createdAt?: Maybe<Scalars['Int']>;
-  updatedAt?: Maybe<Scalars['Int']>;
-};
-
-export type ChecklistDeleteFilter = {
-  and?: InputMaybe<Array<ChecklistDeleteFilter>>;
-  createdAt?: InputMaybe<DateFieldComparison>;
-  or?: InputMaybe<Array<ChecklistDeleteFilter>>;
-  updatedAt?: InputMaybe<DateFieldComparison>;
-};
-
-export type ChecklistDeleteResponse = {
-  __typename?: 'ChecklistDeleteResponse';
-  checklistStep?: Maybe<ChecklistStep>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  id?: Maybe<Scalars['UUID']>;
-  isSkipped?: Maybe<Scalars['Boolean']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-};
-
-export type ChecklistEdge = {
-  __typename?: 'ChecklistEdge';
-  /** Cursor for this node. */
-  cursor: Scalars['ConnectionCursor'];
-  /** The node containing the Checklist */
-  node: Checklist;
-};
-
-export type ChecklistFilter = {
-  and?: InputMaybe<Array<ChecklistFilter>>;
-  createdAt?: InputMaybe<DateFieldComparison>;
-  or?: InputMaybe<Array<ChecklistFilter>>;
-  updatedAt?: InputMaybe<DateFieldComparison>;
-};
-
-export type ChecklistMaxAggregate = {
-  __typename?: 'ChecklistMaxAggregate';
-  createdAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-};
-
-export type ChecklistMinAggregate = {
-  __typename?: 'ChecklistMinAggregate';
-  createdAt?: Maybe<Scalars['DateTime']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
-};
-
-export type ChecklistSort = {
-  direction: SortDirection;
-  field: ChecklistSortFields;
-  nulls?: InputMaybe<SortNulls>;
-};
-
-export enum ChecklistSortFields {
-  CreatedAt = 'createdAt',
-  UpdatedAt = 'updatedAt'
-}
-
 export enum ChecklistStatus {
   Done = 'DONE',
   NotVisited = 'NOT_VISITED',
@@ -967,6 +884,7 @@ export type ContentSchemaDateField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
   withTime: Scalars['Boolean'];
 };
 
@@ -979,6 +897,7 @@ export type ContentSchemaImageField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
 };
 
 export type ContentSchemaInput = {
@@ -995,6 +914,7 @@ export type ContentSchemaLinkField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
 };
 
 export type ContentSchemaRichTextField = {
@@ -1004,6 +924,7 @@ export type ContentSchemaRichTextField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
   toolbar: Array<Scalars['String']>;
 };
 
@@ -1015,6 +936,7 @@ export type ContentSchemaSelectField = {
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   options: Array<SelectOption>;
+  preview?: Maybe<Scalars['Object']>;
 };
 
 export type ContentSchemaSubschemaField = {
@@ -1026,6 +948,7 @@ export type ContentSchemaSubschemaField = {
   label?: Maybe<Scalars['String']>;
   max?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
 };
 
 export type ContentSchemaTextField = {
@@ -1036,6 +959,7 @@ export type ContentSchemaTextField = {
   label?: Maybe<Scalars['String']>;
   maxLength?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
 };
 
 export type ContentSubschema = {
@@ -1275,7 +1199,7 @@ export type CustomizerSchemaColorField = {
   isRequired: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  previewValue?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Object']>;
 };
 
 export type CustomizerSchemaField = CustomizerSchemaColorField | CustomizerSchemaNumberField | CustomizerSchemaSelectField | CustomizerSchemaTextField;
@@ -1294,7 +1218,7 @@ export type CustomizerSchemaNumberField = {
   max?: Maybe<Scalars['Float']>;
   min?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
-  previewValue?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Object']>;
 };
 
 export type CustomizerSchemaSelectField = {
@@ -1304,7 +1228,7 @@ export type CustomizerSchemaSelectField = {
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   options: Array<SelectOption>;
-  previewValue?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Object']>;
 };
 
 export type CustomizerSchemaTextField = {
@@ -1314,7 +1238,7 @@ export type CustomizerSchemaTextField = {
   label?: Maybe<Scalars['String']>;
   maxLength?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
-  previewValue?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Object']>;
 };
 
 export type DateFieldComparison = {
@@ -1342,11 +1266,6 @@ export type DeleteManyAssetsInput = {
   filter: AssetDeleteFilter;
 };
 
-export type DeleteManyChecklistsInput = {
-  /** Filter to find records to delete */
-  filter: ChecklistDeleteFilter;
-};
-
 export type DeleteManyIntegrationsInput = {
   /** Filter to find records to delete */
   filter: IntegrationDeleteFilter;
@@ -1364,11 +1283,6 @@ export type DeleteOneAssetInput = {
 };
 
 export type DeleteOneBlockInput = {
-  /** The id of the record to delete. */
-  id: Scalars['ID'];
-};
-
-export type DeleteOneChecklistInput = {
   /** The id of the record to delete. */
   id: Scalars['ID'];
 };
@@ -2554,11 +2468,9 @@ export type Mutation = {
   createUser: Scalars['Boolean'];
   deleteInvitation: Scalars['Boolean'];
   deleteManyAssets: DeleteManyResponse;
-  deleteManyChecklists: DeleteManyResponse;
   deleteManyIntegrations: DeleteManyResponse;
   deleteOneAsset: AssetDeleteResponse;
   deleteOneBlock: BlockDeleteResponse;
-  deleteOneChecklist: ChecklistDeleteResponse;
   deleteOneDomain: DomainDeleteResponse;
   deleteOneGeolocationRedirect: GeolocationRedirectDeleteResponse;
   deleteOneIntegration: IntegrationDeleteResponse;
@@ -2725,11 +2637,6 @@ export type MutationDeleteManyAssetsArgs = {
 };
 
 
-export type MutationDeleteManyChecklistsArgs = {
-  input: DeleteManyChecklistsInput;
-};
-
-
 export type MutationDeleteManyIntegrationsArgs = {
   input: DeleteManyIntegrationsInput;
 };
@@ -2742,11 +2649,6 @@ export type MutationDeleteOneAssetArgs = {
 
 export type MutationDeleteOneBlockArgs = {
   input: DeleteOneBlockInput;
-};
-
-
-export type MutationDeleteOneChecklistArgs = {
-  input: DeleteOneChecklistInput;
 };
 
 
@@ -4001,8 +3903,6 @@ export type Query = {
   billingDetails: BillingDetails;
   block?: Maybe<Block>;
   blocks: BlockConnection;
-  checklist?: Maybe<Checklist>;
-  checklists: ChecklistConnection;
   /** Get current bulk operation. */
   currentBulkOperation?: Maybe<ShopifyBulkOperation>;
   /** Fetches current organization */
@@ -4089,18 +3989,6 @@ export type QueryBlocksArgs = {
   filter?: InputMaybe<BlockFilter>;
   paging?: InputMaybe<CursorPaging>;
   sorting?: InputMaybe<Array<BlockSort>>;
-};
-
-
-export type QueryChecklistArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type QueryChecklistsArgs = {
-  filter?: InputMaybe<ChecklistFilter>;
-  paging?: InputMaybe<CursorPaging>;
-  sorting?: InputMaybe<Array<ChecklistSort>>;
 };
 
 

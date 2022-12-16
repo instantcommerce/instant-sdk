@@ -1,28 +1,21 @@
-import { SchemaFieldType } from 'types/schemas';
+import {
+  ContentSchemaInputField,
+  CustomizerSchemaInputField,
+} from 'types/schemas';
 import { SchemaTypes } from '../../components/BlocksProvider/context';
 
-const FIELD_PREVIEWS = {
-  [SchemaFieldType.COLOR]: '#CCCCCC',
-  [SchemaFieldType.DATE]: '2022-03-08T12:49:54.540Z',
-  [SchemaFieldType.IMAGE]: {
-    id: 123,
-    alt: 'Alt text',
-    name: 'Name',
-    focus: null,
-    title: 'Title',
-    filename:
-      'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1920&q=80',
-    copyright: '',
-    fieldtype: 'asset',
-  },
-  [SchemaFieldType.LINK]: {
-    id: '',
-    url: '#',
-    linktype: 'url',
-    fieldtype: 'multilink',
-  },
-  [SchemaFieldType.NUMBER]: '1234',
-  [SchemaFieldType.RICH_TEXT]: {
+type FieldType =
+  | ContentSchemaInputField['type']
+  | CustomizerSchemaInputField['type'];
+
+const FIELD_PREVIEWS: Record<FieldType, any> = {
+  color: '#CCCCCC',
+  date: '2022-03-08T12:49:54.540Z',
+  image:
+    'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?auto=format&fit=crop&w=1920&q=80',
+  link: '#',
+  number: '1234',
+  richText: {
     type: 'doc',
     content: [
       {
@@ -48,9 +41,36 @@ const FIELD_PREVIEWS = {
       },
     ],
   },
-  [SchemaFieldType.SELECT]: 'Lorem',
-  [SchemaFieldType.SUBSCHEMA]: {},
-  [SchemaFieldType.TEXT]: 'Lorem ipsum dolor sit amet',
+  select: 'Lorem',
+  subschema: {},
+  text: 'Lorem ipsum dolor sit amet',
+};
+
+const formatFieldValue = (type: FieldType, value: any) => {
+  switch (type) {
+    case 'image': {
+      return {
+        id: 123,
+        alt: 'Alt text',
+        name: 'Name',
+        focus: null,
+        title: 'Title',
+        filename: value,
+        copyright: '',
+        fieldtype: 'asset',
+      };
+    }
+    case 'link': {
+      return {
+        id: '',
+        url: value,
+        linktype: 'url',
+        fieldtype: 'multilink',
+      };
+    }
+    default:
+      return value;
+  }
 };
 
 export const previewSchema = (
@@ -59,9 +79,11 @@ export const previewSchema = (
   previewValues?: Record<SchemaTypes, Record<string, string>>,
 ) =>
   Object.entries(schema.fields).reduce((data: any, [name, field]: any) => {
-    data[name] =
+    data[name] = formatFieldValue(
+      field.type as FieldType,
       previewValues?.[schemaType]?.[name] ||
-      FIELD_PREVIEWS[field.type as SchemaFieldType];
+        FIELD_PREVIEWS[field.type as FieldType],
+    );
 
     return data;
   }, {} as any);

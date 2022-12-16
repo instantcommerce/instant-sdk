@@ -49,9 +49,9 @@ type ContentSelectField = EnhancedContentSchemaField<
   'select'
 >;
 
-type ContentSubSchemaField = EnhancedContentSchemaField<
+type ContentSubschemaField = EnhancedContentSchemaField<
   ContentSchemaSubschemaField,
-  'subSchema'
+  'subschema'
 >;
 
 type ContentTextField = EnhancedContentSchemaField<
@@ -64,7 +64,7 @@ export type ContentSchemaInputField =
   | ContentImageField
   | ContentRichTextField
   | ContentSelectField
-  | ContentSubSchemaField
+  | ContentSubschemaField
   | ContentTextField
   | ContentLinkField;
 

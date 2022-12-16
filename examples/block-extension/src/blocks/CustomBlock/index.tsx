@@ -19,18 +19,18 @@ export default defineBlock({
           { label: 'Small', value: 'sm' },
           { label: 'Large', value: 'lg' },
         ],
-        previewValue: 'sm',
+        preview: 'sm',
       },
-      textColor: { type: 'color', previewValue: '#A020F0' },
+      textColor: { type: 'color', preview: '#A020F0' },
       text: { type: 'text', maxLength: 1 },
     },
   },
   contentSchema: {
     fields: {
-      title: { type: 'text', previewValue: 'Title' },
+      title: { type: 'text', preview: 'Title' },
       select: {
         type: 'select',
-        previewValue: 'value1',
+        preview: 'value1',
         options: [
           { value: 'value1', label: 'Option 1' },
           { value: 'value2', label: 'Option 2' },
@@ -38,25 +38,25 @@ export default defineBlock({
       },
       date: {
         type: 'date',
-        previewValue: '2022-12-12 08:12',
+        preview: '2022-12-12 08:12',
         withTime: true,
       },
       image: {
         type: 'image',
-        previewValue:
+        preview:
           'https://images.unsplash.com/photo-1669962367460-00b711b2e3f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=80',
       },
       link: {
         type: 'link',
-        previewValue: 'https://google.com',
+        preview: 'https://google.com',
       },
       richText: {
         type: 'richText',
-        previewValue: 'Rich text',
+        preview: 'Rich text',
         toolbar: [],
       },
       Cards: {
-        type: 'subSchema',
+        type: 'subschema',
         name: 'cardsGrid',
         label: 'Cards grid',
         allowed: ['Cards'],
@@ -125,7 +125,7 @@ export default defineBlock({
             isRequired: true,
           },
           cardButtons: {
-            type: 'subSchema',
+            type: 'subschema',
             label: 'Buttons',
             isRequired: false,
             max: 2,
@@ -137,7 +137,7 @@ export default defineBlock({
         name: 'Cards',
         fields: [
           {
-            type: 'subSchema',
+            type: 'subschema',
             name: 'cardItems',
             label: 'Cards',
             isRequired: false,

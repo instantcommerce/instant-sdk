@@ -105,13 +105,13 @@ export const CustomBlock = () => {
       </Box>
       <Box className="mt-4">{content.date}</Box>
       <Box className="mt-4">{content.select}</Box>
-      <Box className="mt-4">{content.link}</Box>
-      <Box className="mt-4">{content.richText}</Box>
-      <img alt="test" src={content.image} />
+      <Box className="mt-4">{content.link?.url}</Box>
+      {/* <Box className="mt-4">{content.richText}</Box> */}
+      <img alt="test" src={content.image?.filename} />
       <div className="flex flex-col gap-5 p-5">
         {content?.cards?.map(({ preview }) => (
           <div className="bg-white w-full rounded shadow-lg overflow-hidden">
-            {!!preview?.cardImage && <img src={preview?.cardImage} />}
+            {!!preview?.cardImage && <img src={preview?.cardImage?.filename} />}
 
             <div className="bg-white p-5 flex flex-col gap-6">
               {!!preview?.cardTitle && (

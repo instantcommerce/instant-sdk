@@ -45,7 +45,7 @@ export const RightPanel = () => {
   const { selectedBlock, blocksManifest, setPreviewValue, previewValues } =
     useBlocks();
   const [addFieldModalOpen, setAddFieldModalOpen] = useState(false);
-  const [subSchema, setSubschema] = useState<string | null>(null);
+  const [subschema, setSubschema] = useState<string | null>(null);
   const [allowedSchemas, setAllowedSchemas] = useState<string[]>([]);
   const [breadCrumbs, setBreadCrumbs] = useState<string[]>([]);
 
@@ -80,22 +80,22 @@ export const RightPanel = () => {
 
   const previewContent = get(
     previewValues?.[selectedBlock]?.content,
-    subSchema || '',
+    subschema || '',
   );
 
   useEffect(() => {
     const a = blocksManifest?.[selectedBlock].contentSchema?.fields?.find(
-      (f) => f.name === subSchema,
+      (f) => f.name === subschema,
     );
 
     if (a) {
       setAllowedSchemas(a.allowed);
     }
-  }, [subSchema]);
+  }, [subschema]);
 
   const addPreviewItem = ({ name }: { name: string }) => {
-    if (subSchema) {
-      setPreviewValue('content', `${subSchema}`, [
+    if (subschema) {
+      setPreviewValue('content', `${subschema}`, [
         ...(previewContent || []),
         { name },
       ]);
@@ -103,12 +103,12 @@ export const RightPanel = () => {
   };
 
   const removePreviewItem = (idx: number) => {
-    if (subSchema) {
+    if (subschema) {
       const currentValues = [...(previewContent || [])];
 
       if (currentValues?.length) {
         currentValues.splice(idx, 1);
-        setPreviewValue('content', `${subSchema}`, currentValues);
+        setPreviewValue('content', `${subschema}`, currentValues);
       }
     }
   };
@@ -200,7 +200,7 @@ export const RightPanel = () => {
       case 'richText':
         return <RichText {...baseProps} />;
 
-      case 'subSchema': {
+      case 'subschema': {
         const fieldPreview = selectedBlock
           ? get(previewValues?.[selectedBlock]?.content, field.name, [])
           : [];
@@ -293,21 +293,21 @@ export const RightPanel = () => {
         }
 
         if (!hasDuplicateFieldNames) {
-          const subschemaPreviewValues = subSchema
-            ? get(previewValues?.[selectedBlock]?.content, subSchema, [])
+          const subschemaPreviewValues = subschema
+            ? get(previewValues?.[selectedBlock]?.content, subschema, [])
             : [];
 
           const currentSubschema = blocksManifest[
             selectedBlock
-          ]?.contentSchema?.fields?.find((f) => f.name === subSchema);
+          ]?.contentSchema?.fields?.find((f) => f.name === subschema);
 
-          content = subSchema ? (
+          content = subschema ? (
             <div className="text-xs">
               <BreadCrumbs
                 blockName={blocksManifest?.[selectedBlock]?.name}
                 breadCrumbs={breadCrumbs}
                 setBreadCrumbs={setBreadCrumbs}
-                subSchema={subSchema}
+                subschema={subschema}
                 setSubschema={setSubschema}
               />
 
@@ -339,7 +339,7 @@ export const RightPanel = () => {
                           'content',
                           {
                             ...f,
-                            name: [subSchema, idx, 'preview', f.name].join('.'),
+                            name: [subschema, idx, 'preview', f.name].join('.'),
                             preview: item.preview,
                           },
                           2,
@@ -415,7 +415,7 @@ export const RightPanel = () => {
     [
       selectedBlock,
       blocksManifest,
-      subSchema,
+      subschema,
       allowedSchemas,
       subschemaOptions,
       previewValues,
