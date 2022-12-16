@@ -139,7 +139,7 @@ export const Layout = ({ children }: { children: ReactNode }) => {
             {...baseProps}
             min={field.min !== null ? field.min : undefined}
             max={field.max !== null ? field.max : undefined}
-            decimals={field.decimals}
+            fractionDigits={field.fractionDigits}
           />
         );
 

@@ -693,6 +693,111 @@ export type ChangeAuth0PasswordInput = {
   oldPassword: Scalars['String'];
 };
 
+export type Checklist = {
+  __typename?: 'Checklist';
+  checklistStep: ChecklistStep;
+  createdAt: Scalars['DateTime'];
+  id: Scalars['UUID'];
+  isSkipped: Scalars['Boolean'];
+  updatedAt: Scalars['DateTime'];
+};
+
+export type ChecklistAggregateGroupBy = {
+  __typename?: 'ChecklistAggregateGroupBy';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ChecklistConnection = {
+  __typename?: 'ChecklistConnection';
+  /** Array of edges. */
+  edges: Array<ChecklistEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+};
+
+export type ChecklistCountAggregate = {
+  __typename?: 'ChecklistCountAggregate';
+  createdAt?: Maybe<Scalars['Int']>;
+  updatedAt?: Maybe<Scalars['Int']>;
+};
+
+export type ChecklistDeleteFilter = {
+  and?: InputMaybe<Array<ChecklistDeleteFilter>>;
+  createdAt?: InputMaybe<DateFieldComparison>;
+  or?: InputMaybe<Array<ChecklistDeleteFilter>>;
+  updatedAt?: InputMaybe<DateFieldComparison>;
+};
+
+export type ChecklistDeleteResponse = {
+  __typename?: 'ChecklistDeleteResponse';
+  checklistStep?: Maybe<ChecklistStep>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  id?: Maybe<Scalars['UUID']>;
+  isSkipped?: Maybe<Scalars['Boolean']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ChecklistEdge = {
+  __typename?: 'ChecklistEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the Checklist */
+  node: Checklist;
+};
+
+export type ChecklistFilter = {
+  and?: InputMaybe<Array<ChecklistFilter>>;
+  createdAt?: InputMaybe<DateFieldComparison>;
+  or?: InputMaybe<Array<ChecklistFilter>>;
+  updatedAt?: InputMaybe<DateFieldComparison>;
+};
+
+export type ChecklistMaxAggregate = {
+  __typename?: 'ChecklistMaxAggregate';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ChecklistMinAggregate = {
+  __typename?: 'ChecklistMinAggregate';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ChecklistSort = {
+  direction: SortDirection;
+  field: ChecklistSortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum ChecklistSortFields {
+  CreatedAt = 'createdAt',
+  UpdatedAt = 'updatedAt'
+}
+
+export enum ChecklistStatus {
+  Done = 'DONE',
+  NotVisited = 'NOT_VISITED',
+  Skipped = 'SKIPPED'
+}
+
+export enum ChecklistStep {
+  AddBrandAssets = 'ADD_BRAND_ASSETS',
+  AddStorefrontBlock = 'ADD_STOREFRONT_BLOCK',
+  ConfigureHeadlessTheme = 'CONFIGURE_HEADLESS_THEME',
+  ConfigureLanguages = 'CONFIGURE_LANGUAGES',
+  ConnectShopify = 'CONNECT_SHOPIFY',
+  ConnectStoryblok = 'CONNECT_STORYBLOK',
+  CreateStore = 'CREATE_STORE',
+  EditStorefrontPage = 'EDIT_STOREFRONT_PAGE',
+  FinalChecklist = 'FINAL_CHECKLIST',
+  InviteTeamMembers = 'INVITE_TEAM_MEMBERS',
+  Launch = 'LAUNCH',
+  PublishStorefront = 'PUBLISH_STOREFRONT',
+  SetupRedirects = 'SETUP_REDIRECTS'
+}
+
 export type CodeEmbedBlock = {
   __typename?: 'CodeEmbedBlock';
   backgroundColor?: Maybe<Scalars['String']>;
@@ -1066,6 +1171,7 @@ export type CreateOrFetchStoryInput = {
 };
 
 export type CreateOrganizationInput = {
+  email: Scalars['String'];
   maxStores?: InputMaybe<Scalars['Int']>;
   name: Scalars['String'];
   slug: Scalars['String'];
@@ -1127,6 +1233,7 @@ export type CustomBlock = {
   metadata: Scalars['Object'];
   name: Scalars['String'];
   refId: Scalars['String'];
+  url?: Maybe<Scalars['String']>;
 };
 
 export type CustomerData = {
@@ -1165,6 +1272,7 @@ export type CustomizerSchemaColorField = {
   isRequired: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  previewValue?: Maybe<Scalars['Object']>;
 };
 
 export type CustomizerSchemaField = CustomizerSchemaColorField | CustomizerSchemaNumberField | CustomizerSchemaSelectField | CustomizerSchemaTextField;
@@ -1175,14 +1283,15 @@ export type CustomizerSchemaInput = {
 
 export type CustomizerSchemaNumberField = {
   __typename?: 'CustomizerSchemaNumberField';
-  /** Allowed number of decimals. */
-  decimals: Scalars['Float'];
   description?: Maybe<Scalars['String']>;
+  /** Allowed number of digits after the decimal point. */
+  fractionDigits: Scalars['Float'];
   isRequired: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   max?: Maybe<Scalars['Float']>;
   min?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
+  previewValue?: Maybe<Scalars['Object']>;
 };
 
 export type CustomizerSchemaSelectField = {
@@ -1192,6 +1301,7 @@ export type CustomizerSchemaSelectField = {
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   options: Array<SelectOption>;
+  previewValue?: Maybe<Scalars['Object']>;
 };
 
 export type CustomizerSchemaTextField = {
@@ -1201,6 +1311,7 @@ export type CustomizerSchemaTextField = {
   label?: Maybe<Scalars['String']>;
   maxLength?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
+  previewValue?: Maybe<Scalars['Object']>;
 };
 
 export type DateFieldComparison = {
@@ -1228,6 +1339,11 @@ export type DeleteManyAssetsInput = {
   filter: AssetDeleteFilter;
 };
 
+export type DeleteManyChecklistsInput = {
+  /** Filter to find records to delete */
+  filter: ChecklistDeleteFilter;
+};
+
 export type DeleteManyIntegrationsInput = {
   /** Filter to find records to delete */
   filter: IntegrationDeleteFilter;
@@ -1245,6 +1361,11 @@ export type DeleteOneAssetInput = {
 };
 
 export type DeleteOneBlockInput = {
+  /** The id of the record to delete. */
+  id: Scalars['ID'];
+};
+
+export type DeleteOneChecklistInput = {
   /** The id of the record to delete. */
   id: Scalars['ID'];
 };
@@ -2430,9 +2551,11 @@ export type Mutation = {
   createUser: Scalars['Boolean'];
   deleteInvitation: Scalars['Boolean'];
   deleteManyAssets: DeleteManyResponse;
+  deleteManyChecklists: DeleteManyResponse;
   deleteManyIntegrations: DeleteManyResponse;
   deleteOneAsset: AssetDeleteResponse;
   deleteOneBlock: BlockDeleteResponse;
+  deleteOneChecklist: ChecklistDeleteResponse;
   deleteOneDomain: DomainDeleteResponse;
   deleteOneGeolocationRedirect: GeolocationRedirectDeleteResponse;
   deleteOneIntegration: IntegrationDeleteResponse;
@@ -2482,10 +2605,12 @@ export type Mutation = {
   updateOneRedirect: Redirect;
   updateOneSnippet: Snippet;
   updateOneStore: Store;
+  updateOrganizationChecklist: Scalars['Boolean'];
   /** Create a redirect url to Stripe to set up payment methods. */
   updatePaymentMethod: UpdatePaymentPayload;
   /** Updates the current user profile in Auth0. */
   updateProfile: User;
+  updateStoreChecklist: Scalars['Boolean'];
   /** Updates draft storefront config of the current store. */
   updateStorefrontConfig: Storefront;
   /** Upgrade the amount of storefronts in a subscription in Stripe. */
@@ -2597,6 +2722,11 @@ export type MutationDeleteManyAssetsArgs = {
 };
 
 
+export type MutationDeleteManyChecklistsArgs = {
+  input: DeleteManyChecklistsInput;
+};
+
+
 export type MutationDeleteManyIntegrationsArgs = {
   input: DeleteManyIntegrationsInput;
 };
@@ -2609,6 +2739,11 @@ export type MutationDeleteOneAssetArgs = {
 
 export type MutationDeleteOneBlockArgs = {
   input: DeleteOneBlockInput;
+};
+
+
+export type MutationDeleteOneChecklistArgs = {
+  input: DeleteOneChecklistInput;
 };
 
 
@@ -2788,8 +2923,18 @@ export type MutationUpdateOneStoreArgs = {
 };
 
 
+export type MutationUpdateOrganizationChecklistArgs = {
+  input: UpdateOrganizationChecklistInput;
+};
+
+
 export type MutationUpdateProfileArgs = {
   input: UpdateAuth0ProfileInput;
+};
+
+
+export type MutationUpdateStoreChecklistArgs = {
+  input: UpdateStoreChecklistInput;
 };
 
 
@@ -2899,6 +3044,22 @@ export type OrganizationAggregateGroupBy = {
   __typename?: 'OrganizationAggregateGroupBy';
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type OrganizationBuildChecklist = {
+  __typename?: 'OrganizationBuildChecklist';
+  inviteTeamMembers: ChecklistStatus;
+};
+
+export type OrganizationChecklistOutput = {
+  __typename?: 'OrganizationChecklistOutput';
+  build: OrganizationBuildChecklist;
+  connect: OrganizationConnectChecklist;
+};
+
+export type OrganizationConnectChecklist = {
+  __typename?: 'OrganizationConnectChecklist';
+  createStore: ChecklistStatus;
 };
 
 export type OrganizationConnection = {
@@ -3837,6 +3998,8 @@ export type Query = {
   billingDetails: BillingDetails;
   block?: Maybe<Block>;
   blocks: BlockConnection;
+  checklist?: Maybe<Checklist>;
+  checklists: ChecklistConnection;
   /** Get current bulk operation. */
   currentBulkOperation?: Maybe<ShopifyBulkOperation>;
   /** Fetches current organization */
@@ -3845,6 +4008,8 @@ export type Query = {
   defaultPaymentMethod: PaymentMethodOutput;
   domain?: Maybe<Domain>;
   domains: DomainConnection;
+  fetchOrganizationChecklist: OrganizationChecklistOutput;
+  fetchStoreSetupChecklist: StoreSetupChecklistOutput;
   geolocationRedirect?: Maybe<GeolocationRedirect>;
   geolocationRedirects: GeolocationRedirectConnection;
   /** Fetches the storefront config schema. */
@@ -3921,6 +4086,18 @@ export type QueryBlocksArgs = {
   filter?: InputMaybe<BlockFilter>;
   paging?: InputMaybe<CursorPaging>;
   sorting?: InputMaybe<Array<BlockSort>>;
+};
+
+
+export type QueryChecklistArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryChecklistsArgs = {
+  filter?: InputMaybe<ChecklistFilter>;
+  paging?: InputMaybe<CursorPaging>;
+  sorting?: InputMaybe<Array<ChecklistSort>>;
 };
 
 
@@ -4909,6 +5086,39 @@ export type StoreMinAggregate = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
+export type StoreSetupBuildChecklist = {
+  __typename?: 'StoreSetupBuildChecklist';
+  addBrandAssets: ChecklistStatus;
+  addStoreFrontBlock: ChecklistStatus;
+  editStoreFrontPage: ChecklistStatus;
+  inviteTeamMembers: ChecklistStatus;
+  publishStoreFront: ChecklistStatus;
+};
+
+export type StoreSetupChecklistOutput = {
+  __typename?: 'StoreSetupChecklistOutput';
+  build?: Maybe<StoreSetupBuildChecklist>;
+  connect: StoreSetupConnectChecklist;
+  deploy?: Maybe<StoreSetupDeployChecklist>;
+};
+
+export type StoreSetupConnectChecklist = {
+  __typename?: 'StoreSetupConnectChecklist';
+  connectShopify: ChecklistStatus;
+  connectStoryblok: ChecklistStatus;
+  createAccount: ChecklistStatus;
+  createStore: ChecklistStatus;
+};
+
+export type StoreSetupDeployChecklist = {
+  __typename?: 'StoreSetupDeployChecklist';
+  configureHeadlessTheme: ChecklistStatus;
+  configureLanguages: ChecklistStatus;
+  finalCheck: ChecklistStatus;
+  launch: ChecklistStatus;
+  setupRedirects: ChecklistStatus;
+};
+
 export type StoreSort = {
   direction: SortDirection;
   field: StoreSortFields;
@@ -5049,6 +5259,8 @@ export enum StoryblokContentType {
 
 export type StoryblokMetadata = {
   __typename?: 'StoryblokMetadata';
+  /** Only relevant if not matches the default locale in Instant Commerce. */
+  defaultLocale?: Maybe<Scalars['String']>;
   oauthToken?: Maybe<Scalars['String']>;
   previewKey?: Maybe<Scalars['String']>;
   publicKey?: Maybe<Scalars['String']>;
@@ -5057,6 +5269,8 @@ export type StoryblokMetadata = {
 
 export type StoryblokPublicMetadata = {
   __typename?: 'StoryblokPublicMetadata';
+  /** Only relevant if not matches the default locale in Instant Commerce. */
+  defaultLocale?: Maybe<Scalars['String']>;
   publicKey?: Maybe<Scalars['String']>;
 };
 
@@ -5392,7 +5606,13 @@ export type UpdateOneStoreInput = {
   update: UpdateStoreInput;
 };
 
+export type UpdateOrganizationChecklistInput = {
+  checklistStep: ChecklistStep;
+  isSkipped: Scalars['Boolean'];
+};
+
 export type UpdateOrganizationInput = {
+  email: Scalars['String'];
   maxStores?: InputMaybe<Scalars['Int']>;
   name: Scalars['String'];
   slug: Scalars['String'];
@@ -5431,6 +5651,11 @@ export type UpdateSnippetInput = {
   isPrioritized?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   status?: InputMaybe<SnippetStatus>;
+};
+
+export type UpdateStoreChecklistInput = {
+  checklistStep: ChecklistStep;
+  isSkipped: Scalars['Boolean'];
 };
 
 export type UpdateStoreInput = {

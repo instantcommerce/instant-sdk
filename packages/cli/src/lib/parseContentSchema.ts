@@ -4,7 +4,6 @@ import { schemaFieldTypeMapping } from './schemaFieldTypeMapping';
 
 const formatField = (field: DefineContentSchema['fields'][number]) => ({
   ...field,
-  preview: undefined,
   type: schemaFieldTypeMapping[field.type],
   /** Set optional booleans */
   isRequired: !!field.isRequired,

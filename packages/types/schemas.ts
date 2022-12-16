@@ -20,7 +20,6 @@ type EnhancedContentSchemaField<
   Type,
 > = Partial<Pick<T, 'isRequired' | 'isTranslatable'>> &
   Omit<T, '__typename' | 'name' | 'isRequired' | 'isTranslatable'> & {
-    preview?: string;
     type: Type;
   };
 
@@ -72,11 +71,10 @@ export interface DefineContentSchema {
 }
 
 type EnhancedCustomizerSchemaField<
-  T extends Omit<CustomizerSchemaField, 'decimals'>,
+  T extends Omit<CustomizerSchemaField, 'fractionDigits'>,
   Type,
 > = Partial<Pick<T, 'isRequired'>> &
   Omit<T, '__typename' | 'name' | 'isRequired'> & {
-    preview?: string;
     type: Type;
   };
 
@@ -86,7 +84,9 @@ type CustomizerColorField = EnhancedCustomizerSchemaField<
 >;
 
 type CustomizerNumberField = EnhancedCustomizerSchemaField<
-  Omit<CustomizerSchemaNumberField, 'decimals'> & { decimals?: number },
+  Omit<CustomizerSchemaNumberField, 'fractionDigits'> & {
+    fractionDigits?: number;
+  },
   'number'
 >;
 
