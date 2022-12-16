@@ -1,16 +1,8 @@
+import { SchemaFieldType } from 'types/schemas';
 import { SchemaTypes } from '../../components/BlocksProvider/context';
 
-/** @todo get from codegen backend */
-enum SchemaFieldType {
-  DATE = 'DATE',
-  IMAGE = 'IMAGE',
-  RICH_TEXT = 'RICH_TEXT',
-  SELECT = 'SELECT',
-  TEXT = 'TEXT',
-  URL = 'URL',
-}
-
 const FIELD_PREVIEWS = {
+  [SchemaFieldType.COLOR]: '#CCCCCC',
   [SchemaFieldType.DATE]: '2022-03-08T12:49:54.540Z',
   [SchemaFieldType.IMAGE]: {
     id: 123,
@@ -23,6 +15,13 @@ const FIELD_PREVIEWS = {
     copyright: '',
     fieldtype: 'asset',
   },
+  [SchemaFieldType.LINK]: {
+    id: '',
+    url: '#',
+    linktype: 'url',
+    fieldtype: 'multilink',
+  },
+  [SchemaFieldType.NUMBER]: '1234',
   [SchemaFieldType.RICH_TEXT]: {
     type: 'doc',
     content: [
@@ -50,13 +49,8 @@ const FIELD_PREVIEWS = {
     ],
   },
   [SchemaFieldType.SELECT]: 'Lorem',
+  [SchemaFieldType.SUBSCHEMA]: {},
   [SchemaFieldType.TEXT]: 'Lorem ipsum dolor sit amet',
-  [SchemaFieldType.URL]: {
-    id: '',
-    url: '#',
-    linktype: 'url',
-    fieldtype: 'multilink',
-  },
 };
 
 export const previewSchema = (
@@ -64,9 +58,9 @@ export const previewSchema = (
   schema: any,
   previewValues?: Record<SchemaTypes, Record<string, string>>,
 ) =>
-  schema.fields.reduce((data: any, field: any) => {
-    data[field.name] =
-      previewValues?.[schemaType]?.[field.name] ||
+  Object.entries(schema.fields).reduce((data: any, [name, field]: any) => {
+    data[name] =
+      previewValues?.[schemaType]?.[name] ||
       FIELD_PREVIEWS[field.type as SchemaFieldType];
 
     return data;

@@ -43,8 +43,10 @@ const getBlockFiles = () => glob.sync(path.resolve('src/blocks/**/index.tsx'));
 
 export default function vitePluginInstantSdk({
   blockIdsMap,
+  entry,
 }: {
   blockIdsMap?: Record<string, Record<'id', string>>;
+  entry?: string;
 }): PluginOption {
   let projectRoot = process.cwd();
   let base = '/';
@@ -65,34 +67,33 @@ export default function vitePluginInstantSdk({
     {
       name: 'vite-plugin-instant-sdk',
       enforce: 'post',
-      config() {
-        return {
-          build: {
+      config(config) {
+        if (entry) {
+          config.build = {
+            ...config.build,
             rollupOptions: {
-              input: Object.fromEntries(
-                getBlockFiles().map((file) => [
-                  path.relative(
-                    'src',
-                    file.slice(0, file.length - path.extname(file).length),
+              input: {
+                [entry]: fileURLToPath(
+                  new URL(
+                    getBlockFiles().find(
+                      (file) =>
+                        path.dirname(file).split(path.sep).pop() === entry,
+                    )!,
+                    import.meta.url,
                   ),
-                  fileURLToPath(new URL(file, import.meta.url)),
-                ]),
-              ),
+                ),
+              },
               output: {
-                assetFileNames: (assetInfo) =>
-                  path.relative(
-                    'src',
-                    assetInfo.name?.slice(0, assetInfo.name.length) || '',
-                  ),
-                entryFileNames: '[name].js',
+                assetFileNames: '[name][extname]',
+                entryFileNames: 'index.js',
                 manualChunks: {},
               },
               /** @todo investigate */
-              external: ['react', 'ui-api', '@remote-ui/react'],
+              // external: ['react', '@remote-ui/react'],
             },
             manifest: true,
-          },
-        };
+          };
+        }
       },
       configResolved(config) {
         base = config.base;
@@ -214,7 +215,20 @@ export default function vitePluginInstantSdk({
                  * only 1 defineBlock per file.
                  */
                 ExportDefaultDeclaration(path) {
-                  const defineBlock = path.node.declaration;
+                  let defineBlock = path.node.declaration;
+
+                  if (
+                    !t.isIdentifier(defineBlock.callee, {
+                      name: 'defineBlock',
+                    }) &&
+                    t.isIdentifier(defineBlock)
+                  ) {
+                    const declaration = path.scope.getBinding(defineBlock.name);
+
+                    if (declaration) {
+                      defineBlock = declaration.path.node.init;
+                    }
+                  }
 
                   if (
                     t.isIdentifier(defineBlock.callee, { name: 'defineBlock' })

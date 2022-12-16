@@ -1,4 +1,5 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
+import { exec } from 'child_process';
 import http from 'http';
 import path from 'path';
 import { parse } from 'url';
@@ -25,11 +26,14 @@ const Shortcuts = ({ address }: { address: string }) => {
 
   useInput((input) => {
     switch (input) {
-      case 'q':
-        exit();
+      case 'c':
+        exec('code .');
         break;
       case 'o':
         open(address);
+        break;
+      case 'q':
+        exit();
         break;
       default:
     }
@@ -38,6 +42,7 @@ const Shortcuts = ({ address }: { address: string }) => {
   return (
     <>
       <Text>Press "o" to open in browser</Text>
+      <Text>Press "c" to open in VS Code</Text>
       <Text>Press "q" to quit</Text>
     </>
   );

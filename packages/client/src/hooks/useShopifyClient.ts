@@ -2,9 +2,7 @@ import { useMemo } from 'react';
 import { GraphQLClient, RequestDocument } from 'graphql-request';
 import { useBlockContext } from '../BlockProvider';
 
-const apiVersion = '2022-07';
-
-export const useShopifyClient = () => {
+export const useShopifyClient = ({ apiVersion = '2022-07' } = {}) => {
   const { store } = useBlockContext();
 
   const client = useMemo(
@@ -22,7 +20,7 @@ export const useShopifyClient = () => {
               },
             },
           ),
-    [],
+    [apiVersion],
   );
 
   /** @todo fix types for variables */

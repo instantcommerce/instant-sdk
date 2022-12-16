@@ -10,7 +10,6 @@ import {
   Minus,
 } from 'phosphor-react';
 import { twJoin } from 'tailwind-merge';
-import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import {
   Button,
   StatusMessage,
@@ -22,8 +21,13 @@ import {
   useBlocks,
   RichText,
   Modal,
+  ColorInput,
 } from '../..';
-import { SchemaTypes } from '../../BlocksProvider/context';
+import {
+  BlockContentSchema,
+  BlockCustomizerSchema,
+  SchemaTypes,
+} from '../../BlocksProvider/context';
 import { BreadCrumbs } from './Breadcrumbs';
 
 const tabs = [
@@ -121,8 +125,8 @@ export const RightPanel = () => {
   const renderField = (
     schema: SchemaTypes,
     field:
-      | DefineContentSchema['fields'][0]
-      | DefineCustomizerSchema['fields'][0],
+      | BlockContentSchema['fields'][number]
+      | BlockCustomizerSchema['fields'][number],
     layer: number = 1,
   ) => {
     const fieldPath = field.name.split('.');
@@ -133,9 +137,10 @@ export const RightPanel = () => {
       key: field.name,
       id: field.name,
       name: field.name,
-      value: Object.keys(field.preview || []).length
-        ? field.preview?.[fieldName]
-        : field.preview,
+      defaultValue:
+        typeof field.preview === 'object'
+          ? field.preview?.[fieldName]
+          : field.preview,
       onChange: (e: ChangeEvent<HTMLInputElement>) => {
         setPreviewValue(schema, field.name, e.target.value);
       },
@@ -143,18 +148,24 @@ export const RightPanel = () => {
 
     switch (field.type) {
       case 'text':
-        return <Input {...baseProps} direction={layer <= 1 ? 'row' : 'col'} />;
+        return (
+          <Input
+            {...baseProps}
+            direction={layer <= 1 ? 'row' : 'col'}
+            maxLength={field.maxLength !== null ? field.maxLength : undefined}
+          />
+        );
 
-      // case 'color':
-      //   return (
-      //     <ColorInput
-      //       {...baseProps}
-      //       direction={layer <= 1 ? "row" : 'col'}
-      //       onChange={(value: string) => {
-      //         setPreviewValue(schema, field.name, value);
-      //       }}
-      //     />
-      //   );
+      case 'color':
+        return (
+          <ColorInput
+            {...baseProps}
+            direction={layer <= 1 ? 'row' : 'col'}
+            onChange={(value: string) => {
+              setPreviewValue(schema, field.name, value);
+            }}
+          />
+        );
 
       case 'select':
         return (
@@ -177,8 +188,20 @@ export const RightPanel = () => {
       case 'date':
         return (
           <Input
-            type="date"
+            type={field.withTime ? 'datetime-local' : 'date'}
             {...baseProps}
+            direction={layer <= 1 ? 'row' : 'col'}
+          />
+        );
+
+      case 'number':
+        return (
+          <Input
+            type="number"
+            {...baseProps}
+            min={field.min !== null ? field.min : undefined}
+            max={field.max !== null ? field.max : undefined}
+            decimals={field.decimals}
             direction={layer <= 1 ? 'row' : 'col'}
           />
         );

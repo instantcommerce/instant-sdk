@@ -1,4 +1,4 @@
-import { defineBlock } from 'instant-client/src';
+import { defineBlock } from 'instant-client';
 import { CustomBlock } from './block';
 import '../test.css';
 import './styles.css';
@@ -11,43 +11,51 @@ export default defineBlock({
     ],
   },
   customizerSchema: {
-    fields: [{ type: 'text', name: 'textColor', preview: '#A020F0' }],
+    fields: {
+      number: { type: 'number', min: 2, max: 80, decimals: 3 },
+      padding: {
+        type: 'select',
+        options: [
+          { label: 'Small', value: 'sm' },
+          { label: 'Large', value: 'lg' },
+        ],
+        preview: 'sm',
+      },
+      textColor: { type: 'color', preview: '#A020F0' },
+      text: { type: 'text', maxLength: 1 },
+    },
   },
   contentSchema: {
-    fields: [
-      { type: 'text', name: 'title', preview: 'Title' },
-      {
+    fields: {
+      title: { type: 'text', preview: 'Title' },
+      select: {
         type: 'select',
-        name: 'select',
         preview: 'value1',
         options: [
           { value: 'value1', label: 'Option 1' },
           { value: 'value2', label: 'Option 2' },
         ],
       },
-      {
+      date: {
         type: 'date',
-        name: 'date',
-        preview: '2022-12-12',
+        preview: '2022-12-12 08:12',
+        withTime: true,
       },
-      {
+      image: {
         type: 'image',
-        name: 'image',
         preview:
           'https://images.unsplash.com/photo-1669962367460-00b711b2e3f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=700&q=80',
       },
-      {
+      link: {
         type: 'link',
-        name: 'link',
         preview: 'https://google.com',
       },
-      {
+      richText: {
         type: 'richText',
-        name: 'richText',
         preview: 'Rich text',
         toolbar: [],
       },
-      {
+      Cards: {
         type: 'subSchema',
         name: 'cardsGrid',
         label: 'Cards grid',
@@ -82,53 +90,48 @@ export default defineBlock({
           },
         ],
       },
-    ],
+    },
     subschemas: [
       {
         name: 'Button',
-        fields: [
-          {
+        fields: {
+          text: {
             type: 'text',
-            name: 'text',
             label: 'Text',
             isTranslatable: true,
             isRequired: true,
             maxLength: 40,
           },
-          {
+          link: {
             type: 'link',
-            name: 'link',
             label: 'Link',
             isTranslatable: true,
             isRequired: true,
           },
-        ],
+        },
       },
       {
         name: 'Card',
-        fields: [
-          {
+        fields: {
+          cardImage: {
             type: 'image',
-            name: 'cardImage',
             label: 'Image',
             isRequired: true,
           },
-          {
+          cardTitle: {
             type: 'text',
-            name: 'cardTitle',
             label: 'Title',
             isTranslatable: true,
             isRequired: true,
           },
-          {
+          cardButtons: {
             type: 'subSchema',
-            name: 'cardButtons',
             label: 'Buttons',
             isRequired: false,
             max: 2,
             allowed: ['Button'],
           },
-        ],
+        },
       },
       {
         name: 'Cards',
