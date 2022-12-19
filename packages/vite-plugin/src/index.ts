@@ -370,9 +370,11 @@ export default function vitePluginInstantSdk({
 
               const postcssResult = await (await import('postcss'))
                 .default([
-                  ((await import('postcss-plugin-instant-sdk')).default as any)(
-                    hashedId,
-                  ) as any,
+                  (
+                    (
+                      await import('@instantcommerce/postcss-plugin-sdk')
+                    ).default as any
+                  )(hashedId) as any,
                 ])
                 .process(chunk.source, {
                   to: chunk.fileName,

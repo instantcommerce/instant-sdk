@@ -1,4 +1,4 @@
-import { defineBlock, useBlockState } from 'instant-client';
+import { defineBlock, useBlockState } from '@instantcommerce/sdk';
 import './index.css';
 
 const Hero = () => {

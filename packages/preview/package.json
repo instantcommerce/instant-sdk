@@ -1,7 +1,6 @@
 {
-  "name": "instant-sdk-preview",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@instantcommerce/sdk-preview",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",

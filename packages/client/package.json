@@ -1,5 +1,5 @@
 {
-  "name": "instant-client",
+  "name": "@instantcommerce/sdk",
   "version": "0.0.1",
   "private": true,
   "type": "module",
