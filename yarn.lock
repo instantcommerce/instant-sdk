@@ -11707,6 +11707,11 @@ statuses@~1.5.0:
   resolved "https://registry.yarnpkg.com/statuses/-/statuses-1.5.0.tgz#161c7dac177659fd9811f43771fa99381478628c"
   integrity sha512-OpZ3zP+jT1PI7I8nemJX4AKmAX070ZkYPVWV/AaKTJl+tXCTGyVdC1a4SL8RUQYEwk/f34ZX8UTykN68FwrqAA==
 
+storyblok-rich-text-react-renderer@2.6.1:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/storyblok-rich-text-react-renderer/-/storyblok-rich-text-react-renderer-2.6.1.tgz#e19f319062d870eb4780deaaa2506659703046d1"
+  integrity sha512-8TJGoy7o9viysyylyxi7+ADYKslMHQXlqQYlect3g8gyGeNto9K2ILIyYL1szHP4Ljn0/Kp1EB6NMmHiTlE5xg==
+
 stream-combiner2@~1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/stream-combiner2/-/stream-combiner2-1.1.1.tgz#fb4d8a1420ea362764e21ad4780397bebcb41cbe"

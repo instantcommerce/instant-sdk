@@ -25,6 +25,7 @@ import { BlockContextValue } from 'instant-client/BlockProvider/context';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import { SchemaTypes } from '../../components/BlocksProvider/context';
 
+import { Link, RichText } from './components';
 import { previewSchema } from './previewSchema';
 import sandbox from './sandbox?worker&url';
 
@@ -32,7 +33,7 @@ const BLOCK_SERVER = import.meta.env.DEV
   ? 'http://127.0.0.1:5173'
   : window.__INSTANT_BLOCK_SERVER__;
 
-const COMPONENTS = {};
+const COMPONENTS = { Link, RichText };
 const CONTROLLER = createController(COMPONENTS, { strictComponents: false });
 
 /**
