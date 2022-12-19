@@ -16,5 +16,7 @@ export const schemaFieldTypeMapping: Record<
   number: SchemaFieldType.NUMBER,
   richText: SchemaFieldType.RICH_TEXT,
   select: SchemaFieldType.SELECT,
+  subschema: SchemaFieldType.SUBSCHEMA,
   text: SchemaFieldType.TEXT,
+  toggle: SchemaFieldType.TOGGLE,
 };

@@ -1,9 +1,13 @@
+import humanizeString from 'humanize-string';
 import type { CustomizerSchemaInput } from 'types/api';
 import type { DefineCustomizerSchema } from 'types/schemas';
 import { schemaFieldTypeMapping } from './schemaFieldTypeMapping';
 
-const formatField = (field: DefineCustomizerSchema['fields'][number]) => ({
+const formatField = (
+  field: DefineCustomizerSchema['fields'][number] & { name: string },
+) => ({
   ...field,
+  label: field.label || humanizeString(field.name),
   type: schemaFieldTypeMapping[field.type],
   /** Set optional booleans */
   isRequired: !!field.isRequired,

@@ -1,12 +1,12 @@
 {
-	"previewStoreId": "${previewStoreId}",
-	"organization": "acme-corporation",
-	"blocks": {
-		"CustomBlock": {
-			"id": "c230b892-3278-4410-af5d-0b409d12c3db"
-		},
-		"HeroBlock": {
-			"id": "a3463dec-48d4-442c-aab0-6d2657a9010a"
-		}
-	}
+  "previewStoreId": "${previewStoreId}",
+  "organization": "acme-corporation",
+  "blocks": {
+    "CustomBlock": {
+      "id": "2a1beddf-74ec-45d7-b0a6-da29f43dc8fb"
+    },
+    "HeroBlock": {
+      "id": "a3463dec-48d4-442c-aab0-6d2657a9010a"
+    }
+  }
 }
