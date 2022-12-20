@@ -124,6 +124,14 @@ export const Publish = ({
             const blockFile = createReadStream(
               path.join(dirname, 'dist/blocks', blockName, entry.file),
             );
+            let cssFile;
+
+            if (entry.css?.length) {
+              /** There should be at most 1 CSS file because of bundling */
+              cssFile = createReadStream(
+                path.join(dirname, 'dist/blocks', blockName, entry.css[0]),
+              );
+            }
 
             const existingBlockConfig = config.current!.get(
               `blocks.${blockName}`,
@@ -135,7 +143,8 @@ export const Publish = ({
               {
                 input: {
                   blockId: blockIdToUpdate,
-                  code: blockFile,
+                  css: cssFile,
+                  js: blockFile,
                   contentSchema,
                   customizerSchema,
                 },

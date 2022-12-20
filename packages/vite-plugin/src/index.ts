@@ -268,6 +268,17 @@ export default function vitePluginInstantSdk({
                           }
                         },
                       );
+
+                      if (isProduction) {
+                        /** Remove define props, only keep what we need in prod */
+                        defineBlock.arguments[0].properties =
+                          defineBlock.arguments[0].properties.filter(
+                            (property) =>
+                              t.isIdentifier(property.key, {
+                                name: 'component',
+                              }),
+                          );
+                      }
                     }
                   }
                 },
@@ -357,7 +368,7 @@ export default function vitePluginInstantSdk({
         /** Scope emitted CSS */
         for (const [, chunk] of Object.entries(bundle)) {
           if (chunk.type === 'asset' && cssLangRE.test(chunk.fileName)) {
-            const id = path.dirname(chunk.fileName).split(path.sep).pop();
+            const id = path.dirname(chunk.name!).split(path.sep).pop();
 
             if (id && blockIdsMap?.[id]?.id) {
               /**

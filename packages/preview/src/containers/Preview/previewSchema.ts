@@ -47,7 +47,7 @@ const FIELD_PREVIEWS: Record<FieldType, any> = {
   toggle: true,
 };
 
-const formatFieldValue = (type: FieldType, value: any) => {
+const formatFieldValue = (type: FieldType, value: any, schema: any) => {
   switch (type) {
     case 'image': {
       return {
@@ -69,6 +69,43 @@ const formatFieldValue = (type: FieldType, value: any) => {
         fieldtype: 'multilink',
       };
     }
+    case 'richText': {
+      if (typeof value === 'string') {
+        return {
+          type: 'doc',
+          content: [
+            {
+              type: 'paragraph',
+              content: [
+                {
+                  text: value,
+                  type: 'text',
+                },
+              ],
+            },
+          ],
+        };
+      }
+
+      return value;
+    }
+    case 'subschema': {
+      return value?.map((subschemaField: any) => {
+        const subschema = schema?.subschemas?.[subschemaField.subschema];
+
+        return {
+          ...subschemaField,
+          value: Object.keys(subschemaField.value || {}).reduce((all, key) => {
+            all[key] = formatFieldValue(
+              subschema?.fields?.[key]?.type,
+              subschemaField.value[key],
+              schema,
+            );
+            return all;
+          }, {} as any),
+        };
+      });
+    }
     default:
       return value;
   }
@@ -87,6 +124,7 @@ export const previewSchema = (
       typeof value !== 'undefined'
         ? value
         : FIELD_PREVIEWS[field.type as FieldType],
+      schema,
     );
 
     return data;

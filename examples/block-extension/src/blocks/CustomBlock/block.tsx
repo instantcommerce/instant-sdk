@@ -1,5 +1,7 @@
 import { HTMLProps, ReactNode, useCallback, useEffect, useState } from 'react';
 import {
+  Link,
+  RichText,
   gql,
   useBlockState,
   useEventListener,
@@ -85,7 +87,7 @@ export const CustomBlock = () => {
       ].join(' ')}
     >
       Title: <b style={{ color: colors.primary.s700 }}>{content.title}</b>
-      <a href="https://google.com">Google</a>
+      {!!content.link && <Link to={content.link}>Google</Link>}
       Locale: {request.locale}
       <Box className="mt-4" style={{ color: customizer.textColor }}>
         <h1 className="text-lg">Products</h1>
@@ -106,8 +108,9 @@ export const CustomBlock = () => {
       <Box className="mt-4">Toggle: {`${customizer.toggle}`}</Box>
       <Box className="mt-4">{content.date}</Box>
       <Box className="mt-4">{content.select}</Box>
-      <Box className="mt-4">{content.link?.url}</Box>
-      {/* <Box className="mt-4">{content.richText}</Box> */}
+      <Box className="mt-4">
+        <RichText value={content.richText} />
+      </Box>
       <img alt="test" src={content.image?.filename} />
       <div className="flex flex-col gap-5 p-5">
         {content?.cards?.map(({ value }: any, idx: number) => (
@@ -138,13 +141,13 @@ export const CustomBlock = () => {
                       jdx: number,
                     ) =>
                       button?.link || button?.text ? (
-                        <a
+                        <Link
                           key={jdx}
                           className="bg-purple-300 text-purple-800 text-xs px-5 py-3 no-underline"
-                          href={button?.link?.url}
+                          to={button?.link}
                         >
                           {button?.text}
-                        </a>
+                        </Link>
                       ) : null,
                   )}
                 </div>

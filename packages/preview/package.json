@@ -41,6 +41,7 @@
     "react-use": "17.4.0",
     "re-resizable": "BJvdA/re-resizable#build",
     "shared-utils": "*",
+    "storyblok-rich-text-react-renderer": "2.6.1",
     "tailwindcss": "3.2.4",
     "tailwind-merge": "1.8.0",
     "tailwindcss-radix": "2.6.1",

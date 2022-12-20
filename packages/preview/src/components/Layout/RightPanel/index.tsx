@@ -220,7 +220,14 @@ export const RightPanel = () => {
         );
 
       case 'richText':
-        return <RichText {...baseProps} />;
+        return (
+          <RichText
+            {...baseProps}
+            onChange={(value: string) => {
+              setPreviewValue(schema, field.name, value);
+            }}
+          />
+        );
 
       case 'subschema': {
         const fieldPreview: any[] = selectedBlock

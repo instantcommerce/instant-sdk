@@ -10,7 +10,7 @@ export const RichText = ({
   ...props
 }: {
   defaultValue: EditorContentProps['content'];
-  onChange: EditorContentProps['onChange'];
+  onChange(value: any): void;
 } & InputWrapperProps) => {
   const editor = useEditor({
     extensions: [StarterKit],
@@ -19,6 +19,9 @@ export const RichText = ({
       attributes: {
         class: 'prose prose-sm focus:outline-none',
       },
+    },
+    onUpdate: ({ editor }) => {
+      onChange?.(editor.getJSON());
     },
   });
 

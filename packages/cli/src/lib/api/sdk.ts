@@ -347,14 +347,16 @@ export enum BlockTheme {
 
 export type BlockVersion = {
   __typename?: 'BlockVersion';
-  codeHash: Scalars['String'];
-  codeUrl: Scalars['String'];
   contentSchema: ContentSchema;
   contentSchemaHash: Scalars['String'];
   createdAt: Scalars['DateTime'];
+  cssHash?: Maybe<Scalars['String']>;
+  cssUrl?: Maybe<Scalars['String']>;
   customizerSchema: CustomizerSchema;
   customizerSchemaHash: Scalars['String'];
   id: Scalars['UUID'];
+  jsHash: Scalars['String'];
+  jsUrl: Scalars['String'];
   tag: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
 };
@@ -1156,11 +1158,12 @@ export type CursorPaging = {
 
 export type CustomBlock = {
   __typename?: 'CustomBlock';
+  cssUrl?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
+  jsUrl?: Maybe<Scalars['String']>;
   metadata: Scalars['Object'];
   name: Scalars['String'];
   refId: Scalars['String'];
-  url?: Maybe<Scalars['String']>;
 };
 
 export type CustomerData = {
@@ -3896,9 +3899,10 @@ export type PublicStore = {
 export type PublishBlockVersionInput = {
   /** ID of the block */
   blockId: Scalars['String'];
-  code: Scalars['Upload'];
   contentSchema: ContentSchemaInput;
+  css?: InputMaybe<Scalars['Upload']>;
   customizerSchema: CustomizerSchemaInput;
+  js: Scalars['Upload'];
 };
 
 export type Query = {
