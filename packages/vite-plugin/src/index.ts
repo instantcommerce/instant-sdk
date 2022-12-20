@@ -268,6 +268,12 @@ export default function vitePluginInstantSdk({
                           }
                         },
                       );
+
+                      /** Remove define props, only keep what we need in prod */
+                      defineBlock.arguments[0].properties =
+                        defineBlock.arguments[0].properties.filter((property) =>
+                          t.isIdentifier(property.key, { name: 'component' }),
+                        );
                     }
                   }
                 },
