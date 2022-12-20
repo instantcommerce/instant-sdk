@@ -141,13 +141,13 @@ export const CustomBlock = () => {
                       jdx: number,
                     ) =>
                       button?.link || button?.text ? (
-                        <a
+                        <Link
                           key={jdx}
                           className="bg-purple-300 text-purple-800 text-xs px-5 py-3 no-underline"
-                          href={button?.link?.url}
+                          to={button?.link}
                         >
                           {button?.text}
-                        </a>
+                        </Link>
                       ) : null,
                   )}
                 </div>
