@@ -1,8 +1,13 @@
 {
   "name": "@instantcommerce/sdk",
   "version": "0.0.1",
+  "author": "Instant Commerce B.V.",
+  "license": "MIT",
   "private": true,
   "type": "module",
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.js",

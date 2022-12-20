@@ -25,6 +25,9 @@ jobs:
       - name: Install dependencies
         run: yarn
 
+      - name: Build
+        run: yarn build
+
       - name: Install semantic-release
         run: yarn global add semantic-release semantic-release-monorepo @semantic-release/changelog @semantic-release/npm
 

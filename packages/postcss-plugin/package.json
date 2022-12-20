@@ -1,6 +1,8 @@
 {
   "name": "@instantcommerce/postcss-plugin-sdk",
   "version": "0.0.0",
+  "author": "Instant Commerce B.V.",
+  "license": "MIT",
   "files": [
     "dist"
   ],

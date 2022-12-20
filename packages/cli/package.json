@@ -1,6 +1,8 @@
 {
   "name": "@instantcommerce/cli",
   "version": "0.0.1",
+  "author": "Instant Commerce B.V.",
+  "license": "MIT",
   "bin": {
     "instant": "dist/cli.js"
   },
@@ -18,7 +20,7 @@
     "test": "xo && ava"
   },
   "files": [
-    "dist/cli.js"
+    "dist"
   ],
   "dependencies": {
     "@instantcommerce/vite-plugin-sdk": "*",
