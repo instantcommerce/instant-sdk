@@ -1,11 +1,16 @@
 import { GraphQLClient, gql } from 'graphql-request';
 
-const client = new GraphQLClient(`${import.meta.env.VITE_API_URL}/graphql`, {
-  fetch,
-  headers: {
-    'x-instant-client': 'Storefront',
+const client = new GraphQLClient(
+  `${
+    import.meta.env.VITE_API_URL || 'https://api.instantcommerce.app'
+  }/graphql`,
+  {
+    fetch,
+    headers: {
+      'x-instant-client': 'Storefront',
+    },
   },
-});
+);
 
 const PublicStoreFragmentFragmentDoc = gql`
   fragment PublicStoreFragment on PublicStore {
