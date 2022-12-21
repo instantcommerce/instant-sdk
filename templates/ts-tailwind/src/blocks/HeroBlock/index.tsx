@@ -14,11 +14,13 @@ const HeroBlock = () => {
 export default defineBlock({
   component: HeroBlock,
   customizerSchema: {
-    fields: [{ type: 'text', name: 'Test color' }],
+    fields: {
+      color: { type: 'color', label: 'Test color' },
+    },
   },
   contentSchema: {
-    fields: [
-      { type: 'text', name: 'title', label: 'Title', preview: 'Hero title' },
-    ],
+    fields: {
+      title: { type: 'text', label: 'Title', preview: 'Hero title' },
+    },
   },
 });
