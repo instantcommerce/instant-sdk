@@ -90,7 +90,7 @@ export const CustomBlock = () => {
       {!!content.link && <Link to={content.link}>Google</Link>}
       Locale: {request.locale}
       <Box className="mt-4" style={{ color: customizer.textColor }}>
-        <h1 className="text-lg">Products</h1>
+        <h1 className="text-lg animate-spin">Products</h1>
 
         {/* {products?.edges?.map(({ node }) => (
           <Box key={node.id}>{node.title}</Box>
