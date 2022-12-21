@@ -7,14 +7,14 @@
     "dev": {
       "cache": false
     },
-    "instant-cli#build": {
+    "@instantcommerce/cli#build": {
       "dependsOn": [
         "@instantcommerce/postcss-plugin-sdk#build",
         "@instantcommerce/vite-plugin-sdk#build",
         "@instantcommerce/sdk-preview#build"
       ]
     },
-    "instant-cli#dev": {
+    "@instantcommerce/cli#dev": {
       "dependsOn": [
         "@instantcommerce/postcss-plugin-sdk#build",
         "@instantcommerce/vite-plugin-sdk#build",
