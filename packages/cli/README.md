@@ -23,8 +23,8 @@ $ instant --help
     instant init <name> <template>       Initialize a new Instant project
     instant generate <schematic> <name>  Generate new Instant element
     instant dev                          Start the local development environment
-    instant add [blocknames..]           Add block(s) to the platform, comma-separated list of blocknames to limit
-    instant publish [blocknames..]       Publish new version of block(s), comma-separated list of blocknames to limit
+    instant add [blocknames..]           Add block(s) to the platform, space-separated list of blocknames to limit
+    instant publish [blocknames..]       Publish new version of block(s), space-separated list of blocknames to limit
 
   Options:
     --version  Show version number

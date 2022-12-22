@@ -295,7 +295,7 @@ export const Publish = ({
 export const publish: CommandModule = {
   command: 'publish [blocknames..]',
   describe:
-    'Publish new version of block(s), comma-separated list of blocknames to limit',
+    'Publish new version of block(s), space-separated list of blocknames to limit',
   handler: (argv) => {
     render(<Publish blockNames={argv['blocknames'] as string[]} />);
   },

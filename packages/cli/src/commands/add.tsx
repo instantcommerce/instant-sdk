@@ -208,7 +208,7 @@ export const Add = ({
 export const add: CommandModule = {
   command: 'add [blocknames..]',
   describe:
-    'Add block(s) to the platform, comma-separated list of blocknames to limit',
+    'Add block(s) to the platform, space-separated list of blocknames to limit',
   handler: (argv) => {
     render(<Add blockNames={argv['blocknames'] as string[]} />);
   },
