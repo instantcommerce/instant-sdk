@@ -10,6 +10,9 @@
   "engines": {
     "node": "16"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "compile": "tsup && chmod +x dist/cli.js",
     "build": "npm run compile && mkdir -p ./dist/preview/ && cp -r ../preview/dist ./dist/preview/ && cp -r ../../templates ./dist/",

@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "author": "Instant Commerce B.V.",
   "license": "MIT",
-  "private": true,
   "type": "module",
   "files": [
     "dist"
@@ -20,6 +19,9 @@
   "sideEffects": false,
   "engines": {
     "node": ">=16"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "tsup"
