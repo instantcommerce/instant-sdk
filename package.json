@@ -9,12 +9,12 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "build:cli": "turbo run build --filter=instant-cli",
+    "build:cli": "turbo run build --filter=@instantcommerce/cli",
     "codegen": "graphql-codegen -r dotenv/config",
     "commit": "npx git-emoji-cli",
     "dev": "concurrently \"npm run dev:cli dev\" \"npm run dev:preview\"",
-    "dev:cli": "turbo run dev --filter=instant-cli && FORCE_DIR=./../../../examples/block-extension packages/cli/dist/cli.js",
-    "dev:preview": "turbo run dev --filter=instant-sdk-preview",
+    "dev:cli": "turbo run dev --filter=@instantcommerce/cli && FORCE_DIR=./../../../examples/block-extension packages/cli/dist/cli.js",
+    "dev:preview": "turbo run dev --filter=@instantcommerce/sdk-preview",
     "prepare": "husky install"
   },
   "eslintConfig": {

@@ -8,7 +8,7 @@
     "publish": "instant publish"
   },
   "dependencies": {
-    "instant-client": "file:./instant-client-v0.0.1.tgz",
+    "@instantcommerce/sdk": "*",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },

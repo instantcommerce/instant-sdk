@@ -16,7 +16,7 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "paths": {
-      "instant-client/*": ["../packages/client/src/*"]
+      "@instantcommerce/sdk/*": ["../packages/client/src/*"]
     }
   },
   "include": ["src"],

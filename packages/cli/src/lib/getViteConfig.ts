@@ -1,6 +1,6 @@
+import instantSdk from '@instantcommerce/vite-plugin-sdk';
 import react from '@vitejs/plugin-react';
 import { InlineConfig, mergeConfig } from 'vite';
-import instantSdk from 'vite-plugin-instant-sdk';
 import { dirname } from '~/config';
 
 export const getViteConfig = async (

@@ -7,19 +7,19 @@
     "dev": {
       "cache": false
     },
-    "instant-cli#build": {
+    "@instantcommerce/cli#build": {
       "dependsOn": [
-        "postcss-plugin-instant-sdk#build",
-        "vite-plugin-instant-sdk#build",
-        "instant-sdk-preview#build"
+        "@instantcommerce/postcss-plugin-sdk#build",
+        "@instantcommerce/vite-plugin-sdk#build",
+        "@instantcommerce/sdk-preview#build"
       ]
     },
-    "instant-cli#dev": {
+    "@instantcommerce/cli#dev": {
       "dependsOn": [
-        "postcss-plugin-instant-sdk#build",
-        "vite-plugin-instant-sdk#build",
-        "instant-sdk-preview#build",
-        "instant-client#build"
+        "@instantcommerce/postcss-plugin-sdk#build",
+        "@instantcommerce/vite-plugin-sdk#build",
+        "@instantcommerce/sdk-preview#build",
+        "@instantcommerce/sdk#build"
       ]
     }
   }

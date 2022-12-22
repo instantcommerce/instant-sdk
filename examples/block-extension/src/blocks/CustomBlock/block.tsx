@@ -1,6 +1,7 @@
 import { HTMLProps, ReactNode, useCallback, useEffect, useState } from 'react';
 import {
   Link,
+  RichText,
   gql,
   useBlockState,
   useEventListener,
@@ -8,8 +9,7 @@ import {
   useShopifyClient,
   useTheme,
   useToast,
-  RichText,
-} from 'instant-client';
+} from '@instantcommerce/sdk';
 
 const Box = ({
   children,
