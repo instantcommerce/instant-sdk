@@ -1,27 +1,30 @@
-# instant-cli
+# @instantcommerce/cli
 
 ## Install
 
 ```bash
-$ npm install --global instant-cli
+$ npm install --global @instantcommerce/cli
 ```
 
 ## CLI
 
 ```
-$ instant-cli --help
+$ instant --help
 
   Usage
-    $ instant-cli <command>
+    $ instant <command>
 
   Commands:
-    instant-cli login                        Login to your account
-    instant-cli logout                       Logout of current account
-    instant-cli me                           Check current login status
-    instant-cli refresh                      Refresh your access token
-    instant-cli select                       Select organization and store
-    instant-cli init <name>                  Initialize a new Instant project
-    instant-cli generate <schematic> <name>  Generate new Instant element
+    instant login                        Login to your account
+    instant whoami                       Check current login status
+    instant logout                       Logout of current account
+    instant refresh                      Refresh your access token
+    instant select                       Select organization and store
+    instant init <name> <template>       Initialize a new Instant project
+    instant generate <schematic> <name>  Generate new Instant element
+    instant dev                          Start the local development environment
+    instant add [blocknames..]           Add block(s) to the platform, comma-separated list of blocknames to limit
+    instant publish [blocknames..]       Publish new version of block(s), comma-separated list of blocknames to limit
 
   Options:
     --version  Show version number
