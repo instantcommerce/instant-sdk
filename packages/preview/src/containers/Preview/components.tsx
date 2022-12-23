@@ -1,4 +1,4 @@
-import { LinkProps, RichTextProps } from 'instant-client';
+import { LinkProps, RichTextProps } from '@instantcommerce/sdk';
 import { render } from 'storyblok-rich-text-react-renderer';
 
 export const Link = ({ children, to, ...props }: LinkProps) => {

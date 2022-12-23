@@ -1,8 +1,8 @@
 import { retain, createRemoteRoot, RemoteChannel } from '@remote-ui/core';
 import { endpoint } from '@shopify/web-worker/worker';
 
-import type { RenderCallback } from 'instant-client';
 import type { BlockContextValue } from 'instant-client/BlockProvider/context';
+import type { RenderCallback } from 'instant-client/defineBlock';
 
 endpoint.callable('addInstantEventListener');
 endpoint.callable('removeInstantEventListener');
