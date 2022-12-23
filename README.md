@@ -18,7 +18,7 @@
 
 ## Installation ⚡
 
-The CLI is available as a npm package. To install the package run:
+The CLI is available as an npm package. To install the package run:
 
 ```bash
 npm install -g @instantcommerce/cli
