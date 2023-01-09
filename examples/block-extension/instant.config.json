@@ -1,12 +1,12 @@
 {
-  "organization": "${organization}",
   "previewStoreId": "${previewStoreId}",
+  "organization": "acme-corporation",
   "blocks": {
     "CustomBlock": {
-      "id": "e51f5b07-c258-4459-95ad-fc2bb6f238f9"
+      "id": "2a1beddf-74ec-45d7-b0a6-da29f43dc8fb"
     },
-    "TestBlock": {
-      "id": "8b745d0a-0dde-4d40-b8e6-228fff913c7b"
+    "HeroBlock": {
+      "id": "a3463dec-48d4-442c-aab0-6d2657a9010a"
     }
   }
 }

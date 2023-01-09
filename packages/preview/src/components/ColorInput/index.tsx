@@ -10,7 +10,7 @@ import {
 } from '../Input/InputWrapper';
 
 interface ColorInputProps {
-  defaultValue: string;
+  defaultValue?: string;
   onChange(value: string): void;
 }
 
@@ -66,18 +66,16 @@ export const ColorInput = ({
               setShowPicker(true);
             }
           }}
-          onBlur={() => {
-            if (showPicker) {
-              setShowPicker(false);
-            }
-          }}
           className={twMerge(
             twJoin(
               inputBaseStyles,
-              'flex px-0 h-8 overflow-hidden z-50 w-full focus:border-transparent',
+              'flex px-0 h-8 overflow-hidden z-50 w-full',
+              showPicker &&
+                'outline outline-1 outline-primary-700 border-primary-700',
             ),
             className,
           )}
+          id={props.id}
         >
           <div
             className="w-8 h-full shrink-0"

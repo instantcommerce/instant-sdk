@@ -1,17 +1,24 @@
 {
-  "name": "vite-plugin-instant-sdk",
+  "name": "@instantcommerce/vite-plugin-sdk",
   "version": "0.0.0",
+  "author": "Instant Commerce B.V.",
+  "license": "MIT",
   "files": [
     "dist"
   ],
   "type": "module",
+  "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
       "import": "./dist/index.js"
     }
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "tsup",
@@ -22,9 +29,9 @@
   },
   "dependencies": {
     "@babel/core": "7.20.5",
+    "@instantcommerce/postcss-plugin-sdk": "*",
     "glob": "8.0.3",
     "hashids": "2.2.10",
-    "postcss-plugin-instant-sdk": "*",
     "react-refresh": "^0.14.0"
   },
   "devDependencies": {

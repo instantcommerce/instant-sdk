@@ -10,29 +10,40 @@ export const RichText = ({
   ...props
 }: {
   defaultValue: EditorContentProps['content'];
-  onChange: EditorContentProps['onChange'];
+  onChange(value: any): void;
 } & InputWrapperProps) => {
   const editor = useEditor({
     extensions: [StarterKit],
     content: defaultValue,
     editorProps: {
       attributes: {
-        class:
-          'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl m-5 focus:outline-none',
+        class: 'prose prose-sm focus:outline-none',
       },
+    },
+    onUpdate: ({ editor }) => {
+      onChange?.(editor.getJSON());
     },
   });
 
   return (
-    <InputWrapper {...props} direction="col">
+    <InputWrapper
+      {...props}
+      direction="col"
+      labelProps={{
+        onClick: () => {
+          editor?.commands.focus();
+        },
+      }}
+    >
       <MenuBar editor={editor} />
 
       <EditorContent
+        id={props.id}
         editor={editor}
         className={twJoin(
-          'h-[200px] w-full p-3 border border-gray-200 rounded',
+          'min-h-[200px] w-full p-3 border border-gray-200 rounded',
           '[&_.ProseMirror]:w-full [&_.ProseMirror]:h-full [&_.ProseMirror-focused]:outline-none',
-          'focus-within:outline focus-within:outline-2 focus-within:outline-primary-700 focus-within:border-transparent',
+          'focus-within:outline focus-within:outline-1 focus-within:outline-primary-700 focus-within:border-primary-700',
         )}
       />
     </InputWrapper>

@@ -8,8 +8,8 @@
     "publish": "./node_modules/instant-cli/dist/cli.js publish"
   },
   "dependencies": {
-    "instant-cli": "link:./../../packages/cli",
-    "instant-client": "link:./../../packages/client",
+    "@instantcommerce/cli": "link:./../../packages/cli",
+    "@instantcommerce/sdk": "link:./../../packages/client",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
@@ -24,10 +24,10 @@
     "vite": "^3.1.0"
   },
   "resolutions": {
+    "@instantcommerce/postcss-plugin-sdk": "link:./../../packages/postcss-plugin",
+    "@instantcommerce/vite-plugin-sdk": "link:./../../packages/vite-plugin",
     "@remote-ui/core": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/core?build-react-18",
     "@remote-ui/react": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/react?build-react-18",
-    "postcss-plugin-instant-sdk": "link:./../../packages/postcss-plugin",
-    "react-reconciler": "0.29.0",
-    "vite-plugin-instant-sdk": "link:./../../packages/vite-plugin"
+    "react-reconciler": "0.29.0"
   }
 }

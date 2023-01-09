@@ -1,8 +1,12 @@
 {
-  "name": "instant-client",
+  "name": "@instantcommerce/sdk",
   "version": "0.0.1",
-  "private": true,
+  "author": "Instant Commerce B.V.",
+  "license": "MIT",
   "type": "module",
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -13,10 +17,14 @@
     }
   },
   "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "sideEffects": false,
   "engines": {
     "node": ">=16"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "build": "tsup"
@@ -28,6 +36,7 @@
     "graphql-request": "5.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "storyblok-rich-text-react-renderer": "2.6.1",
     "tsconfig": "*",
     "ts-toolbelt": "9.6.0",
     "types": "*"

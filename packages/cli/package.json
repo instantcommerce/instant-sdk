@@ -1,12 +1,17 @@
 {
-  "name": "instant-cli",
+  "name": "@instantcommerce/cli",
   "version": "0.0.1",
+  "author": "Instant Commerce B.V.",
+  "license": "MIT",
   "bin": {
     "instant": "dist/cli.js"
   },
   "type": "module",
   "engines": {
     "node": "16"
+  },
+  "publishConfig": {
+    "access": "public"
   },
   "scripts": {
     "compile": "tsup && chmod +x dist/cli.js",
@@ -18,9 +23,10 @@
     "test": "xo && ava"
   },
   "files": [
-    "dist/cli.js"
+    "dist"
   ],
   "dependencies": {
+    "@instantcommerce/vite-plugin-sdk": "*",
     "@vitejs/plugin-react": "2.1.0",
     "arr-rotate": "1.0.0",
     "axios": "1.1.3",
@@ -32,14 +38,15 @@
     "glob": "8.0.3",
     "graphql": "16.6.0",
     "graphql-request": "5.0.0",
+    "humanize-string": "3.0.0",
     "ink": "3.2.0",
     "meow": "9.0.0",
     "open": "8.4.0",
     "react": "17.0.2",
     "serve-static": "1.15.0",
     "terminal-link": "3.0.0",
+    "types": "*",
     "vite": "3.2.3",
-    "vite-plugin-instant-sdk": "*",
     "yargs": "17.6.0"
   },
   "ava": {

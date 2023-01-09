@@ -1,13 +1,13 @@
 export const blockTemplate = (
   name: string,
-) => `import { defineBlock, useBlockState } from "instant-client";
+) => `import { defineBlock, useBlockState } from "@instantcommerce/sdk";
 
 const ${name} = () => {
-  const { content } = useBlockState();
+  const { content, customizer } = useBlockState();
 
   return (
     <div>
-      <h1>
+      <h1 style={{ color: customizer.color }}>
         {content.title}
       </h1>
     </div>
@@ -17,10 +17,14 @@ const ${name} = () => {
 export default defineBlock({
   component: ${name},
   customizerSchema: {
-    fields: [{ type: "color", name: "Test color" }],
+    fields: {
+      color: { type: "color", label: "Color" },
+    },
   },
   contentSchema: {
-    fields: [{ type: "text", name: "title", label: "Title", preview: 'Hero title' }],
+    fields: {
+      title: { type: "text", label: "Title", preview: 'Hero title' },
+    },
   },
 });
 ;

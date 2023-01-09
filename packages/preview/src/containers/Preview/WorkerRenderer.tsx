@@ -21,10 +21,11 @@ import {
 } from '@remote-ui/rpc';
 import { createWorkerFactory, expose, terminate } from '@shopify/web-worker';
 import equal from 'fast-deep-equal';
-import { BlockContextValue } from 'instant-client/src/BlockProvider/context';
+import { BlockContextValue } from 'instant-client/BlockProvider/context';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import { SchemaTypes } from '../../components/BlocksProvider/context';
 
+import { Link, RichText } from './components';
 import { previewSchema } from './previewSchema';
 import sandbox from './sandbox?worker&url';
 
@@ -32,7 +33,7 @@ const BLOCK_SERVER = import.meta.env.DEV
   ? 'http://127.0.0.1:5173'
   : window.__INSTANT_BLOCK_SERVER__;
 
-const COMPONENTS = {};
+const COMPONENTS = { Link, RichText };
 const CONTROLLER = createController(COMPONENTS, { strictComponents: false });
 
 /**
@@ -176,15 +177,15 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
             cleanup,
           ]);
 
-          window.dispatchEvent(
-            new CustomEvent('instantAddToCart', {
-              bubbles: false,
-              cancelable: false,
-              detail: {
-                test: true,
-              },
-            }),
-          );
+          // window.dispatchEvent(
+          //   new CustomEvent('instantAddToCart', {
+          //     bubbles: false,
+          //     cancelable: false,
+          //     detail: {
+          //       test: true,
+          //     },
+          //   }),
+          // );
         },
         removeInstantEventListener: (type, listener, options) => {
           const cleanupIdx = eventListeners.findIndex((l) =>
@@ -294,7 +295,7 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
       try {
         worker.render(receiver.receive, {
           content: contentData,
-          customizations: customizerData,
+          customizer: customizerData,
           instantObject: (window as any).Instant,
           store: store || {
             storefront: {
@@ -338,15 +339,18 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
         }
       }
     }
-  }, [isRegistered, contentData, customizerData, receiver, worker]);
+  }, [isRegistered, contentData, customizerData, worker]);
 
-  const onMessage = useCallback((message: MessageEvent<any>) => {
-    if (message.isTrusted) {
-      if (message.data?.type === 'updatePreviewValues') {
-        setPreviewValues(message.data.previewValues);
+  const onMessage = useCallback(
+    (message: MessageEvent<any>) => {
+      if (message.isTrusted) {
+        if (message.data?.type === 'updatePreviewValues') {
+          setPreviewValues(message.data.previewValues);
+        }
       }
-    }
-  }, []);
+    },
+    [setPreviewValues],
+  );
 
   useEffect(() => {
     window.addEventListener('message', onMessage);
@@ -354,7 +358,7 @@ export function WorkerRenderer({ store }: WorkerRendererProps) {
     return () => {
       window.removeEventListener('message', onMessage);
     };
-  });
+  }, [onMessage]);
 
   if (error) {
     return (

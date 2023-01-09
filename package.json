@@ -9,18 +9,28 @@
   ],
   "scripts": {
     "build": "turbo run build",
-    "build:cli": "turbo run build --filter=instant-cli",
+    "build:cli": "turbo run build --filter=@instantcommerce/cli",
     "codegen": "graphql-codegen -r dotenv/config",
     "commit": "npx git-emoji-cli",
-    "dev": "concurrently \"FORCE_DIR=./../../../examples/block-extension npm run dev:cli dev\" \"npm run dev:preview\"",
-    "dev:cli": "turbo run dev --filter=instant-cli && packages/cli/dist/cli.js",
-    "dev:preview": "turbo run dev --filter=instant-sdk-preview",
+    "dev": "concurrently \"npm run dev:cli dev\" \"npm run dev:preview\"",
+    "dev:cli": "turbo run dev --filter=@instantcommerce/cli && FORCE_DIR=./../../../examples/block-extension packages/cli/dist/cli.js",
+    "dev:preview": "turbo run dev --filter=@instantcommerce/sdk-preview",
     "prepare": "husky install"
   },
   "eslintConfig": {
     "extends": [
       "@storyofams/eslint-config-ams/web"
-    ]
+    ],
+    "settings": {
+      "import/resolver": {
+        "alias": [
+          [
+            "instant-client",
+            "./packages/client/src"
+          ]
+        ]
+      }
+    }
   },
   "devDependencies": {
     "@commitlint/cli": "17.1.2",
@@ -39,26 +49,30 @@
     "concurrently": "7.6.0",
     "css-mediaquery": "^0.1.2",
     "dotenv": "^16.0.3",
-    "eslint": "^8.28.0",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-import-resolver-alias": "^1.1.2",
-    "eslint-plugin-import": "^2.26.0",
-    "eslint-plugin-jsx-a11y": "^6.6.1",
-    "eslint-plugin-mdx": "^2.0.5",
-    "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-react": "^7.31.11",
-    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint": "8.17.0",
+    "eslint-config-prettier": "8.5.0",
+    "eslint-import-resolver-alias": "1.1.2",
+    "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-jsx-a11y": "6.5.1",
+    "eslint-plugin-mdx": "2.0.5",
+    "eslint-plugin-prettier": "4.0.0",
+    "eslint-plugin-react": "7.30.0",
+    "eslint-plugin-react-hooks": "4.5.0",
     "husky": "8.0.1",
     "lint-staged": "13.0.3",
+    "lodash.set": "^4.3.2",
+    "lodash.get": "^4.4.2",
     "npm-run-all": "4.1.5",
-    "prettier": "^2.8.0",
+    "prettier": "2.6.2",
     "semantic-release": "19.0.5",
     "semantic-release-monorepo": "7.0.5",
     "turbo": "1.4.5"
   },
   "resolutions": {
-    "@remote-ui/core": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/core?build-react-18",
-    "@remote-ui/react": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/react?build-react-18",
+    "@types/react": "18.0.25",
+    "@types/react-dom": "18.0.5",
+    "@remote-ui/core": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/core?8a375d4",
+    "@remote-ui/react": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/react?8a375d4",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   }

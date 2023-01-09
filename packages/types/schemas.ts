@@ -1,34 +1,41 @@
 import {
-  InputMaybe,
   ContentSchemaDateField,
   ContentSchemaImageField,
   ContentSchemaRichTextField,
   ContentSchemaSelectField,
   ContentSchemaTextField,
-  ContentSchemaUrlField,
+  ContentSchemaLinkField,
   ContentSubschemaInput,
   ContentSchemaField,
   CustomizerSchemaSelectField,
   CustomizerSchemaTextField,
   CustomizerSchemaField,
+  CustomizerSchemaNumberField,
+  CustomizerSchemaColorField,
+  ContentSchemaSubschemaField,
 } from './api';
 
-type EnhancedContentSchemaField<T extends ContentSchemaField, Type> = Partial<
-  Pick<T, 'isRequired' | 'isTranslatable'>
-> &
-  Omit<T, '__typename' | 'isRequired' | 'isTranslatable'> & {
-    preview?: string;
+type EnhancedContentSchemaField<
+  T extends Omit<ContentSchemaField, 'withTime'>,
+  Type,
+> = Partial<Pick<T, 'isRequired' | 'isTranslatable'>> &
+  Omit<T, '__typename' | 'name' | 'isRequired' | 'isTranslatable'> & {
     type: Type;
   };
 
 type ContentDateField = EnhancedContentSchemaField<
-  ContentSchemaDateField,
+  Omit<ContentSchemaDateField, 'withTime'> & { withTime?: boolean },
   'date'
 >;
 
 type ContentImageField = EnhancedContentSchemaField<
   ContentSchemaImageField,
   'image'
+>;
+
+type ContentLinkField = EnhancedContentSchemaField<
+  ContentSchemaLinkField,
+  'link'
 >;
 
 type ContentRichTextField = EnhancedContentSchemaField<
@@ -41,38 +48,53 @@ type ContentSelectField = EnhancedContentSchemaField<
   'select'
 >;
 
+type ContentSubschemaField = EnhancedContentSchemaField<
+  ContentSchemaSubschemaField,
+  'subschema'
+>;
+
 type ContentTextField = EnhancedContentSchemaField<
   ContentSchemaTextField,
   'text'
 >;
 
-type ContentUrlField = EnhancedContentSchemaField<ContentSchemaUrlField, 'url'>;
-
-type ContentSchemaInputField =
+export type ContentSchemaInputField =
   | ContentDateField
   | ContentImageField
   | ContentRichTextField
   | ContentSelectField
+  | ContentSubschemaField
   | ContentTextField
-  | ContentUrlField;
+  | ContentLinkField;
 
-type ContentSubschema = Pick<ContentSubschemaInput, 'displayName' | 'name'> & {
-  fields: Array<ContentSchemaInputField>;
+type ContentSubschema = Pick<ContentSubschemaInput, 'displayName'> & {
+  fields: Record<string, ContentSchemaInputField>;
 };
 
 export interface DefineContentSchema {
-  fields: Array<ContentSchemaInputField>;
-  subschemas?: InputMaybe<Array<ContentSubschema>>;
+  fields: Record<string, ContentSchemaInputField>;
+  subschemas?: Record<string, ContentSubschema>;
 }
 
 type EnhancedCustomizerSchemaField<
-  T extends CustomizerSchemaField,
+  T extends Omit<CustomizerSchemaField, 'fractionDigits'>,
   Type,
 > = Partial<Pick<T, 'isRequired'>> &
-  Omit<T, '__typename' | 'isRequired'> & {
-    preview?: string;
+  Omit<T, '__typename' | 'name' | 'isRequired'> & {
     type: Type;
   };
+
+type CustomizerColorField = EnhancedCustomizerSchemaField<
+  CustomizerSchemaColorField,
+  'color'
+>;
+
+type CustomizerNumberField = EnhancedCustomizerSchemaField<
+  Omit<CustomizerSchemaNumberField, 'fractionDigits'> & {
+    fractionDigits?: number;
+  },
+  'number'
+>;
 
 type CustomizerSelectField = EnhancedCustomizerSchemaField<
   CustomizerSchemaSelectField,
@@ -84,8 +106,32 @@ type CustomizerTextField = EnhancedCustomizerSchemaField<
   'text'
 >;
 
-type CustomizerSchemaInputField = CustomizerSelectField | CustomizerTextField;
+type CustomizerToggleField = EnhancedCustomizerSchemaField<
+  CustomizerSchemaTextField,
+  'toggle'
+>;
+
+export type CustomizerSchemaInputField =
+  | CustomizerColorField
+  | CustomizerNumberField
+  | CustomizerSelectField
+  | CustomizerTextField
+  | CustomizerToggleField;
 
 export interface DefineCustomizerSchema {
-  fields: Array<CustomizerSchemaInputField>;
+  fields: Record<string, CustomizerSchemaInputField>;
+}
+
+/** @todo get from codegen backend */
+export enum SchemaFieldType {
+  COLOR = 'COLOR',
+  DATE = 'DATE',
+  IMAGE = 'IMAGE',
+  LINK = 'LINK',
+  NUMBER = 'NUMBER',
+  RICH_TEXT = 'RICH_TEXT',
+  SELECT = 'SELECT',
+  SUBSCHEMA = 'SUBSCHEMA',
+  TEXT = 'TEXT',
+  TOGGLE = 'TOGGLE',
 }

@@ -260,6 +260,7 @@ export type Block = {
   name: Scalars['String'];
   updatedAt: Scalars['DateTime'];
   version?: Maybe<BlockVersion>;
+  /** Does not support pagination currently. */
   versions: Array<BlockVersion>;
 };
 
@@ -346,14 +347,16 @@ export enum BlockTheme {
 
 export type BlockVersion = {
   __typename?: 'BlockVersion';
-  codeHash: Scalars['String'];
-  codeUrl: Scalars['String'];
   contentSchema: ContentSchema;
   contentSchemaHash: Scalars['String'];
   createdAt: Scalars['DateTime'];
+  cssHash?: Maybe<Scalars['String']>;
+  cssUrl?: Maybe<Scalars['String']>;
   customizerSchema: CustomizerSchema;
   customizerSchemaHash: Scalars['String'];
   id: Scalars['UUID'];
+  jsHash: Scalars['String'];
+  jsUrl: Scalars['String'];
   tag: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
 };
@@ -695,6 +698,28 @@ export type ChangeAuth0PasswordInput = {
   oldPassword: Scalars['String'];
 };
 
+export enum ChecklistStatus {
+  Done = 'DONE',
+  NotVisited = 'NOT_VISITED',
+  Skipped = 'SKIPPED'
+}
+
+export enum ChecklistStep {
+  AddBrandAssets = 'ADD_BRAND_ASSETS',
+  AddStorefrontBlock = 'ADD_STOREFRONT_BLOCK',
+  ConfigureHeadlessTheme = 'CONFIGURE_HEADLESS_THEME',
+  ConfigureLanguages = 'CONFIGURE_LANGUAGES',
+  ConnectShopify = 'CONNECT_SHOPIFY',
+  ConnectStoryblok = 'CONNECT_STORYBLOK',
+  CreateStore = 'CREATE_STORE',
+  EditStorefrontPage = 'EDIT_STOREFRONT_PAGE',
+  FinalChecklist = 'FINAL_CHECKLIST',
+  InviteTeamMembers = 'INVITE_TEAM_MEMBERS',
+  Launch = 'LAUNCH',
+  PublishStorefront = 'PUBLISH_STOREFRONT',
+  SetupRedirects = 'SETUP_REDIRECTS'
+}
+
 export type CodeEmbedBlock = {
   __typename?: 'CodeEmbedBlock';
   backgroundColor?: Maybe<Scalars['String']>;
@@ -861,9 +886,11 @@ export type ContentSchemaDateField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
+  withTime: Scalars['Boolean'];
 };
 
-export type ContentSchemaField = ContentSchemaDateField | ContentSchemaImageField | ContentSchemaRichTextField | ContentSchemaSelectField | ContentSchemaTextField | ContentSchemaUrlField;
+export type ContentSchemaField = ContentSchemaDateField | ContentSchemaImageField | ContentSchemaLinkField | ContentSchemaRichTextField | ContentSchemaSelectField | ContentSchemaSubschemaField | ContentSchemaTextField;
 
 export type ContentSchemaImageField = {
   __typename?: 'ContentSchemaImageField';
@@ -872,11 +899,24 @@ export type ContentSchemaImageField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
 };
 
 export type ContentSchemaInput = {
+  displayName?: InputMaybe<Scalars['String']>;
   fields: Array<Scalars['Object']>;
+  name: Scalars['String'];
   subschemas?: InputMaybe<Array<ContentSubschemaInput>>;
+};
+
+export type ContentSchemaLinkField = {
+  __typename?: 'ContentSchemaLinkField';
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  isTranslatable: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
 };
 
 export type ContentSchemaRichTextField = {
@@ -886,6 +926,7 @@ export type ContentSchemaRichTextField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
   toolbar: Array<Scalars['String']>;
 };
 
@@ -896,7 +937,20 @@ export type ContentSchemaSelectField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  options: Array<KeyValue>;
+  options: Array<SelectOption>;
+  preview?: Maybe<Scalars['Object']>;
+};
+
+export type ContentSchemaSubschemaField = {
+  __typename?: 'ContentSchemaSubschemaField';
+  allowed: Array<Scalars['String']>;
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  isTranslatable: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  max?: Maybe<Scalars['Float']>;
+  name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
 };
 
 export type ContentSchemaTextField = {
@@ -907,15 +961,7 @@ export type ContentSchemaTextField = {
   label?: Maybe<Scalars['String']>;
   maxLength?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
-};
-
-export type ContentSchemaUrlField = {
-  __typename?: 'ContentSchemaUrlField';
-  description?: Maybe<Scalars['String']>;
-  isRequired: Scalars['Boolean'];
-  isTranslatable: Scalars['Boolean'];
-  label?: Maybe<Scalars['String']>;
-  name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
 };
 
 export type ContentSubschema = {
@@ -1054,6 +1100,7 @@ export type CreateOrFetchStoryInput = {
 };
 
 export type CreateOrganizationInput = {
+  email: Scalars['String'];
   maxStores?: InputMaybe<Scalars['Int']>;
   name: Scalars['String'];
   slug: Scalars['String'];
@@ -1109,6 +1156,16 @@ export type CursorPaging = {
   last?: InputMaybe<Scalars['Int']>;
 };
 
+export type CustomBlock = {
+  __typename?: 'CustomBlock';
+  cssUrl?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  jsUrl?: Maybe<Scalars['String']>;
+  metadata: Scalars['Object'];
+  name: Scalars['String'];
+  refId: Scalars['String'];
+};
+
 export type CustomerData = {
   __typename?: 'CustomerData';
   billingAddress: BillingAddress;
@@ -1139,10 +1196,32 @@ export type CustomizerSchema = {
   fields: Array<CustomizerSchemaField>;
 };
 
-export type CustomizerSchemaField = CustomizerSchemaSelectField | CustomizerSchemaTextField;
+export type CustomizerSchemaColorField = {
+  __typename?: 'CustomizerSchemaColorField';
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
+};
+
+export type CustomizerSchemaField = CustomizerSchemaColorField | CustomizerSchemaNumberField | CustomizerSchemaSelectField | CustomizerSchemaTextField | CustomizerSchemaToggleField;
 
 export type CustomizerSchemaInput = {
   fields: Array<Scalars['Object']>;
+};
+
+export type CustomizerSchemaNumberField = {
+  __typename?: 'CustomizerSchemaNumberField';
+  description?: Maybe<Scalars['String']>;
+  /** Allowed number of digits after the decimal point. */
+  fractionDigits: Scalars['Float'];
+  isRequired: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  max?: Maybe<Scalars['Float']>;
+  min?: Maybe<Scalars['Float']>;
+  name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
 };
 
 export type CustomizerSchemaSelectField = {
@@ -1151,7 +1230,8 @@ export type CustomizerSchemaSelectField = {
   isRequired: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  options: Array<KeyValue>;
+  options: Array<SelectOption>;
+  preview?: Maybe<Scalars['Object']>;
 };
 
 export type CustomizerSchemaTextField = {
@@ -1161,6 +1241,16 @@ export type CustomizerSchemaTextField = {
   label?: Maybe<Scalars['String']>;
   maxLength?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
+};
+
+export type CustomizerSchemaToggleField = {
+  __typename?: 'CustomizerSchemaToggleField';
+  description?: Maybe<Scalars['String']>;
+  isRequired: Scalars['Boolean'];
+  label?: Maybe<Scalars['String']>;
+  name: Scalars['String'];
+  preview?: Maybe<Scalars['Object']>;
 };
 
 export type DateFieldComparison = {
@@ -2006,12 +2096,14 @@ export type InputComponentInput = {
 export type Integration = {
   __typename?: 'Integration';
   createdAt: Scalars['DateTime'];
+  errors: Array<ValidationMessage>;
   id: Scalars['UUID'];
   isActive: Scalars['Boolean'];
   metadata: IntegrationMetadata;
   type: IntegrationType;
   updatedAt: Scalars['DateTime'];
   verifiedAt?: Maybe<Scalars['DateTime']>;
+  warnings: Array<ValidationMessage>;
 };
 
 export type IntegrationAggregateGroupBy = {
@@ -2050,12 +2142,14 @@ export type IntegrationDeleteFilter = {
 export type IntegrationDeleteResponse = {
   __typename?: 'IntegrationDeleteResponse';
   createdAt?: Maybe<Scalars['DateTime']>;
+  errors?: Maybe<Array<ValidationMessage>>;
   id?: Maybe<Scalars['UUID']>;
   isActive?: Maybe<Scalars['Boolean']>;
   metadata?: Maybe<IntegrationMetadata>;
   type?: Maybe<IntegrationType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
   verifiedAt?: Maybe<Scalars['DateTime']>;
+  warnings?: Maybe<Array<ValidationMessage>>;
 };
 
 export type IntegrationEdge = {
@@ -2155,17 +2249,6 @@ export type JudgeMeMetadata = {
   __typename?: 'JudgeMeMetadata';
   privateToken?: Maybe<Scalars['String']>;
   publicToken?: Maybe<Scalars['String']>;
-};
-
-export type KeyValue = {
-  __typename?: 'KeyValue';
-  key: Scalars['String'];
-  value: Scalars['String'];
-};
-
-export type KeyValueInput = {
-  key: Scalars['String'];
-  value: Scalars['String'];
 };
 
 export type KiwiSizingMetadata = {
@@ -2449,10 +2532,12 @@ export type Mutation = {
   updateOneRedirect: Redirect;
   updateOneSnippet: Snippet;
   updateOneStore: Store;
+  updateOrganizationChecklist: Scalars['Boolean'];
   /** Create a redirect url to Stripe to set up payment methods. */
   updatePaymentMethod: UpdatePaymentPayload;
   /** Updates the current user profile in Auth0. */
   updateProfile: User;
+  updateStoreChecklist: Scalars['Boolean'];
   /** Updates draft storefront config of the current store. */
   updateStorefrontConfig: Storefront;
   /** Upgrade the amount of storefronts in a subscription in Stripe. */
@@ -2755,8 +2840,18 @@ export type MutationUpdateOneStoreArgs = {
 };
 
 
+export type MutationUpdateOrganizationChecklistArgs = {
+  input: UpdateOrganizationChecklistInput;
+};
+
+
 export type MutationUpdateProfileArgs = {
   input: UpdateAuth0ProfileInput;
+};
+
+
+export type MutationUpdateStoreChecklistArgs = {
+  input: UpdateStoreChecklistInput;
 };
 
 
@@ -2866,6 +2961,22 @@ export type OrganizationAggregateGroupBy = {
   __typename?: 'OrganizationAggregateGroupBy';
   createdAt?: Maybe<Scalars['DateTime']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type OrganizationBuildChecklist = {
+  __typename?: 'OrganizationBuildChecklist';
+  inviteTeamMembers: ChecklistStatus;
+};
+
+export type OrganizationChecklistOutput = {
+  __typename?: 'OrganizationChecklistOutput';
+  build: OrganizationBuildChecklist;
+  connect: OrganizationConnectChecklist;
+};
+
+export type OrganizationConnectChecklist = {
+  __typename?: 'OrganizationConnectChecklist';
+  createStore: ChecklistStatus;
 };
 
 export type OrganizationConnection = {
@@ -3786,11 +3897,12 @@ export type PublicStore = {
 };
 
 export type PublishBlockVersionInput = {
-  code: Scalars['Upload'];
-  contentSchema: ContentSchemaInput;
-  customizerSchema: CustomizerSchemaInput;
   /** ID of the block */
-  id: Scalars['String'];
+  blockId: Scalars['String'];
+  contentSchema: ContentSchemaInput;
+  css?: InputMaybe<Scalars['Upload']>;
+  customizerSchema: CustomizerSchemaInput;
+  js: Scalars['Upload'];
 };
 
 export type Query = {
@@ -3812,6 +3924,8 @@ export type Query = {
   defaultPaymentMethod: PaymentMethodOutput;
   domain?: Maybe<Domain>;
   domains: DomainConnection;
+  fetchOrganizationChecklist: OrganizationChecklistOutput;
+  fetchStoreSetupChecklist: StoreSetupChecklistOutput;
   geolocationRedirect?: Maybe<GeolocationRedirect>;
   geolocationRedirects: GeolocationRedirectConnection;
   /** Fetches the storefront config schema. */
@@ -4350,6 +4464,17 @@ export enum ScrollDirection {
   Vertical = 'VERTICAL'
 }
 
+export type SelectOption = {
+  __typename?: 'SelectOption';
+  label: Scalars['String'];
+  value: Scalars['String'];
+};
+
+export type SelectOptionInput = {
+  label: Scalars['String'];
+  value: Scalars['String'];
+};
+
 export type ShopifyBulkOperation = {
   __typename?: 'ShopifyBulkOperation';
   createdAt: Scalars['DateTime'];
@@ -4865,6 +4990,39 @@ export type StoreMinAggregate = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
+export type StoreSetupBuildChecklist = {
+  __typename?: 'StoreSetupBuildChecklist';
+  addBrandAssets: ChecklistStatus;
+  addStoreFrontBlock: ChecklistStatus;
+  editStoreFrontPage: ChecklistStatus;
+  inviteTeamMembers: ChecklistStatus;
+  publishStoreFront: ChecklistStatus;
+};
+
+export type StoreSetupChecklistOutput = {
+  __typename?: 'StoreSetupChecklistOutput';
+  build?: Maybe<StoreSetupBuildChecklist>;
+  connect: StoreSetupConnectChecklist;
+  deploy?: Maybe<StoreSetupDeployChecklist>;
+};
+
+export type StoreSetupConnectChecklist = {
+  __typename?: 'StoreSetupConnectChecklist';
+  connectShopify: ChecklistStatus;
+  connectStoryblok: ChecklistStatus;
+  createAccount: ChecklistStatus;
+  createStore: ChecklistStatus;
+};
+
+export type StoreSetupDeployChecklist = {
+  __typename?: 'StoreSetupDeployChecklist';
+  configureHeadlessTheme: ChecklistStatus;
+  configureLanguages: ChecklistStatus;
+  finalCheck: ChecklistStatus;
+  launch: ChecklistStatus;
+  setupRedirects: ChecklistStatus;
+};
+
 export type StoreSort = {
   direction: SortDirection;
   field: StoreSortFields;
@@ -4887,7 +5045,7 @@ export type Storefront = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type StorefrontBlock = BlockquoteBlock | BlogCardsColumnsBlock | BlogCardsDefaultBlock | BlogHeaderBlock | BlogSliderBlock | CardBlock | CategoryBlock | CategorySliderBlock | CodeEmbedBlock | ContactDetailsBlock | ContactFormBlock | ContactFormImageBlock | EmailBannerBlock | EmailBannerImageBlock | FaqBlock | HeaderBlock | HeroBlock | HeroSliderBlock | HeroVideoBlock | ImageDualBlock | ImageSingleBlock | ImageTripleBlock | ListBlock | MultiColumnRichTextBlock | ProductSliderBlock | QuoteBlock | RichTextBlock | SocialGalleryBlock | SocialProofBlock | StatisticsBlock | StoreLocatorBlock | StoremapperBlock | TableBlock | TextImageBlock | UspsBlock | VideoBlock;
+export type StorefrontBlock = BlockquoteBlock | BlogCardsColumnsBlock | BlogCardsDefaultBlock | BlogHeaderBlock | BlogSliderBlock | CardBlock | CategoryBlock | CategorySliderBlock | CodeEmbedBlock | ContactDetailsBlock | ContactFormBlock | ContactFormImageBlock | CustomBlock | EmailBannerBlock | EmailBannerImageBlock | FaqBlock | HeaderBlock | HeroBlock | HeroSliderBlock | HeroVideoBlock | ImageDualBlock | ImageSingleBlock | ImageTripleBlock | ListBlock | MultiColumnRichTextBlock | ProductSliderBlock | QuoteBlock | RichTextBlock | SocialGalleryBlock | SocialProofBlock | StatisticsBlock | StoreLocatorBlock | StoremapperBlock | TableBlock | TextImageBlock | UspsBlock | VideoBlock;
 
 export type StorefrontComponents = {
   __typename?: 'StorefrontComponents';
@@ -5005,6 +5163,8 @@ export enum StoryblokContentType {
 
 export type StoryblokMetadata = {
   __typename?: 'StoryblokMetadata';
+  /** Only relevant if not matches the default locale in Instant Commerce. */
+  defaultLocale?: Maybe<Scalars['String']>;
   oauthToken?: Maybe<Scalars['String']>;
   previewKey?: Maybe<Scalars['String']>;
   publicKey?: Maybe<Scalars['String']>;
@@ -5013,6 +5173,8 @@ export type StoryblokMetadata = {
 
 export type StoryblokPublicMetadata = {
   __typename?: 'StoryblokPublicMetadata';
+  /** Only relevant if not matches the default locale in Instant Commerce. */
+  defaultLocale?: Maybe<Scalars['String']>;
   publicKey?: Maybe<Scalars['String']>;
 };
 
@@ -5348,7 +5510,13 @@ export type UpdateOneStoreInput = {
   update: UpdateStoreInput;
 };
 
+export type UpdateOrganizationChecklistInput = {
+  checklistStep: ChecklistStep;
+  isSkipped: Scalars['Boolean'];
+};
+
 export type UpdateOrganizationInput = {
+  email: Scalars['String'];
   maxStores?: InputMaybe<Scalars['Int']>;
   name: Scalars['String'];
   slug: Scalars['String'];
@@ -5387,6 +5555,11 @@ export type UpdateSnippetInput = {
   isPrioritized?: InputMaybe<Scalars['Boolean']>;
   name?: InputMaybe<Scalars['String']>;
   status?: InputMaybe<SnippetStatus>;
+};
+
+export type UpdateStoreChecklistInput = {
+  checklistStep: ChecklistStep;
+  isSkipped: Scalars['Boolean'];
 };
 
 export type UpdateStoreInput = {
@@ -5461,6 +5634,13 @@ export type UspsBlock = {
   theme: BlockTheme;
   titleColor?: Maybe<Scalars['String']>;
   titleSize: FontSize;
+};
+
+export type ValidationMessage = {
+  __typename?: 'ValidationMessage';
+  code: Scalars['String'];
+  message: Scalars['String'];
+  prop?: Maybe<Scalars['String']>;
 };
 
 export type VatId = {

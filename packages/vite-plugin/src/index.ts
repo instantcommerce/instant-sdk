@@ -43,8 +43,10 @@ const getBlockFiles = () => glob.sync(path.resolve('src/blocks/**/index.tsx'));
 
 export default function vitePluginInstantSdk({
   blockIdsMap,
+  entry,
 }: {
   blockIdsMap?: Record<string, Record<'id', string>>;
+  entry?: string;
 }): PluginOption {
   let projectRoot = process.cwd();
   let base = '/';
@@ -65,34 +67,33 @@ export default function vitePluginInstantSdk({
     {
       name: 'vite-plugin-instant-sdk',
       enforce: 'post',
-      config() {
-        return {
-          build: {
+      config(config) {
+        if (entry) {
+          config.build = {
+            ...config.build,
             rollupOptions: {
-              input: Object.fromEntries(
-                getBlockFiles().map((file) => [
-                  path.relative(
-                    'src',
-                    file.slice(0, file.length - path.extname(file).length),
+              input: {
+                [entry]: fileURLToPath(
+                  new URL(
+                    getBlockFiles().find(
+                      (file) =>
+                        path.dirname(file).split(path.sep).pop() === entry,
+                    )!,
+                    import.meta.url,
                   ),
-                  fileURLToPath(new URL(file, import.meta.url)),
-                ]),
-              ),
+                ),
+              },
               output: {
-                assetFileNames: (assetInfo) =>
-                  path.relative(
-                    'src',
-                    assetInfo.name?.slice(0, assetInfo.name.length) || '',
-                  ),
-                entryFileNames: '[name].js',
+                assetFileNames: '[name][extname]',
+                entryFileNames: 'index.js',
                 manualChunks: {},
               },
               /** @todo investigate */
-              external: ['react', 'ui-api', '@remote-ui/react'],
+              // external: ['react', '@remote-ui/react'],
             },
             manifest: true,
-          },
-        };
+          };
+        }
       },
       configResolved(config) {
         base = config.base;
@@ -214,7 +215,20 @@ export default function vitePluginInstantSdk({
                  * only 1 defineBlock per file.
                  */
                 ExportDefaultDeclaration(path) {
-                  const defineBlock = path.node.declaration;
+                  let defineBlock = path.node.declaration;
+
+                  if (
+                    !t.isIdentifier(defineBlock.callee, {
+                      name: 'defineBlock',
+                    }) &&
+                    t.isIdentifier(defineBlock)
+                  ) {
+                    const declaration = path.scope.getBinding(defineBlock.name);
+
+                    if (declaration) {
+                      defineBlock = declaration.path.node.init;
+                    }
+                  }
 
                   if (
                     t.isIdentifier(defineBlock.callee, { name: 'defineBlock' })
@@ -254,6 +268,17 @@ export default function vitePluginInstantSdk({
                           }
                         },
                       );
+
+                      if (isProduction) {
+                        /** Remove define props, only keep what we need in prod */
+                        defineBlock.arguments[0].properties =
+                          defineBlock.arguments[0].properties.filter(
+                            (property) =>
+                              t.isIdentifier(property.key, {
+                                name: 'component',
+                              }),
+                          );
+                      }
                     }
                   }
                 },
@@ -343,7 +368,7 @@ export default function vitePluginInstantSdk({
         /** Scope emitted CSS */
         for (const [, chunk] of Object.entries(bundle)) {
           if (chunk.type === 'asset' && cssLangRE.test(chunk.fileName)) {
-            const id = path.dirname(chunk.fileName).split(path.sep).pop();
+            const id = path.dirname(chunk.name!).split(path.sep).pop();
 
             if (id && blockIdsMap?.[id]?.id) {
               /**
@@ -356,9 +381,11 @@ export default function vitePluginInstantSdk({
 
               const postcssResult = await (await import('postcss'))
                 .default([
-                  ((await import('postcss-plugin-instant-sdk')).default as any)(
-                    hashedId,
-                  ) as any,
+                  (
+                    (
+                      await import('@instantcommerce/postcss-plugin-sdk')
+                    ).default as any
+                  )(hashedId) as any,
                 ])
                 .process(chunk.source, {
                   to: chunk.fileName,

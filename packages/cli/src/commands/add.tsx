@@ -101,6 +101,8 @@ export const Add = ({
       process.chdir(dirname);
     }
 
+    config.current = getProjectConfig('./');
+
     if (!userConfig.get('organization')) {
       setError(`No organization selected, run the \`select\` command first`);
       return;
@@ -117,6 +119,8 @@ export const Add = ({
           2,
         ),
       );
+    } else if (!config.current.get('organization')) {
+      config.current.set('organization', userConfig.get('organization'));
     }
 
     config.current = getProjectConfig('./');
@@ -204,7 +208,7 @@ export const Add = ({
 export const add: CommandModule = {
   command: 'add [blocknames..]',
   describe:
-    'Add block(s) to the platform, comma-separated list of blocknames to limit',
+    'Add block(s) to the platform, space-separated list of blocknames to limit',
   handler: (argv) => {
     render(<Add blockNames={argv['blocknames'] as string[]} />);
   },

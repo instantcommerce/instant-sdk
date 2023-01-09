@@ -1,15 +1,8 @@
-import {
-  defineBlock,
-  useBlockState,
-  InferBlockState,
-} from 'instant-client/src';
+import { defineBlock, useBlockState } from '@instantcommerce/sdk';
 import './index.css';
 
 const Hero = () => {
-  const { content } = useBlockState<InferBlockState<typeof HeroBlock>>();
-  type Test = NonNullable<
-    typeof HeroBlock['contentSchema']
-  >['fields'][number]['name'];
+  const { content } = useBlockState();
 
   return (
     <div className="p-8 min-h-[600px] bg-gray-800">
@@ -21,13 +14,14 @@ const Hero = () => {
 const HeroBlock = defineBlock({
   component: Hero,
   customizerSchema: {
-    fields: [{ type: 'text', name: 'Test color' }],
+    fields: {
+      color: { type: 'text' },
+    },
   },
   contentSchema: {
-    fields: [
-      { type: 'text', name: 'title', label: 'Title', preview: 'Hero title' },
-      { type: 'select', name: 'select', options: [{ key: '', value: '' }] },
-    ],
+    fields: {
+      title: { type: 'text', label: 'Title', preview: 'Hero title' },
+    },
   },
 });
 

@@ -9,4 +9,5 @@ export default defineConfig({
   env: {
     NODE_ENV: 'production',
   },
+  noExternal: ['types'],
 });

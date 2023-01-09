@@ -27,6 +27,7 @@ export const screenSizes = [
     label: 'Responsive',
     w: IFRAME_DEFAULT_SIZE.width,
     h: IFRAME_DEFAULT_SIZE.height,
+    isDefault: true,
   },
   { label: 'iPhone 14 Pro', w: 393, h: 852 },
   { label: 'iPad Air', w: 820, h: 1180 },
@@ -36,14 +37,52 @@ export const screenSizes = [
   { label: '4k', w: 3840, h: 2160 },
 ].map((item, idx) => ({ ...item, value: `${idx}` }));
 
+export const scales = [
+  {
+    label: '50%',
+    className:
+      'scale-50 min-w-[200%] h-[200%] -translate-x-1/4 -translate-y-1/4',
+  },
+  {
+    label: '75%',
+    className:
+      'scale-75 min-w-[133.33%] h-[133.33%] -translate-x-[12.5%] -translate-y-[12.5%]',
+  },
+  {
+    label: '100%',
+    className: '',
+  },
+  {
+    label: '125%',
+    className:
+      'scale-125 w-[80%] h-[80%] translate-x-[12.5%] translate-y-[12.5%]',
+  },
+  {
+    label: '150%',
+    className:
+      'scale-150 w-[66.66%] h-[66.66%] translate-x-1/4 translate-y-1/4',
+  },
+].map((item, idx) => ({ ...item, value: `${idx}` }));
+
 export const ConfigProvider = ({ children }: { children: ReactNode }) => {
-  const [leftPanelVisible, setLeftPanelVisible] = useState(true);
-  const [rightPanelVisible, setRightPanelVisible] = useState(true);
-  const [darkModeEnabled, setDarkModeEnabled] = useState(false);
-  const [scale, setScale] = useState<number | undefined>(undefined);
+  const [leftPanelVisible, setLeftPanelVisible] = useState(
+    typeof window.__INITIAL_USER_CONFIG__?.leftPanel !== 'undefined'
+      ? !!window.__INITIAL_USER_CONFIG__?.leftPanel
+      : true,
+  );
+  const [rightPanelVisible, setRightPanelVisible] = useState(
+    typeof window.__INITIAL_USER_CONFIG__?.rightPanel !== 'undefined'
+      ? !!window.__INITIAL_USER_CONFIG__?.rightPanel
+      : true,
+  );
+  const [darkModeEnabled, setDarkModeEnabled] = useState(
+    !!window.__INITIAL_USER_CONFIG__?.darkMode,
+  );
+  const [scale, setScale] = useState(
+    window.__INITIAL_USER_CONFIG__?.scale || 2,
+  );
   const [screenSize, setScreenSize] = useState(0);
   const [bookmarks, setBookmarks] = useState<string[]>([]);
-  const [initializedConfig, setInitializedConfig] = useState(false);
   const [selectedStore, setSelectedStore] = useState(
     window.__INSTANT_STORES__?.[0],
   );
@@ -79,17 +118,6 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
     if (favouriteBlocks?.length) {
       setBookmarks(favouriteBlocks);
     }
-
-    const userConfig = JSON.parse(localStorage.getItem('userConfig') || '{}');
-
-    if (Object.keys(userConfig)?.length) {
-      setLeftPanelVisible(userConfig?.leftPanel);
-      setRightPanelVisible(userConfig?.rightPanel);
-      setDarkModeEnabled(userConfig?.darkMode);
-      setScale(userConfig?.scale);
-    }
-
-    setInitializedConfig(true);
   }, []);
 
   useEffect(() => {
@@ -97,14 +125,12 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
   }, [bookmarks]);
 
   useEffect(() => {
-    if (initializedConfig) {
-      updateConfig({
-        leftPanel: leftPanelVisible,
-        rightPanel: rightPanelVisible,
-        darkMode: darkModeEnabled,
-        scale,
-      });
-    }
+    updateConfig({
+      leftPanel: leftPanelVisible,
+      rightPanel: rightPanelVisible,
+      darkMode: darkModeEnabled,
+      scale,
+    });
   }, [leftPanelVisible, rightPanelVisible, darkModeEnabled, scale]);
 
   const updateBookmarks = (blockName: string) => {
