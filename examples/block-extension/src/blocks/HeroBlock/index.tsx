@@ -1,8 +1,12 @@
-import { defineBlock, useBlockState } from '@instantcommerce/sdk';
+import {
+  defineBlock,
+  InferBlockState,
+  useBlockState,
+} from '@instantcommerce/sdk';
 import './index.css';
 
 const Hero = () => {
-  const { content } = useBlockState();
+  const { content } = useBlockState<InferBlockState<typeof HeroBlock>>();
 
   return (
     <div className="p-8 min-h-[600px] bg-gray-800">
@@ -17,12 +21,12 @@ const HeroBlock = defineBlock({
     fields: {
       color: { type: 'text' },
     },
-  },
+  } as const,
   contentSchema: {
     fields: {
       title: { type: 'text', label: 'Title', preview: 'Hero title' },
     },
-  },
+  } as const,
 });
 
 export default HeroBlock;

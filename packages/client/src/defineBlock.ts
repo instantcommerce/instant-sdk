@@ -1,6 +1,5 @@
 import { createElement, ReactElement, ReactNode } from 'react';
 import { render as remoteRender, RemoteRoot } from '@remote-ui/react';
-import { O } from 'ts-toolbelt';
 import { Narrow } from 'ts-toolbelt/out/Function/Narrow';
 /** This relative import forces types from this package to be included in this bundle */
 import {
@@ -39,13 +38,13 @@ type DefineBlockParams = {
   contentSchema?: DefineContentSchema;
 };
 
-export const defineBlock = (params: DefineBlockParams) => {
+export const defineBlock = <T>(params: Narrow<T>) => {
   const {
     component,
     preview: { decorators } = {},
     customizerSchema,
     contentSchema,
-  } = params;
+  } = params as DefineBlockParams;
 
   render(
     (root, blockProps) => {
@@ -72,9 +71,11 @@ export const defineBlock = (params: DefineBlockParams) => {
   return params;
 };
 
-export interface InferBlockState<T extends ReturnType<typeof defineBlock>> {
-  content: {
-    [K in NonNullable<T['contentSchema']>['fields'][number]['name']]: string;
-  };
-  customizations: any;
+export interface InferBlockState<T extends DefineBlockParams> {
+  content: T['contentSchema'] extends { fields: any }
+    ? { [name in keyof T['contentSchema']['fields']]: string }
+    : {};
+  customizer: T['customizerSchema'] extends { fields: any }
+    ? T['customizerSchema']['fields']
+    : {};
 }
