@@ -13,6 +13,7 @@ import {
   CustomizerSchemaNumberField,
   CustomizerSchemaColorField,
   ContentSchemaSubschemaField,
+  SelectOption,
 } from './api';
 
 type EnhancedContentSchemaField<
@@ -39,17 +40,25 @@ type ContentLinkField = EnhancedContentSchemaField<
 >;
 
 type ContentRichTextField = EnhancedContentSchemaField<
-  ContentSchemaRichTextField,
+  Omit<ContentSchemaRichTextField, 'toolbar'> & {
+    toolbar: Array<string> | ReadonlyArray<string>;
+  },
   'richText'
 >;
 
 type ContentSelectField = EnhancedContentSchemaField<
-  ContentSchemaSelectField,
+  Omit<ContentSchemaSelectField, 'options'> & {
+    options: Array<SelectOption> | ReadonlyArray<SelectOption>;
+  },
   'select'
 >;
 
-type ContentSubschemaField = EnhancedContentSchemaField<
-  ContentSchemaSubschemaField,
+type ContentSubschemaField<
+  Subschemas extends Record<string, ContentSubschema>,
+> = EnhancedContentSchemaField<
+  Omit<ContentSchemaSubschemaField, 'allowed'> & {
+    allowed: Array<keyof Subschemas> | ReadonlyArray<keyof Subschemas>;
+  },
   'subschema'
 >;
 
@@ -58,12 +67,14 @@ type ContentTextField = EnhancedContentSchemaField<
   'text'
 >;
 
-export type ContentSchemaInputField =
+export type ContentSchemaInputField<
+  Subschemas extends Record<string, ContentSubschema> = {},
+> =
   | ContentDateField
   | ContentImageField
   | ContentRichTextField
   | ContentSelectField
-  | ContentSubschemaField
+  | ContentSubschemaField<Subschemas>
   | ContentTextField
   | ContentLinkField;
 
@@ -71,9 +82,11 @@ type ContentSubschema = Pick<ContentSubschemaInput, 'displayName'> & {
   fields: Record<string, ContentSchemaInputField>;
 };
 
-export interface DefineContentSchema {
-  fields: Record<string, ContentSchemaInputField>;
-  subschemas?: Record<string, ContentSubschema>;
+export interface DefineContentSchema<
+  Subschemas extends Record<string, ContentSubschema> = {},
+> {
+  fields: Record<string, ContentSchemaInputField<Subschemas>>;
+  subschemas?: Subschemas;
 }
 
 type EnhancedCustomizerSchemaField<
@@ -97,7 +110,9 @@ type CustomizerNumberField = EnhancedCustomizerSchemaField<
 >;
 
 type CustomizerSelectField = EnhancedCustomizerSchemaField<
-  CustomizerSchemaSelectField,
+  Omit<CustomizerSchemaSelectField, 'options'> & {
+    options: Array<SelectOption> | ReadonlyArray<SelectOption>;
+  },
   'select'
 >;
 
