@@ -7,6 +7,10 @@ import { config } from '~/config';
 import { API_URL } from './api.constants';
 import { getSdk } from './sdk';
 
+/** Fix for node 18, @see https://github.com/prisma-labs/graphql-request/issues/384 */
+// @ts-ignore
+global.FormData = undefined;
+
 export const useApiSdk = () => {
   const { exit } = useApp();
   const { write } = useStderr();
