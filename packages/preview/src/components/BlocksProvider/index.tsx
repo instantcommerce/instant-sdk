@@ -18,9 +18,11 @@ if (import.meta.env.DEV) {
   window.__INSTANT_BLOCKS_MANIFEST__ = {
     'src/blocks/CustomBlock/index.tsx': {
       name: 'CustomBlock',
+      type: 'section',
     },
     'src/blocks/TestBlock/index.tsx': {
       name: 'TestBlock',
+      type: 'section',
     },
   };
 }

@@ -55,9 +55,25 @@ export const SideBar = ({ className }: { className?: string }) => {
         ?.filter((key) => !bookmarks?.includes(blocksManifest[key]?.name))
         ?.map((key) => ({
           name: blocksManifest[key]?.name,
+          type: blocksManifest[key]?.type,
           url: key,
         })),
     [blocksManifest, bookmarks],
+  );
+
+  const sections = useMemo(
+    () => blocks?.filter((block) => block?.type === 'section'),
+    [blocks],
+  );
+
+  const pages = useMemo(
+    () => blocks?.filter((block) => block?.type === 'page'),
+    [blocks],
+  );
+
+  const components = useMemo(
+    () => blocks?.filter((block) => block?.type === 'component'),
+    [blocks],
   );
 
   const bookmarkItems = useMemo(
@@ -81,7 +97,7 @@ export const SideBar = ({ className }: { className?: string }) => {
         className,
       )}
     >
-      <nav>
+      <nav className="flex flex-col gap-y-3">
         {!!bookmarkItems?.length && (
           <SidebarSection
             title="Bookmarks"
@@ -90,10 +106,26 @@ export const SideBar = ({ className }: { className?: string }) => {
           />
         )}
 
-        {!!blocks?.length && (
+        {!!sections?.length && (
           <SidebarSection
-            title="Blocks"
-            items={blocks}
+            title="Sections"
+            items={sections}
+            selectedItem={selectedItem}
+          />
+        )}
+
+        {!!pages?.length && (
+          <SidebarSection
+            title="Pages"
+            items={pages}
+            selectedItem={selectedItem}
+          />
+        )}
+
+        {!!components?.length && (
+          <SidebarSection
+            title="Components"
+            items={components}
             selectedItem={selectedItem}
           />
         )}

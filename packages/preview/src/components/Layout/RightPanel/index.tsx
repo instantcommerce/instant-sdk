@@ -484,7 +484,12 @@ export const RightPanel = () => {
         )}
       >
         <Tabs
-          tabs={tabs}
+          tabs={
+            /** Only show content schema fields for sections */
+            selectedBlock && blocksManifest?.[selectedBlock]?.type === 'section'
+              ? tabs
+              : [tabs[0]]
+          }
           content={{
             contentSchema,
             customizerSchema,
