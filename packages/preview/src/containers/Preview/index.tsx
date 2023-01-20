@@ -4,16 +4,21 @@ import { HelmetProvider } from 'react-helmet-async';
 
 import { getStore } from './getStore';
 import { Head } from './Head';
-import { WorkerRenderer } from './WorkerRenderer';
+import { WorkerRenderer } from './legacy/WorkerRenderer';
+import { PortalRenderer } from './PortalRenderer';
 
 const Preview = () => {
   const [error, setError] = useState('');
   const [store, setStore] = useState<any>();
 
-  const selectedStore = useMemo(
-    () => new URLSearchParams(window.location.search).get('store'),
-    [window.location.search],
-  );
+  const { selectedStore, version } = useMemo(() => {
+    const search = new URLSearchParams(window.location.search);
+
+    return {
+      selectedStore: search.get('store'),
+      version: search.get('version') || 2,
+    };
+  }, [window.location.search]);
 
   const loadStore = async () => {
     setError('');
@@ -52,7 +57,11 @@ const Preview = () => {
     <HelmetProvider>
       <Head store={store} />
 
-      <WorkerRenderer store={store} />
+      {version === 1 ? (
+        <WorkerRenderer store={store} />
+      ) : (
+        <PortalRenderer store={store} />
+      )}
     </HelmetProvider>
   );
 };

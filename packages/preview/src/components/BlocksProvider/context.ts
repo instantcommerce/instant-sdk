@@ -35,6 +35,7 @@ export interface BlocksContextValue {
       path?: string;
       contentSchema?: BlockContentSchema;
       customizerSchema?: BlockCustomizerSchema;
+      version?: number;
     }
   >;
   previewRef: MutableRefObject<HTMLIFrameElement | null>;

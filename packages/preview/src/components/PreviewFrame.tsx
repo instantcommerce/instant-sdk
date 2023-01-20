@@ -6,8 +6,11 @@ import { useConfig } from './ConfigProvider';
 
 export const PreviewFrame = () => {
   const endpoint = useRef<Endpoint<any>>();
-  const { selectedBlock, previewRef } = useBlocks();
+  const { blocksManifest, selectedBlock, previewRef } = useBlocks();
   const { selectedStore } = useConfig();
+
+  const isLegacy =
+    selectedBlock && blocksManifest?.[selectedBlock]?.version === 1;
 
   const registerCall = (...args: any[]) => {
     console.log('Function called:', ...args);
@@ -20,15 +23,17 @@ export const PreviewFrame = () => {
   const onPreviewRef = useCallback((node: HTMLIFrameElement) => {
     (previewRef as any)(node);
 
-    endpoint.current = createEndpoint(fromIframe(node));
+    if (isLegacy) {
+      endpoint.current = createEndpoint(fromIframe(node));
 
-    endpoint.current.expose({
-      cartAddLine: registerCall.bind(this, 'cart.addLine'),
-      cartUpdateLines: registerCall.bind(this, 'cart.updateLines'),
-      toastCreate: registerCall.bind(this, 'Toast.create'),
-      toastDismissAll: registerCall.bind(this, 'Toast.dismissAll'),
-      toastRemoveAll: registerCall.bind(this, 'Toast.removeAll'),
-    });
+      endpoint.current.expose({
+        cartAddLine: registerCall.bind(this, 'cart.addLine'),
+        cartUpdateLines: registerCall.bind(this, 'cart.updateLines'),
+        toastCreate: registerCall.bind(this, 'Toast.create'),
+        toastDismissAll: registerCall.bind(this, 'Toast.dismissAll'),
+        toastRemoveAll: registerCall.bind(this, 'Toast.removeAll'),
+      });
+    }
   }, []) as unknown as typeof previewRef;
 
   if (!selectedBlock) {
@@ -41,6 +46,7 @@ export const PreviewFrame = () => {
       src={`/preview.html?${new URLSearchParams({
         block: selectedBlock,
         store: selectedStore?.hostname || '',
+        ...(isLegacy ? { version: 1 } : ({} as any)),
       }).toString()}`}
       title="Preview"
       ref={onPreviewRef}
