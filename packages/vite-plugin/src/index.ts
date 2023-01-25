@@ -51,6 +51,7 @@ export default function vitePluginInstantSdk({
   let projectRoot = process.cwd();
   let base = '/';
   let isProduction = true;
+  let isSsr = false;
   let skipFastRefresh = false;
   let extractedSchemas = new Map<string, Map<string, string>>();
 
@@ -68,6 +69,8 @@ export default function vitePluginInstantSdk({
       name: 'vite-plugin-instant-sdk',
       enforce: 'post',
       config(config) {
+        isSsr = !!config.build?.ssr;
+
         if (entry) {
           config.build = {
             ...config.build,
@@ -85,13 +88,13 @@ export default function vitePluginInstantSdk({
               },
               output: {
                 assetFileNames: '[name][extname]',
-                entryFileNames: 'index.js',
-                manualChunks: {},
+                entryFileNames: isSsr ? 'server.js' : 'index.js',
+                manualChunks: !isSsr ? {} : undefined,
               },
-              /** @todo investigate */
-              // external: ['react', '@remote-ui/react'],
+              preserveEntrySignatures: 'strict',
+              // external: ['@instantcommerce/sdk-remote-component'],
             },
-            manifest: true,
+            manifest: !isSsr,
           };
         }
       },
@@ -334,6 +337,10 @@ export default function vitePluginInstantSdk({
         extractedSchemas.clear();
       },
       generateBundle: function (_, bundle) {
+        if (isSsr) {
+          return;
+        }
+
         /** Emit extracted schemas */
         for (const [, chunk] of Object.entries(bundle)) {
           if (chunk.type === 'chunk' && chunk.isEntry && chunk.facadeModuleId) {

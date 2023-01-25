@@ -1,6 +1,6 @@
 import { createElement, ReactElement, ReactNode } from 'react';
 import { render as remoteRender, RemoteRoot } from '@remote-ui/react';
-import { createRoot } from 'react-dom/client';
+
 /** This relative import forces types from this package to be included in this bundle */
 import {
   DefineContentSchema,
@@ -17,14 +17,6 @@ export type RenderCallback = (
 
 export type RenderElement = Parameters<typeof remoteRender>[0];
 
-function render(
-  callback: RenderCallback,
-  contentSchema?: DefineContentSchema,
-  customizerSchema?: DefineCustomizerSchema,
-) {
-  (self as any).render(callback, contentSchema, customizerSchema);
-}
-
 interface DefineBlockParams {
   /** React component rendered by the block */
   component: () => RenderElement | ReactElement;
@@ -38,32 +30,26 @@ interface DefineBlockParams {
   contentSchema?: DefineContentSchema;
 }
 
-export const defineBlock =
-  ({
-    component,
-    preview: { decorators } = {},
-    customizerSchema,
-    contentSchema,
-  }: DefineBlockParams) =>
-  () => ({
-    render: (blockProps, container) => {
-      const renderedComponent =
-        typeof component === 'function' ? createElement(component) : component;
+export const defineBlock = ({
+  component,
+  preview: { decorators } = {},
+  customizerSchema,
+  contentSchema,
+}: DefineBlockParams) => ({
+  render: (blockProps) => {
+    const renderedComponent =
+      typeof component === 'function' ? createElement(component) : component;
 
-      const result =
-        decorators?.reduce((total, decorator) => {
-          return decorator(total);
-        }, renderedComponent as any) || renderedComponent;
+    const result =
+      decorators?.reduce((total, decorator) => {
+        return decorator(total);
+      }, renderedComponent as any) || renderedComponent;
 
-      const root = createRoot(container);
-
-      root.render(
-        createElement(BlockProvider, {
-          children: result,
-          blockProps,
-        }),
-      );
-    },
-    contentSchema,
-    customizerSchema,
-  });
+    return createElement(BlockProvider, {
+      children: result,
+      blockProps,
+    });
+  },
+  contentSchema,
+  customizerSchema,
+});

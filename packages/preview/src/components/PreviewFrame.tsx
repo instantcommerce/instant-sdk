@@ -23,17 +23,15 @@ export const PreviewFrame = () => {
   const onPreviewRef = useCallback((node: HTMLIFrameElement) => {
     (previewRef as any)(node);
 
-    if (isLegacy) {
-      endpoint.current = createEndpoint(fromIframe(node));
+    endpoint.current = createEndpoint(fromIframe(node));
 
-      endpoint.current.expose({
-        cartAddLine: registerCall.bind(this, 'cart.addLine'),
-        cartUpdateLines: registerCall.bind(this, 'cart.updateLines'),
-        toastCreate: registerCall.bind(this, 'Toast.create'),
-        toastDismissAll: registerCall.bind(this, 'Toast.dismissAll'),
-        toastRemoveAll: registerCall.bind(this, 'Toast.removeAll'),
-      });
-    }
+    endpoint.current.expose({
+      cartAddLine: registerCall.bind(this, 'cart.addLine'),
+      cartUpdateLines: registerCall.bind(this, 'cart.updateLines'),
+      toastCreate: registerCall.bind(this, 'Toast.create'),
+      toastDismissAll: registerCall.bind(this, 'Toast.dismissAll'),
+      toastRemoveAll: registerCall.bind(this, 'Toast.removeAll'),
+    });
   }, []) as unknown as typeof previewRef;
 
   if (!selectedBlock) {

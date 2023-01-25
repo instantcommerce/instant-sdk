@@ -34,7 +34,7 @@ export const Publish = ({
   const config = useRef<ReturnType<typeof getProjectConfig>>();
 
   const buildBlocks = async (entry: string) => {
-    const output = await build(
+    const clientOutput = await build(
       await getViteConfig(
         'production',
         {
@@ -49,11 +49,37 @@ export const Publish = ({
       ),
     );
 
-    if (!('output' in output)) {
+    const serverOutput = await build(
+      await getViteConfig(
+        'production',
+        {
+          logLevel: 'silent',
+          build: {
+            outDir: `dist/blocks/${entry}`,
+            emptyOutDir: false,
+            ssr: true,
+            target: 'es2022',
+            rollupOptions: {
+              output: {
+                format: 'es',
+              },
+            },
+          },
+          ssr: {
+            noExternal: true,
+            target: 'webworker',
+          },
+        },
+        config.current!.get(`blocks`),
+        entry,
+      ),
+    );
+
+    if (!('output' in clientOutput) || !('output' in serverOutput)) {
       throw new Error('No build output found');
     }
 
-    return output.output;
+    return clientOutput.output;
   };
 
   const buildAndPublish = async () => {

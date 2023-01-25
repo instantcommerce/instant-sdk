@@ -1,22 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
+import * as React from 'react';
 import ReactDOM from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 
+import { BlockRenderer } from './BlockRenderer';
 import { getStore } from './getStore';
 import { Head } from './Head';
-import { WorkerRenderer } from './legacy/WorkerRenderer';
-import { PortalRenderer } from './PortalRenderer';
+
+window.React = React;
 
 const Preview = () => {
   const [error, setError] = useState('');
   const [store, setStore] = useState<any>();
 
-  const { selectedStore, version } = useMemo(() => {
+  const { selectedStore } = useMemo(() => {
     const search = new URLSearchParams(window.location.search);
 
     return {
       selectedStore: search.get('store'),
-      version: search.get('version') || 2,
     };
   }, [window.location.search]);
 
@@ -57,11 +58,7 @@ const Preview = () => {
     <HelmetProvider>
       <Head store={store} />
 
-      {version === 1 ? (
-        <WorkerRenderer store={store} />
-      ) : (
-        <PortalRenderer store={store} />
-      )}
+      <BlockRenderer store={store} />
     </HelmetProvider>
   );
 };
