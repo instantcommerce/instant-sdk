@@ -1,5 +1,6 @@
 import { createElement, ReactElement, ReactNode } from 'react';
 import { render as remoteRender, RemoteRoot } from '@remote-ui/react';
+
 /** This relative import forces types from this package to be included in this bundle */
 import {
   DefineContentSchema,
@@ -15,14 +16,6 @@ export type RenderCallback = (
 ) => void;
 
 export type RenderElement = Parameters<typeof remoteRender>[0];
-
-function render(
-  callback: RenderCallback,
-  contentSchema?: DefineContentSchema,
-  customizerSchema?: DefineCustomizerSchema,
-) {
-  (self as any).render(callback, contentSchema, customizerSchema);
-}
 
 interface DefineBlockParams {
   /** React component rendered by the block */
@@ -42,26 +35,21 @@ export const defineBlock = ({
   preview: { decorators } = {},
   customizerSchema,
   contentSchema,
-}: DefineBlockParams) => {
-  render(
-    (root, blockProps) => {
-      const renderedComponent =
-        typeof component === 'function' ? createElement(component) : component;
+}: DefineBlockParams) => ({
+  render: (blockProps) => {
+    const renderedComponent =
+      typeof component === 'function' ? createElement(component) : component;
 
-      const result =
-        decorators?.reduce((total, decorator) => {
-          return decorator(total);
-        }, renderedComponent as any) || renderedComponent;
+    const result =
+      decorators?.reduce((total, decorator) => {
+        return decorator(total);
+      }, renderedComponent as any) || renderedComponent;
 
-      remoteRender(
-        createElement(BlockProvider, {
-          children: result,
-          blockProps,
-        }),
-        root,
-      );
-    },
-    contentSchema,
-    customizerSchema,
-  );
-};
+    return createElement(BlockProvider, {
+      children: result,
+      blockProps,
+    });
+  },
+  contentSchema,
+  customizerSchema,
+});
