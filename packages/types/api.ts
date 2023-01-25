@@ -10,6 +10,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Any: any;
   ConnectionCursor: any;
   DateTime: any;
   Object: any;
@@ -255,6 +256,8 @@ export type Block = {
   description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   name: Scalars['String'];
+  subtype: BlockSubtype;
+  type: BlockType;
   updatedAt: Scalars['DateTime'];
   version?: Maybe<BlockVersion>;
   /** Does not support pagination currently. */
@@ -269,6 +272,7 @@ export type BlockVersionArgs = {
 export type BlockAggregateGroupBy = {
   __typename?: 'BlockAggregateGroupBy';
   createdAt?: Maybe<Scalars['DateTime']>;
+  type?: Maybe<BlockType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
@@ -283,6 +287,7 @@ export type BlockConnection = {
 export type BlockCountAggregate = {
   __typename?: 'BlockCountAggregate';
   createdAt?: Maybe<Scalars['Int']>;
+  type?: Maybe<Scalars['Int']>;
   updatedAt?: Maybe<Scalars['Int']>;
 };
 
@@ -292,6 +297,8 @@ export type BlockDeleteResponse = {
   description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['UUID']>;
   name?: Maybe<Scalars['String']>;
+  subtype?: Maybe<BlockSubtype>;
+  type?: Maybe<BlockType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
@@ -307,18 +314,21 @@ export type BlockFilter = {
   and?: InputMaybe<Array<BlockFilter>>;
   createdAt?: InputMaybe<DateFieldComparison>;
   or?: InputMaybe<Array<BlockFilter>>;
+  type?: InputMaybe<BlockTypeFilterComparison>;
   updatedAt?: InputMaybe<DateFieldComparison>;
 };
 
 export type BlockMaxAggregate = {
   __typename?: 'BlockMaxAggregate';
   createdAt?: Maybe<Scalars['DateTime']>;
+  type?: Maybe<BlockType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type BlockMinAggregate = {
   __typename?: 'BlockMinAggregate';
   createdAt?: Maybe<Scalars['DateTime']>;
+  type?: Maybe<BlockType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
@@ -330,7 +340,16 @@ export type BlockSort = {
 
 export enum BlockSortFields {
   CreatedAt = 'createdAt',
+  Type = 'type',
   UpdatedAt = 'updatedAt'
+}
+
+/** Block subtype. */
+export enum BlockSubtype {
+  All = 'ALL',
+  CartSidebar = 'CART_SIDEBAR',
+  None = 'NONE',
+  Pdp = 'PDP'
 }
 
 /** Block theme settings. */
@@ -342,10 +361,33 @@ export enum BlockTheme {
   PrimaryLight = 'PRIMARY_LIGHT'
 }
 
+export enum BlockType {
+  Component = 'COMPONENT',
+  Page = 'PAGE',
+  Section = 'SECTION'
+}
+
+export type BlockTypeFilterComparison = {
+  eq?: InputMaybe<BlockType>;
+  gt?: InputMaybe<BlockType>;
+  gte?: InputMaybe<BlockType>;
+  iLike?: InputMaybe<BlockType>;
+  in?: InputMaybe<Array<BlockType>>;
+  is?: InputMaybe<Scalars['Boolean']>;
+  isNot?: InputMaybe<Scalars['Boolean']>;
+  like?: InputMaybe<BlockType>;
+  lt?: InputMaybe<BlockType>;
+  lte?: InputMaybe<BlockType>;
+  neq?: InputMaybe<BlockType>;
+  notILike?: InputMaybe<BlockType>;
+  notIn?: InputMaybe<Array<BlockType>>;
+  notLike?: InputMaybe<BlockType>;
+};
+
 export type BlockVersion = {
   __typename?: 'BlockVersion';
-  contentSchema: ContentSchema;
-  contentSchemaHash: Scalars['String'];
+  contentSchema?: Maybe<ContentSchema>;
+  contentSchemaHash?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   cssHash?: Maybe<Scalars['String']>;
   cssUrl?: Maybe<Scalars['String']>;
@@ -354,6 +396,7 @@ export type BlockVersion = {
   id: Scalars['UUID'];
   jsHash: Scalars['String'];
   jsUrl: Scalars['String'];
+  sdkVersion: Scalars['Float'];
   tag: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
 };
@@ -883,7 +926,7 @@ export type ContentSchemaDateField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
   withTime: Scalars['Boolean'];
 };
 
@@ -896,7 +939,7 @@ export type ContentSchemaImageField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type ContentSchemaInput = {
@@ -913,7 +956,7 @@ export type ContentSchemaLinkField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type ContentSchemaRichTextField = {
@@ -923,7 +966,7 @@ export type ContentSchemaRichTextField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
   toolbar: Array<Scalars['String']>;
 };
 
@@ -935,7 +978,7 @@ export type ContentSchemaSelectField = {
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   options: Array<SelectOption>;
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type ContentSchemaSubschemaField = {
@@ -947,7 +990,7 @@ export type ContentSchemaSubschemaField = {
   label?: Maybe<Scalars['String']>;
   max?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type ContentSchemaTextField = {
@@ -958,7 +1001,7 @@ export type ContentSchemaTextField = {
   label?: Maybe<Scalars['String']>;
   maxLength?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type ContentSubschema = {
@@ -1029,6 +1072,8 @@ export type CreateAuth0UserInput = {
 export type CreateBlockInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
+  subtype: BlockSubtype;
+  type: BlockType;
 };
 
 export type CreateIntegrationInput = {
@@ -1156,11 +1201,12 @@ export type CursorPaging = {
 export type CustomBlock = {
   __typename?: 'CustomBlock';
   cssUrl?: Maybe<Scalars['String']>;
+  hashId: Scalars['String'];
   id: Scalars['UUID'];
   jsUrl?: Maybe<Scalars['String']>;
   metadata: Scalars['Object'];
   name: Scalars['String'];
-  refId: Scalars['String'];
+  refId: Scalars['UUID'];
 };
 
 export type CustomerData = {
@@ -1199,7 +1245,7 @@ export type CustomizerSchemaColorField = {
   isRequired: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type CustomizerSchemaField = CustomizerSchemaColorField | CustomizerSchemaNumberField | CustomizerSchemaSelectField | CustomizerSchemaTextField | CustomizerSchemaToggleField;
@@ -1218,7 +1264,7 @@ export type CustomizerSchemaNumberField = {
   max?: Maybe<Scalars['Float']>;
   min?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type CustomizerSchemaSelectField = {
@@ -1228,7 +1274,7 @@ export type CustomizerSchemaSelectField = {
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   options: Array<SelectOption>;
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type CustomizerSchemaTextField = {
@@ -1238,7 +1284,7 @@ export type CustomizerSchemaTextField = {
   label?: Maybe<Scalars['String']>;
   maxLength?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type CustomizerSchemaToggleField = {
@@ -1247,7 +1293,7 @@ export type CustomizerSchemaToggleField = {
   isRequired: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type DateFieldComparison = {
@@ -2173,7 +2219,7 @@ export type IntegrationMaxAggregate = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
-export type IntegrationMetadata = AlgoliaMetadata | AppmateMetadata | CookiebotMetadata | FasletMetadata | GoogleTagManagerMetadata | GorgiasMetadata | GrowaveMetadata | JudgeMeMetadata | KiwiSizingMetadata | KlaviyoMetadata | MailchimpMetadata | ShopifyMetadata | StampedMetadata | StoremapperMetadata | StoryblokMetadata | TrustpilotMetadata | YotpoMetadata;
+export type IntegrationMetadata = AlgoliaMetadata | AppmateMetadata | CookiebotMetadata | FasletMetadata | GoogleTagManagerMetadata | GorgiasMetadata | GrowaveMetadata | JudgeMeMetadata | KiwiSizingMetadata | KlaviyoMetadata | MailchimpMetadata | MetaMetadata | ShopifyMetadata | StampedMetadata | StoremapperMetadata | StoryblokMetadata | TrustpilotMetadata | YotpoMetadata;
 
 export type IntegrationMinAggregate = {
   __typename?: 'IntegrationMinAggregate';
@@ -2208,6 +2254,7 @@ export enum IntegrationType {
   KiwiSizing = 'KIWI_SIZING',
   Klaviyo = 'KLAVIYO',
   Mailchimp = 'MAILCHIMP',
+  Meta = 'META',
   Shopify = 'SHOPIFY',
   Stamped = 'STAMPED',
   Storemapper = 'STOREMAPPER',
@@ -2427,6 +2474,16 @@ export type MailchimpMetadata = {
   /** Data center used for API requests. */
   dataCenter?: Maybe<Scalars['String']>;
   listId?: Maybe<Scalars['String']>;
+};
+
+export type MetaMetadata = {
+  __typename?: 'MetaMetadata';
+  pixelId?: Maybe<Scalars['String']>;
+};
+
+export type MetaPublicMetadata = {
+  __typename?: 'MetaPublicMetadata';
+  pixelId?: Maybe<Scalars['String']>;
 };
 
 export type MultiColumnRichTextBlock = {
@@ -2885,6 +2942,7 @@ export enum NavigationAlignment {
 
 export type NavigationComponent = {
   __typename?: 'NavigationComponent';
+  accountIcon: Scalars['Boolean'];
   alignment: NavigationAlignment;
   countrySelect: Scalars['Boolean'];
   /** Show search, account, and cart items as text. */
@@ -2904,6 +2962,7 @@ export type NavigationComponent = {
 };
 
 export type NavigationComponentInput = {
+  accountIcon?: InputMaybe<Scalars['Boolean']>;
   alignment?: InputMaybe<NavigationAlignment>;
   countrySelect?: InputMaybe<Scalars['Boolean']>;
   /** Show search, account, and cart items as text. */
@@ -3802,6 +3861,7 @@ export type PublicIntegrationMetadata = {
   gorgias?: Maybe<GorgiasPublicMetadata>;
   kiwiSizing?: Maybe<KiwiSizingPublicMetadata>;
   klaviyo?: Maybe<KlaviyoPublicMetadata>;
+  meta?: Maybe<MetaPublicMetadata>;
   review?: Maybe<PublicReviewIntegrationMetadata>;
   shopify?: Maybe<ShopifyPublicMetadata>;
   storemapper?: Maybe<StoremapperPublicMetadata>;
@@ -3896,10 +3956,11 @@ export type PublicStore = {
 export type PublishBlockVersionInput = {
   /** ID of the block */
   blockId: Scalars['String'];
-  contentSchema: ContentSchemaInput;
+  contentSchema?: InputMaybe<ContentSchemaInput>;
   css?: InputMaybe<Scalars['Upload']>;
   customizerSchema: CustomizerSchemaInput;
   js: Scalars['Upload'];
+  sdkVersion: Scalars['Float'];
 };
 
 export type Query = {

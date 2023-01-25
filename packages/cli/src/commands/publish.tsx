@@ -169,6 +169,7 @@ export const Publish = ({
               {
                 input: {
                   blockId: blockIdToUpdate,
+                  sdkVersion: 2,
                   css: cssFile,
                   js: blockFile,
                   contentSchema,
