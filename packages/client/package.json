@@ -27,7 +27,7 @@
     "build": "tsup"
   },
   "dependencies": {
-    "@remote-ui/react": "4.5.12",
+    "@remote-ui/react": "5.0.0",
     "graphql": "16.6.0",
     "graphql-tag": "2.12.6",
     "graphql-request": "5.0.0",

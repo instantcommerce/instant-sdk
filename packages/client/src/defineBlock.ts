@@ -46,7 +46,9 @@ export const defineBlock = ({
   render(
     (root, blockProps) => {
       const renderedComponent =
-        typeof component === 'function' ? createElement(component) : component;
+        typeof component === 'function'
+          ? createElement(component as any)
+          : component;
 
       const result =
         decorators?.reduce((total, decorator) => {
