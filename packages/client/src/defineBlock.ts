@@ -2,6 +2,7 @@ import { createElement, ReactElement, ReactNode } from 'react';
 import { render as remoteRender, RemoteRoot } from '@remote-ui/react';
 
 /** This relative import forces types from this package to be included in this bundle */
+import { BlockType } from '../../types/api';
 import {
   DefineContentSchema,
   DefineCustomizerSchema,
@@ -17,7 +18,7 @@ export type RenderCallback = (
 
 export type RenderElement = Parameters<typeof remoteRender>[0];
 
-interface DefineBlockParams {
+interface DefineSectionParams {
   /** React component rendered by the block */
   component: () => RenderElement | ReactElement;
   preview?: {
@@ -30,13 +31,16 @@ interface DefineBlockParams {
   contentSchema?: DefineContentSchema;
 }
 
-export const defineBlock = ({
-  component,
-  preview: { decorators } = {},
-  customizerSchema,
-  contentSchema,
-}: DefineBlockParams) => ({
-  render: (blockProps) => {
+type DefineComponentParams = Omit<DefineSectionParams, 'contentSchema'>;
+
+type DefinePageParams = Omit<DefineSectionParams, 'contentSchema'>;
+
+const renderFunction =
+  (
+    component: DefineSectionParams['component'],
+    decorators: NonNullable<DefineSectionParams['preview']>['decorators'],
+  ) =>
+  (blockProps) => {
     const renderedComponent =
       typeof component === 'function' ? createElement(component) : component;
 
@@ -49,7 +53,39 @@ export const defineBlock = ({
       children: result,
       blockProps,
     });
-  },
+  };
+
+export const defineSection = ({
+  component,
+  preview: { decorators } = {},
+  customizerSchema,
+  contentSchema,
+}: DefineSectionParams) => ({
+  render: renderFunction(component, decorators),
   contentSchema,
   customizerSchema,
+  type: BlockType.Section,
+});
+
+/** @deprecated Use `defineSection` instead */
+export const defineBlock = defineSection;
+
+export const defineComponent = ({
+  component,
+  preview: { decorators } = {},
+  customizerSchema,
+}: DefineComponentParams) => ({
+  render: renderFunction(component, decorators),
+  customizerSchema,
+  type: BlockType.Component,
+});
+
+export const definePage = ({
+  component,
+  preview: { decorators } = {},
+  customizerSchema,
+}: DefinePageParams) => ({
+  render: renderFunction(component, decorators),
+  customizerSchema,
+  type: BlockType.Page,
 });

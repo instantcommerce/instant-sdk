@@ -7,6 +7,7 @@ import {
   useState,
 } from 'react';
 import set from 'lodash/set';
+import { BlockType } from 'types/api';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import { useConfig } from '../ConfigProvider';
 
@@ -18,11 +19,15 @@ if (import.meta.env.DEV) {
   window.__INSTANT_BLOCKS_MANIFEST__ = {
     'src/blocks/CustomBlock/index.tsx': {
       name: 'CustomBlock',
-      type: 'section',
+      type: BlockType.Section,
     },
-    'src/blocks/TestBlock/index.tsx': {
-      name: 'TestBlock',
-      type: 'section',
+    'src/blocks/HeroBlock/index.tsx': {
+      name: 'HeroBlock',
+      type: BlockType.Section,
+    },
+    'src/pages/CustomPdp/index.tsx': {
+      name: 'CustomPdp',
+      type: BlockType.Page,
     },
   };
 }

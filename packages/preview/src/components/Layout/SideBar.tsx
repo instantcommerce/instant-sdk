@@ -1,5 +1,6 @@
 import { ButtonHTMLAttributes, useMemo } from 'react';
 import { twJoin, twMerge } from 'tailwind-merge';
+import { BlockType } from 'types/api';
 import { useBlocks } from '../BlocksProvider';
 import { Button } from '../Button';
 import { useConfig } from '../ConfigProvider';
@@ -62,17 +63,17 @@ export const SideBar = ({ className }: { className?: string }) => {
   );
 
   const sections = useMemo(
-    () => blocks?.filter((block) => block?.type === 'section'),
+    () => blocks?.filter((block) => block?.type === BlockType.Section),
     [blocks],
   );
 
   const pages = useMemo(
-    () => blocks?.filter((block) => block?.type === 'page'),
+    () => blocks?.filter((block) => block?.type === BlockType.Page),
     [blocks],
   );
 
   const components = useMemo(
-    () => blocks?.filter((block) => block?.type === 'component'),
+    () => blocks?.filter((block) => block?.type === BlockType.Component),
     [blocks],
   );
 

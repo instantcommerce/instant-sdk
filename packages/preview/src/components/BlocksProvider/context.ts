@@ -1,4 +1,5 @@
 import { createContext, MutableRefObject } from 'react';
+import { BlockType, BlockSubtype } from 'types/api';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 
 export type SchemaTypes = 'customizer' | 'content';
@@ -35,17 +36,18 @@ type BlockBase = {
 };
 
 export type BlockSection = BlockBase & {
-  type: 'section';
+  type: BlockType.Section;
+  // subtype: BlockSubtype.All;
 };
 
 export type BlockPage = BlockBase & {
-  type: 'page';
-  page: 'pdp';
+  type: BlockType.Page;
+  // subtype: BlockSubtype.Pdp;
 };
 
 export type BlockComponent = BlockBase & {
-  type: 'component';
-  component: 'cart';
+  type: BlockType.Component;
+  // subtype: BlockSubtype.CartSidebar;
 };
 
 export interface BlocksContextValue {

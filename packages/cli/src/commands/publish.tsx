@@ -1,7 +1,6 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import { createReadStream, existsSync } from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, render, Static, Text } from 'ink';
 import { build } from 'vite';
@@ -9,7 +8,7 @@ import { CommandModule } from 'yargs';
 import { dirname } from '~/config';
 import { extractApiError, useApiSdk } from '~/lib/api';
 import { BlockFragmentFragment } from '~/lib/api/sdk';
-import { getBlockFiles } from '~/lib/getBlockFiles';
+import { BlockFiles, getBlockFiles } from '~/lib/getBlockFiles';
 import { getBlockNameFromPath } from '~/lib/getBlockNameFromPath';
 import { getProjectConfig } from '~/lib/getProjectConfig';
 import { getViteConfig } from '~/lib/getViteConfig';
@@ -23,7 +22,7 @@ export const Publish = ({
 }) => {
   const apiSdk = useApiSdk();
 
-  const [blocks, setBlocks] = useState<Array<string> | null>(null);
+  const [blocks, setBlocks] = useState<BlockFiles | null>(null);
   const [isDone, setDone] = useState<boolean>(false);
   const [buildSuccess, setBuildSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string>();
@@ -33,14 +32,16 @@ export const Publish = ({
 
   const config = useRef<ReturnType<typeof getProjectConfig>>();
 
-  const buildBlocks = async (entry: string) => {
+  const buildBlocks = async (entry: BlockFiles[number]) => {
+    const outDir = `dist/${entry.type.toLowerCase()}s/${entry.name}`;
+
     const clientOutput = await build(
       await getViteConfig(
         'production',
         {
           logLevel: 'silent',
           build: {
-            outDir: `dist/blocks/${entry}`,
+            outDir,
             manifest: true,
           },
         },
@@ -55,7 +56,7 @@ export const Publish = ({
         {
           logLevel: 'silent',
           build: {
-            outDir: `dist/blocks/${entry}`,
+            outDir,
             emptyOutDir: false,
             ssr: true,
             target: 'es2022',
@@ -125,7 +126,7 @@ export const Publish = ({
           const blockName = getBlockNameFromPath(entry.src);
           let blockIdToUpdate: string;
 
-          if (!blocks?.includes(blockName)) {
+          if (!blocks?.find(({ name }) => name === blockName)) {
             continue;
           }
 
@@ -238,7 +239,7 @@ export const Publish = ({
       return;
     }
 
-    const blockNames = getBlockFiles().filter((blockName) => {
+    const blockFiles = getBlockFiles().filter(({ name: blockName }) => {
       if (providedBlockNames && !providedBlockNames.includes(blockName)) {
         return false;
       }
@@ -259,14 +260,14 @@ export const Publish = ({
 
     if (providedBlockNames) {
       for (const providedBlockName of providedBlockNames) {
-        if (!blockNames.includes(providedBlockName)) {
+        if (!blockFiles.find(({ name }) => name === providedBlockName)) {
           setError(`Block not found: "${providedBlockName}"`);
           break;
         }
       }
     }
 
-    setBlocks(blockNames);
+    setBlocks(blockFiles);
   }, []);
 
   if (error) {

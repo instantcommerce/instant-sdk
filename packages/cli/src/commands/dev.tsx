@@ -137,7 +137,7 @@ export const Dev: FC = () => {
 
       previewServer.current = http
         .createServer(app)
-        .listen({ port: 3000 }, () => {
+        .listen({ port: 3002 }, () => {
           resolve();
         });
     });

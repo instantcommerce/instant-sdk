@@ -1,4 +1,4 @@
-import { createContext } from 'react';
+import { createContext, ReactNode } from 'react';
 
 export interface BlockState {
   content?: any;
@@ -119,6 +119,7 @@ export interface Instant {
 }
 
 export type BlockContextValue = BlockState & {
+  components?: Record<string, ReactNode>;
   instantObject: Instant;
   store: any;
 };

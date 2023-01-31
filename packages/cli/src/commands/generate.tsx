@@ -2,7 +2,7 @@ import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import React, { FC, useEffect, useState } from 'react';
 import { render, Text } from 'ink';
 import { CommandModule } from 'yargs';
-import { blockTemplate } from '~/templates';
+import { componentTemplate, pageTemplate, sectionTemplate } from '~/templates';
 
 export const Generate: FC<{ schematic: string; name: string }> = ({
   schematic,
@@ -16,12 +16,19 @@ export const Generate: FC<{ schematic: string; name: string }> = ({
 
     switch (schematic) {
       case 'block':
-        template = blockTemplate;
+      case 'section':
+        template = sectionTemplate;
+        break;
+      case 'component':
+        template = componentTemplate;
+        break;
+      case 'page':
+        template = pageTemplate;
         break;
 
       default:
         setError(
-          `Invalid schematic "${schematic}", use one of the following values: "block"`,
+          `Invalid schematic "${schematic}", use one of the following values: "section", "page", "component"`,
         );
         return;
     }

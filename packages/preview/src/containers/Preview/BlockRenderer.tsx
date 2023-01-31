@@ -1,9 +1,11 @@
 import { Suspense, useCallback, useEffect, useMemo, useState } from 'react';
 import { createEndpoint, fromInsideIframe } from '@remote-ui/rpc';
 import { ErrorBoundary } from 'react-error-boundary';
+import { BlockType } from 'types/api';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import { SchemaTypes } from '../../components/BlocksProvider/context';
 import { createRemoteReactComponent } from './components';
+import { PageRenderer } from './PageRenderer';
 import { previewSchema } from './previewSchema';
 
 const BLOCK_SERVER = import.meta.env.DEV
@@ -198,6 +200,18 @@ const Renderer = ({ store }: { store: any }) => {
 
   if (!block) {
     return null;
+  }
+
+  if (block.type === BlockType.Page) {
+    const blockUrl = getBlockScript(`${BLOCK_SERVER}/${blockPath}`);
+
+    return (
+      <PageRenderer
+        blockUrl={blockUrl}
+        store={store}
+        customizerData={customizerData}
+      />
+    );
   }
 
   return block.render({

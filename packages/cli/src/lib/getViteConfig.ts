@@ -4,12 +4,13 @@ import externalGlobals from 'rollup-plugin-external-globals';
 import { InlineConfig, mergeConfig } from 'vite';
 import { viteExternalsPlugin } from 'vite-plugin-externals';
 import { dirname } from '~/config';
+import { BlockFiles } from './getBlockFiles';
 
 export const getViteConfig = async (
   mode = 'development',
   overrides?: Partial<InlineConfig>,
   blockIdsMap?: Record<string, Record<'id', string>>,
-  entry?: string,
+  entry?: BlockFiles[number],
 ) => {
   return mergeConfig(
     {

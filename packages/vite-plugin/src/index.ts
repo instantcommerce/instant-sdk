@@ -4,6 +4,8 @@ import vm from 'node:vm';
 import * as babel from '@babel/core';
 import glob from 'glob';
 import Hashids from 'hashids';
+/** @fixme This does not resolve */
+// import { BlockSubtype, BlockType } from 'types/api';
 import { ModuleNode, Plugin, PluginOption } from 'vite';
 import {
   addRefreshWrapper,
@@ -39,14 +41,60 @@ function invalidate(mod: ModuleNode, timestamp: number, seen: Set<ModuleNode>) {
   });
 }
 
-const getBlockFiles = () => glob.sync(path.resolve('src/blocks/**/index.tsx'));
+/** Block subtype. */
+enum BlockSubtype {
+  All = 'ALL',
+  CartSidebar = 'CART_SIDEBAR',
+  None = 'NONE',
+  Pdp = 'PDP',
+}
+
+enum BlockType {
+  Component = 'COMPONENT',
+  Page = 'PAGE',
+  Section = 'SECTION',
+}
+
+const BLOCK_GLOBS = [
+  {
+    type: BlockType.Component,
+    glob: 'src/components/**/index.tsx',
+  },
+  {
+    type: BlockType.Section,
+    glob: 'src/{sections,blocks}/**/index.tsx',
+  },
+  {
+    type: BlockType.Page,
+    glob: 'src/pages/**/index.tsx',
+  },
+];
+
+const getBlockNameFromPath = (filePath: string) =>
+  path.dirname(filePath).split(path.sep).pop()!;
+
+const getBlockFiles = () => {
+  const blocks = BLOCK_GLOBS.map(({ type, glob: pattern }) => {
+    return glob.sync(path.resolve(pattern)).map((file) => ({
+      type,
+      name: getBlockNameFromPath(file),
+      path: file,
+    }));
+  });
+
+  return blocks.flat();
+};
 
 export default function vitePluginInstantSdk({
   blockIdsMap,
   entry,
 }: {
   blockIdsMap?: Record<string, Record<'id', string>>;
-  entry?: string;
+  entry?: {
+    type: BlockType;
+    name: string;
+    path: string;
+  };
 }): PluginOption {
   let projectRoot = process.cwd();
   let base = '/';
@@ -76,14 +124,8 @@ export default function vitePluginInstantSdk({
             ...config.build,
             rollupOptions: {
               input: {
-                [entry]: fileURLToPath(
-                  new URL(
-                    getBlockFiles().find(
-                      (file) =>
-                        path.dirname(file).split(path.sep).pop() === entry,
-                    )!,
-                    import.meta.url,
-                  ),
+                [entry.name]: fileURLToPath(
+                  new URL(entry.path, import.meta.url),
                 ),
               },
               output: {
@@ -118,11 +160,19 @@ export default function vitePluginInstantSdk({
             return preambleCode.replace(`__BASE__`, base);
           case `\0${blocksManifestPath}`: {
             const blocksManifest = Object.fromEntries(
-              getBlockFiles().map((file) => [
-                path.join('src', path.relative('src', file)),
+              getBlockFiles().map((blockFile) => [
+                path.join('src', path.relative('src', blockFile.path)),
                 {
-                  name: path.dirname(file).split(path.sep).pop(),
-                  path: fileURLToPath(new URL(file, import.meta.url)),
+                  name: blockFile.name,
+                  path: fileURLToPath(new URL(blockFile.path, import.meta.url)),
+                  type: blockFile.type,
+                  /** @todo get subtype from code */
+                  subtype:
+                    blockFile.type === BlockType.Component
+                      ? BlockSubtype.CartSidebar
+                      : blockFile.type === BlockType.Page
+                      ? BlockSubtype.Pdp
+                      : BlockSubtype.All,
                 },
               ]),
             );
@@ -211,6 +261,16 @@ export default function vitePluginInstantSdk({
           if (!isNodeModules && id.includes(projectRoot)) {
             const { types: t } = babel;
 
+            const isDefineBlock = (node) =>
+              node != null &&
+              node.type === 'Identifier' &&
+              [
+                'defineBlock',
+                'defineComponent',
+                'definePage',
+                'defineSection',
+              ].includes(node.name);
+
             plugins.push({
               visitor: {
                 /**
@@ -221,9 +281,7 @@ export default function vitePluginInstantSdk({
                   let defineBlock = path.node.declaration;
 
                   if (
-                    !t.isIdentifier(defineBlock.callee, {
-                      name: 'defineBlock',
-                    }) &&
+                    !isDefineBlock(defineBlock.callee) &&
                     t.isIdentifier(defineBlock)
                   ) {
                     const declaration = path.scope.getBinding(defineBlock.name);
@@ -233,9 +291,7 @@ export default function vitePluginInstantSdk({
                     }
                   }
 
-                  if (
-                    t.isIdentifier(defineBlock.callee, { name: 'defineBlock' })
-                  ) {
+                  if (isDefineBlock(defineBlock.callee)) {
                     containsDefineBlock = true;
 
                     if (
