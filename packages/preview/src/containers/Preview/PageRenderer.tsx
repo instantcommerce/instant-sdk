@@ -74,7 +74,7 @@ export const PageRenderer = ({
         url,
       );
     }
-  }, [hasPonged]);
+  }, [hasPonged, customizerData]);
 
   return (
     <iframe

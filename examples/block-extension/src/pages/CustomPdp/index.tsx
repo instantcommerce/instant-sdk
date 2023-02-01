@@ -1,13 +1,49 @@
-import { definePage, Pdp, useBlockState } from '@instantcommerce/sdk';
+import {
+  definePage,
+  Pdp,
+  useBlockState,
+  usePdpContext,
+} from '@instantcommerce/sdk';
+import './index.css';
 
 const CustomPdp = () => {
   const { customizer } = useBlockState();
+  const { product } = usePdpContext();
 
   return (
     <div className="p-8 min-h-[600px] bg-gray-800">
-      <Pdp.Gallery />
+      <Pdp.Container>
+        <Pdp.ColumnMain>
+          <Pdp.Form>
+            <Pdp.MainInfo />
+            {/* <Pdp.Price /> */}
 
-      <div>test</div>
+            <div
+              className="text-4xl font-bold mt-4 animate-bounce"
+              style={{ color: customizer?.color || '#000' }}
+            >
+              {product.selectedVariant?.priceV2?.amount}
+            </div>
+
+            <Pdp.Rating />
+
+            <Pdp.VariantSelects />
+            <Pdp.NotificationMessage />
+            <Pdp.AddToCartSection>
+              <Pdp.QuantityInput />
+
+              <Pdp.AddToCartButtons />
+
+              <Pdp.PaymentIcons />
+            </Pdp.AddToCartSection>
+            <Pdp.Details />
+            <Pdp.Usps />
+          </Pdp.Form>
+        </Pdp.ColumnMain>
+        <Pdp.ColumnGallery>
+          <Pdp.Gallery />
+        </Pdp.ColumnGallery>
+      </Pdp.Container>
     </div>
   );
 };

@@ -215,10 +215,10 @@ export default function vitePluginInstantSdk({
             .replace(/export \{(.*), updateStyle(.*)\}/m, 'export {$1$2}')
             .replace(/export \{(.*), removeStyle(.*)\}/m, 'export {$1$2}')}
         export function updateStyle(id, content) {
-          self.updateStyle(id, content);
+          window.updateStyle(id, content);
         }
         export function removeStyle(id) {
-          self.removeStyle(id);
+          window.removeStyle(id);
         }`;
         }
 

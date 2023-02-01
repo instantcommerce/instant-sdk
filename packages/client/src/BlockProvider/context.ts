@@ -122,6 +122,7 @@ export type BlockContextValue = BlockState & {
   components?: Record<string, ReactNode>;
   instantObject: Instant;
   store: any;
+  pdpContext?: any;
 };
 
 export const BlockContext = createContext<BlockContextValue | null>(null);
