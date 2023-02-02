@@ -1065,6 +1065,8 @@ export type CreateAssetInput = {
 
 export type CreateAuth0UserInput = {
   email: Scalars['String'];
+  /** Whether the user is an external partner of the organization. E.g.: Freelancer */
+  isExternal?: InputMaybe<Scalars['Boolean']>;
   /** Auth0 role ids. */
   roles: Array<Scalars['String']>;
 };
@@ -1172,7 +1174,7 @@ export type CreateSnippetInput = {
 };
 
 export type CreateStoreInput = {
-  contactEmail?: InputMaybe<Scalars['String']>;
+  contactEmail: Scalars['String'];
   name: Scalars['String'];
   slug: Scalars['String'];
 };
@@ -1207,6 +1209,7 @@ export type CustomBlock = {
   metadata: Scalars['Object'];
   name: Scalars['String'];
   refId: Scalars['UUID'];
+  sdkVersion?: Maybe<Scalars['Float']>;
 };
 
 export type CustomerData = {
@@ -3473,11 +3476,13 @@ export type ProductDetailPage = {
   hasQuantitySelect: Scalars['Boolean'];
   hasStickyAddToCartBarDesktop: Scalars['Boolean'];
   hasStickyAddToCartBarMobile: Scalars['Boolean'];
+  isPersonalizationFormOpenByDefault: Scalars['Boolean'];
   /** The color swatches size is only applicable when color swatches are enabled. */
   productColorOptionsSize: ColorOptionsSize;
   productColorOptionsStyle?: Maybe<ColorOptionsStyle>;
   /** @deprecated Should use `sections` instead. */
   productRecommendationsBlockPosition?: Maybe<FixedBlockPosition>;
+  refId?: Maybe<Scalars['UUID']>;
   /** The sections are displayed in the order they are specified. */
   sections: Array<ProductDetailSection>;
   stickyAddToCartItemsDesktop: Array<ProductDetailStickyAddToCartItem>;
@@ -3502,10 +3507,12 @@ export type ProductDetailPageInput = {
   hasQuantitySelect?: InputMaybe<Scalars['Boolean']>;
   hasStickyAddToCartBarDesktop?: InputMaybe<Scalars['Boolean']>;
   hasStickyAddToCartBarMobile?: InputMaybe<Scalars['Boolean']>;
+  isPersonalizationFormOpenByDefault?: InputMaybe<Scalars['Boolean']>;
   /** The color swatches size is only applicable when color swatches are enabled. */
   productColorOptionsSize?: InputMaybe<ColorOptionsSize>;
   productColorOptionsStyle?: InputMaybe<ColorOptionsStyle>;
   productRecommendationsBlockPosition?: InputMaybe<FixedBlockPosition>;
+  refId?: InputMaybe<Scalars['UUID']>;
   /** The sections are displayed in the order they are specified. */
   sections?: InputMaybe<Array<ProductDetailSection>>;
   stickyAddToCartItemsDesktop?: InputMaybe<Array<ProductDetailStickyAddToCartItem>>;

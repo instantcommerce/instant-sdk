@@ -4,8 +4,6 @@ import './style.css';
 
 let pinger: NodeJS.Timeout | null = null;
 
-const url = 'http://127.0.0.1:3000';
-
 export const PageRenderer = ({
   blockUrl,
   customizerData,
@@ -13,11 +11,24 @@ export const PageRenderer = ({
 }: {
   blockUrl: string;
   customizerData: any;
+  productHandle: string;
   store: any;
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [hasLoaded, setHasLoaded] = useState(false);
   const [hasPonged, setHasPonged] = useState(false);
+
+  const productHandle = new URLSearchParams(window.location.search).get(
+    'product',
+  );
+
+  if (!productHandle) {
+    throw new Error('Select a product to preview this block');
+  }
+
+  const url = import.meta.env.DEV
+    ? 'http://127.0.0.1:3000'
+    : store?.primaryDomain?.url;
 
   const handleMessage = (event: any) => {
     const urlIsTrusted =
@@ -83,8 +94,13 @@ export const PageRenderer = ({
         setHasLoaded(true);
       }}
       title="Page preview"
-      src="http://127.0.0.1:3000/products/training-long-sleeve-crop-top?variant=42907914404010"
-      style={{ width: '100%', height: '100%', border: 'none' }}
+      src={`${url}/products/${productHandle}`}
+      style={{
+        width: '100%',
+        height: '100%',
+        border: 'none',
+        opacity: !hasPonged ? '0' : '1',
+      }}
     />
   );
 };

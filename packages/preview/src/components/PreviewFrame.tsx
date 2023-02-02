@@ -7,7 +7,7 @@ import { useConfig } from './ConfigProvider';
 export const PreviewFrame = () => {
   const endpoint = useRef<Endpoint<any>>();
   const { selectedBlock, previewRef } = useBlocks();
-  const { selectedStore } = useConfig();
+  const { selectedProduct, selectedStore } = useConfig();
 
   const registerCall = (...args: any[]) => {
     console.log('Function called:', ...args);
@@ -40,6 +40,7 @@ export const PreviewFrame = () => {
       className="h-full w-full"
       src={`/preview.html?${new URLSearchParams({
         block: selectedBlock,
+        product: selectedProduct?.handle || '',
         store: selectedStore?.hostname || '',
       }).toString()}`}
       title="Preview"

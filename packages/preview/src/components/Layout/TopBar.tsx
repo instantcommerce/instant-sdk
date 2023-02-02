@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import {
   ArrowCounterClockwise,
   ArrowRight,
@@ -8,6 +8,7 @@ import {
   XCircle,
 } from 'phosphor-react';
 import { useBlocks, Button, useConfig, Select } from '..';
+import { useProductsQuery } from '../../lib';
 import { Logo } from './Logo';
 
 export const TopBar = () => {
@@ -20,6 +21,8 @@ export const TopBar = () => {
     getUrl,
     selectedStore,
     setSelectedStore,
+    selectedProduct,
+    setSelectedProduct,
   } = useConfig();
 
   const blockName = useMemo(
@@ -36,6 +39,16 @@ export const TopBar = () => {
       })),
     [],
   );
+
+  const { data, error, isLoading } = useProductsQuery({
+    first: 10,
+  });
+
+  useEffect(() => {
+    if (!error && data?.products?.edges?.length && !selectedProduct) {
+      setSelectedProduct(data.products.edges[0]);
+    }
+  }, [data]);
 
   return (
     <nav className="sticky top-0 z-30 flex shrink-0 h-12 w-full bg-white border-b border-gray-100 px-2">

@@ -2,6 +2,7 @@ import { ReactNode, useEffect, useMemo, useState } from 'react';
 import qs from 'qs';
 import { useLocation } from 'react-router';
 
+import { ProductsQuery } from '../../lib';
 import { IFRAME_DEFAULT_SIZE } from '../Resizable';
 import { ConfigContext } from './context';
 
@@ -86,6 +87,9 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
   const [selectedStore, setSelectedStore] = useState(
     window.__INSTANT_STORES__?.[0],
   );
+  const [selectedProduct, setSelectedProduct] = useState<
+    ProductsQuery['products']['edges'][0]['node'] | null
+  >(null);
   const [iframeWidth, setWidth] = useState(IFRAME_DEFAULT_SIZE.width);
   const [iframeHeight, setHeight] = useState(IFRAME_DEFAULT_SIZE.height);
 
@@ -169,6 +173,8 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
       setScreenSize,
       selectedStore,
       setSelectedStore,
+      selectedProduct,
+      setSelectedProduct,
       params,
       updateConfig,
       updateBookmarks,
@@ -193,6 +199,8 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
     setScreenSize,
     selectedStore,
     setSelectedStore,
+    selectedProduct,
+    setSelectedProduct,
     params,
     updateConfig,
     updateBookmarks,

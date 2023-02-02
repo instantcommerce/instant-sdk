@@ -1,4 +1,5 @@
 import { createContext } from 'react';
+import { ProductsQuery } from '../../lib';
 
 export interface ConfigContextValue {
   leftPanelVisible: boolean;
@@ -12,6 +13,10 @@ export interface ConfigContextValue {
   selectedStore?: NonNullable<typeof window.__INSTANT_STORES__>[0];
   setSelectedStore(
     value: NonNullable<typeof window.__INSTANT_STORES__>[0],
+  ): void;
+  selectedProduct?: ProductsQuery['products']['edges'][0]['node'];
+  setSelectedProduct(
+    value: ProductsQuery['products']['edges'][0]['node'],
   ): void;
   params: any;
   getUrl(params: any): string;
