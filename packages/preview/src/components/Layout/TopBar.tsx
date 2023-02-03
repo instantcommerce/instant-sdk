@@ -7,6 +7,7 @@ import {
   Star,
   XCircle,
 } from 'phosphor-react';
+import { BlockType } from 'types/api';
 import { useBlocks, Button, useConfig, Select } from '..';
 import { useProductsQuery } from '../../lib';
 import { Logo } from './Logo';
@@ -25,6 +26,10 @@ export const TopBar = () => {
     setSelectedProduct,
   } = useConfig();
 
+  const shouldShowProductSelect = !!(
+    selectedBlock && blocksManifest?.[selectedBlock]?.type === BlockType.Page
+  );
+
   const blockName = useMemo(
     () =>
       selectedBlock ? blocksManifest?.[selectedBlock]?.name : 'Select block',
@@ -40,13 +45,32 @@ export const TopBar = () => {
     [],
   );
 
-  const { data, error, isLoading } = useProductsQuery({
-    first: 10,
-  });
+  const { data, error, isLoading } = useProductsQuery(
+    {
+      first: 10,
+    },
+    {
+      enabled: !!selectedStore && shouldShowProductSelect,
+    },
+  );
+
+  const availableProducts = useMemo(
+    () =>
+      data?.products?.edges?.map(({ node }) => ({
+        label: node.title,
+        value: node.handle,
+      })) || [],
+    [data],
+  );
 
   useEffect(() => {
-    if (!error && data?.products?.edges?.length && !selectedProduct) {
-      setSelectedProduct(data.products.edges[0]);
+    if (
+      !isLoading &&
+      !error &&
+      data?.products?.edges?.length &&
+      !selectedProduct
+    ) {
+      setSelectedProduct(data.products.edges[0].node);
     }
   }, [data]);
 
@@ -104,28 +128,55 @@ export const TopBar = () => {
           )}
         </div>
 
-        <div className="flex gap-1.5">
-          <Button iconOnly onClick={reloadPreview}>
-            <ArrowCounterClockwise size={18} />
-          </Button>
+        <div className="flex gap-1.5 items-center">
+          {shouldShowProductSelect && (
+            <>
+              <Select
+                className="max-w-[140px] text-[13px] border-none shadow-none"
+                itemClassName="text-[13px]"
+                options={availableProducts}
+                value={selectedProduct?.handle}
+                onValueChange={(value) => {
+                  const product = data?.products?.edges?.find(
+                    ({ node }) => node.handle === value,
+                  );
 
-          <Button
-            iconOnly
-            to={getUrl({ viewMode: 'fullScreen' })}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <ArrowSquareOut size={18} />
-          </Button>
+                  if (product) {
+                    setSelectedProduct(product.node);
+                  }
+                }}
+              />
 
-          <Button
-            iconOnly
-            onClick={() => {
-              setRightPanelVisible(!rightPanelVisible);
-            }}
-          >
-            {rightPanelVisible ? <XCircle size={18} /> : <Faders size={18} />}
-          </Button>
+              <div className="w-[1px] bg-gray-200 h-[30px]" />
+            </>
+          )}
+
+          <div className="flex gap-1.5">
+            <Button iconOnly onClick={reloadPreview}>
+              <ArrowCounterClockwise size={18} />
+            </Button>
+
+            <Button
+              iconOnly
+              to={getUrl({
+                product: selectedProduct?.handle || '',
+                viewMode: 'fullScreen',
+              })}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <ArrowSquareOut size={18} />
+            </Button>
+
+            <Button
+              iconOnly
+              onClick={() => {
+                setRightPanelVisible(!rightPanelVisible);
+              }}
+            >
+              {rightPanelVisible ? <XCircle size={18} /> : <Faders size={18} />}
+            </Button>
+          </div>
         </div>
       </div>
     </nav>

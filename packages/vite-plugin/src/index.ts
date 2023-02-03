@@ -208,6 +208,38 @@ export default function vitePluginInstantSdk({
         return [];
       },
       async transform(code, id, options) {
+        /** Apply class prefixing in DEV using blockname */
+        if (!isProduction && cssLangRE.test(id)) {
+          if (code.includes('const __vite__css = ')) {
+            const postcssResult = await (await import('postcss'))
+              .default([
+                (
+                  (
+                    await import('@instantcommerce/postcss-plugin-sdk')
+                  ).default as any
+                )(getBlockNameFromPath(id)) as any,
+              ])
+              .process(
+                `${
+                  JSON.parse(
+                    `{"code": ${
+                      /^const __vite__css = (.*)$/gm.exec(code)?.[1] || '""'
+                    }}`,
+                  ).code
+                }`,
+                {
+                  to: id,
+                  from: id,
+                },
+              );
+
+            return code.replace(
+              /^const __vite__css = .*$/gm,
+              `const __vite__css = ${JSON.stringify(postcssResult.css)}`,
+            );
+          }
+        }
+
         // if (id.endsWith(viteClientId)) {
         //   return `${code
         //     .replace(/function updateStyle/, 'function updateStyle_OLD')

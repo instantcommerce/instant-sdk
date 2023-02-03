@@ -214,46 +214,51 @@ const Renderer = ({ store }: { store: any }) => {
     );
   }
 
-  return block.render({
-    content: contentData,
-    customizer: customizerData,
-    instantObject: (window as any).Instant,
-    store: store || {
-      storefront: {
-        config: {
-          theme: {
-            colors: {
-              primary: {
-                s50: '#F5FAFF',
-                s100: '#EFF8FF',
-                s200: '#D1E9FF',
-                s300: '#84CAFF',
-                s400: '#53B1FD',
-                s500: '#2E90FA',
-                s600: '#1570EF',
-                s700: '#175CD3',
-                s800: '#1849A9',
-                s900: '#0F2C60',
+  /** @todo get blockName instead of block path */
+  return (
+    <section className={blockPath || ''}>
+      {block.render({
+        content: contentData,
+        customizer: customizerData,
+        instantObject: (window as any).Instant,
+        store: store || {
+          storefront: {
+            config: {
+              theme: {
+                colors: {
+                  primary: {
+                    s50: '#F5FAFF',
+                    s100: '#EFF8FF',
+                    s200: '#D1E9FF',
+                    s300: '#84CAFF',
+                    s400: '#53B1FD',
+                    s500: '#2E90FA',
+                    s600: '#1570EF',
+                    s700: '#175CD3',
+                    s800: '#1849A9',
+                    s900: '#0F2C60',
+                  },
+                  grayscale: {
+                    s50: '#FAFAFA',
+                    s100: '#F4F4F5',
+                    s200: '#E4E4E7',
+                    s300: '#D4D4D8',
+                    s400: '#A1A1AA',
+                    s500: '#71717A',
+                    s600: '#52525B',
+                    s700: '#3F3F46',
+                    s800: '#27272A',
+                    s900: '#18181B',
+                  },
+                  text: 'LIGHT',
+                },
               },
-              grayscale: {
-                s50: '#FAFAFA',
-                s100: '#F4F4F5',
-                s200: '#E4E4E7',
-                s300: '#D4D4D8',
-                s400: '#A1A1AA',
-                s500: '#71717A',
-                s600: '#52525B',
-                s700: '#3F3F46',
-                s800: '#27272A',
-                s900: '#18181B',
-              },
-              text: 'LIGHT',
             },
           },
         },
-      },
-    },
-  });
+      })}
+    </section>
+  );
 };
 
 export const BlockRenderer = ({ store }: { store: any }) => {
