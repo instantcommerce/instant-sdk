@@ -8,7 +8,7 @@ import {
   XCircle,
 } from 'phosphor-react';
 import { BlockType } from 'types/api';
-import { useBlocks, Button, useConfig, Select } from '..';
+import { useBlocks, Button, useConfig, Select, useStore } from '..';
 import { useProductsQuery } from '../../lib';
 import { Logo } from './Logo';
 
@@ -25,6 +25,7 @@ export const TopBar = () => {
     selectedProduct,
     setSelectedProduct,
   } = useConfig();
+  const { store } = useStore();
 
   const shouldShowProductSelect = !!(
     selectedBlock && blocksManifest?.[selectedBlock]?.type === BlockType.Page
@@ -50,7 +51,7 @@ export const TopBar = () => {
       first: 10,
     },
     {
-      enabled: !!selectedStore && shouldShowProductSelect,
+      enabled: !!selectedStore && !!store && shouldShowProductSelect,
     },
   );
 

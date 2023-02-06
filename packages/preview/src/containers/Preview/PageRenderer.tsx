@@ -5,13 +5,14 @@ import './style.css';
 let pinger: NodeJS.Timeout | null = null;
 
 export const PageRenderer = ({
+  blockClassName,
   blockUrl,
   customizerData,
   store,
 }: {
+  blockClassName: string;
   blockUrl: string;
   customizerData: any;
-  productHandle: string;
   store: any;
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -79,6 +80,7 @@ export const PageRenderer = ({
       iframeRef.current?.contentWindow?.postMessage(
         {
           type: 'sdkBlock',
+          blockClassName,
           blockUrl,
           customizerData,
         },

@@ -45,7 +45,7 @@ export const PreviewFrame = () => {
       }).toString()}`}
       title="Preview"
       ref={onPreviewRef}
-      sandbox="allow-same-origin allow-scripts"
+      sandbox="allow-same-origin allow-scripts allow-forms"
     />
   );
 };

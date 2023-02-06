@@ -11,7 +11,7 @@ const CustomPdp = () => {
   const { product } = usePdpContext();
 
   return (
-    <div className="p-8 min-h-[600px] bg-gray-800">
+    <div className="p-8 min-h-[600px] bg-gray-200">
       <Pdp.Container>
         <Pdp.ColumnMain>
           <Pdp.Form>

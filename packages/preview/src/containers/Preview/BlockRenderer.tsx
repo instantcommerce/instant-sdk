@@ -75,10 +75,6 @@ const call =
   }
 };
 
-(window as any).reload = () => {
-  window.location.reload();
-};
-
 /** Wrap Promise for React Suspense */
 const wrapPromise = (promise: Promise<any>) => {
   let status = 'pending';
@@ -137,8 +133,23 @@ const useLoadBlock = (blockPath?: string | null) => {
   return block;
 };
 
+const getBlockNameFromPath = (blockPath: string) => {
+  const parts = blockPath.split('/');
+  return parts.length - 2 >= 0 ? parts[parts.length - 2] : '';
+};
+
 const Renderer = ({ store }: { store: any }) => {
-  const blockPath = new URLSearchParams(window.location.search).get('block');
+  const [blockPath, setBlockPath] = useState(
+    new URLSearchParams(window.location.search).get('block'),
+  );
+
+  (window as any).reload = (data: { timestamp: number }) => {
+    setBlockPath(
+      `${new URLSearchParams(window.location.search).get('block')}?t=${
+        data.timestamp
+      }`,
+    );
+  };
 
   const block = useLoadBlock(blockPath);
   const [contentSchema, setContentSchema] = useState<DefineContentSchema>();
@@ -202,11 +213,14 @@ const Renderer = ({ store }: { store: any }) => {
     return null;
   }
 
+  const blockClassName = getBlockNameFromPath(blockPath || '');
+
   if (block.type === BlockType.Page) {
     const blockUrl = getBlockScript(`${BLOCK_SERVER}/${blockPath}`);
 
     return (
       <PageRenderer
+        blockClassName={blockClassName}
         blockUrl={blockUrl}
         store={store}
         customizerData={customizerData}
@@ -214,9 +228,8 @@ const Renderer = ({ store }: { store: any }) => {
     );
   }
 
-  /** @todo get blockName instead of block path */
   return (
-    <section className={blockPath || ''}>
+    <section className={blockClassName}>
       {block.render({
         content: contentData,
         customizer: customizerData,
@@ -265,7 +278,7 @@ export const BlockRenderer = ({ store }: { store: any }) => {
   return (
     <ErrorBoundary
       FallbackComponent={({ error }) => (
-        <div>
+        <div style={{ margin: '8px' }}>
           <b>Error running block:</b>
           <div style={{ marginTop: '16px', marginBottom: '32px' }}>
             <div
