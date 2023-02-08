@@ -648,8 +648,16 @@ interface RichTextStoryblok {
   type: string;
 }
 
+interface AddToCartParams {
+  attributes?: { key: string; value: string }[];
+  product: any;
+  quantity?: number;
+  showModalOnSuccess?: boolean;
+  variantId: string;
+}
+
 interface PdpContext {
-  addToCart: (values: any) => Promise<void>;
+  addToCart: (params: AddToCartParams) => Promise<void>;
   openNotifyMeModal: () => void;
   personalizations?: PublicProductForm & {
     fields: Array<ProductFormField & { id: string }>;
