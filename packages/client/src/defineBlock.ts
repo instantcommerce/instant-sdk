@@ -2,7 +2,7 @@ import { createElement, ReactElement, ReactNode } from 'react';
 import { render as remoteRender, RemoteRoot } from '@remote-ui/react';
 
 /** This relative import forces types from this package to be included in this bundle */
-import { BlockType } from '../../types/api';
+import { BlockSubtype, BlockType } from '../../types/api';
 import {
   DefineContentSchema,
   DefineCustomizerSchema,
@@ -39,8 +39,10 @@ const renderFunction =
   (
     component: DefineSectionParams['component'],
     decorators: NonNullable<DefineSectionParams['preview']>['decorators'],
+    type: BlockType,
+    subtype?: BlockSubtype,
   ) =>
-  (blockProps) => {
+  (blockProps: any) => {
     const renderedComponent =
       typeof component === 'function' ? createElement(component) : component;
 
@@ -51,7 +53,11 @@ const renderFunction =
 
     return createElement(BlockProvider, {
       children: result,
-      blockProps,
+      blockProps: {
+        ...(blockProps || {}),
+        type,
+        subtype,
+      },
     });
   };
 
@@ -60,12 +66,16 @@ export const defineSection = ({
   preview: { decorators } = {},
   customizerSchema,
   contentSchema,
-}: DefineSectionParams) => ({
-  render: renderFunction(component, decorators),
-  contentSchema,
-  customizerSchema,
-  type: BlockType.Section,
-});
+}: DefineSectionParams) => {
+  const type = BlockType.Section;
+
+  return {
+    render: renderFunction(component, decorators, type),
+    contentSchema,
+    customizerSchema,
+    type,
+  };
+};
 
 /** @deprecated Use `defineSection` instead */
 export const defineBlock = defineSection;
@@ -74,18 +84,30 @@ export const defineComponent = ({
   component,
   preview: { decorators } = {},
   customizerSchema,
-}: DefineComponentParams) => ({
-  render: renderFunction(component, decorators),
-  customizerSchema,
-  type: BlockType.Component,
-});
+}: DefineComponentParams) => {
+  const type = BlockType.Component;
+  const subtype = BlockSubtype.CartSidebar;
+
+  return {
+    render: renderFunction(component, decorators, type, subtype),
+    customizerSchema,
+    type,
+    subtype,
+  };
+};
 
 export const definePage = ({
   component,
   preview: { decorators } = {},
   customizerSchema,
-}: DefinePageParams) => ({
-  render: renderFunction(component, decorators),
-  customizerSchema,
-  type: BlockType.Page,
-});
+}: DefinePageParams) => {
+  const type = BlockType.Page;
+  const subtype = BlockSubtype.Pdp;
+
+  return {
+    render: renderFunction(component, decorators, type, subtype),
+    customizerSchema,
+    type,
+    subtype,
+  };
+};
