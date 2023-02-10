@@ -7,7 +7,7 @@ import { build } from 'vite';
 import { CommandModule } from 'yargs';
 import { dirname } from '~/config';
 import { extractApiError, useApiSdk } from '~/lib/api';
-import { BlockFragmentFragment } from '~/lib/api/sdk';
+import { BlockFragmentFragment, BlockType } from '~/lib/api/sdk';
 import { BlockFiles, getBlockFiles } from '~/lib/getBlockFiles';
 import { getBlockNameFromPath } from '~/lib/getBlockNameFromPath';
 import { getProjectConfig } from '~/lib/getProjectConfig';
@@ -80,7 +80,7 @@ export const Publish = ({
       throw new Error('No build output found');
     }
 
-    return clientOutput.output;
+    return [entry.type, outDir, clientOutput.output] as const;
   };
 
   const buildAndPublish = async () => {
@@ -100,7 +100,7 @@ export const Publish = ({
     setBuildSuccess(true);
 
     for (let i = 0; i < buildOutputs.length; i += 1) {
-      const buildOutput = buildOutputs[i]!;
+      const [blockType, outDir, buildOutput] = buildOutputs[i]!;
       let manifest;
 
       try {
@@ -139,24 +139,24 @@ export const Publish = ({
                 )?.source,
               ),
             );
-            const contentSchema = parseContentSchema(
-              JSON.parse(
-                buildOutput.find(
-                  ({ fileName }) => fileName === 'contentSchema.json',
-                  // @ts-ignore
-                )?.source,
-              ),
-              blockName,
-            );
+
+            const contentSchemaSource = buildOutput.find(
+              ({ fileName }) => fileName === 'contentSchema.json',
+              // @ts-ignore
+            )?.source;
+            const contentSchema = contentSchemaSource
+              ? parseContentSchema(JSON.parse(contentSchemaSource), blockName)
+              : undefined;
+
             const blockFile = createReadStream(
-              path.join(dirname, 'dist/blocks', blockName, entry.file),
+              path.join(dirname, outDir, entry.file),
             );
             let cssFile;
 
             if (entry.css?.length) {
               /** There should be at most 1 CSS file because of bundling */
               cssFile = createReadStream(
-                path.join(dirname, 'dist/blocks', blockName, entry.css[0]),
+                path.join(dirname, outDir, entry.css[0]),
               );
             }
 
@@ -173,7 +173,8 @@ export const Publish = ({
                   sdkVersion: 2,
                   css: cssFile,
                   js: blockFile,
-                  contentSchema,
+                  contentSchema:
+                    blockType === BlockType.Section ? contentSchema : undefined,
                   customizerSchema,
                 },
               },

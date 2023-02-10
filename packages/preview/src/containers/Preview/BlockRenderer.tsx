@@ -5,6 +5,7 @@ import { BlockType } from 'types/api';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 import { SchemaTypes } from '../../components/BlocksProvider/context';
 import { createRemoteReactComponent } from './components';
+import { ErrorMessage } from './ErrorMessage';
 import { PageRenderer } from './PageRenderer';
 import { previewSchema } from './previewSchema';
 
@@ -277,34 +278,7 @@ const Renderer = ({ store }: { store: any }) => {
 export const BlockRenderer = ({ store }: { store: any }) => {
   return (
     <ErrorBoundary
-      FallbackComponent={({ error }) => (
-        <div style={{ margin: '8px' }}>
-          <b>Error running block:</b>
-          <div style={{ marginTop: '16px', marginBottom: '32px' }}>
-            <div
-              style={{
-                padding: '8px',
-                borderRadius: '8px',
-                backgroundColor: 'black',
-                color: '#EEE',
-              }}
-            >
-              <code>{error.message}</code>
-            </div>
-          </div>
-          Check the console for errors.
-          <div style={{ marginTop: '8px' }}>
-            <a
-              href="#"
-              onClick={() => {
-                window.location.reload();
-              }}
-            >
-              Reset
-            </a>
-          </div>
-        </div>
-      )}
+      FallbackComponent={({ error }) => <ErrorMessage error={error.message} />}
     >
       <Suspense>
         <Renderer store={store} />

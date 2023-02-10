@@ -10,3 +10,21 @@ body,
 body {
   margin: 0;
 }
+
+.loader {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: #ccc;
+  cursor: wait;
+  z-index: 9999;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
