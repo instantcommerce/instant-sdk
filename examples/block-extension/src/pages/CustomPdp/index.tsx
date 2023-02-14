@@ -28,6 +28,7 @@ const CustomPdp = () => {
             <Pdp.Rating />
 
             <Pdp.VariantSelects />
+            <Pdp.SellingPlans />
             <Pdp.NotificationMessage />
             <Pdp.AddToCartSection>
               <Pdp.QuantityInput />

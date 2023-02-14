@@ -442,7 +442,15 @@ export type ProductProviderFragmentFragment = {
   };
 };
 
-export type VariantFragmentFragment = {
+/** The checkout charge when the full amount isn't charged at checkout. */
+enum SellingPlanCheckoutChargeType {
+  /** The checkout charge is a percentage of the product or variant price. */
+  Percentage = 'PERCENTAGE',
+  /** The checkout charge is a fixed price amount. */
+  Price = 'PRICE',
+}
+
+type VariantFragmentFragment = {
   __typename?: 'ProductVariant';
   id: string;
   title: string;
@@ -456,8 +464,8 @@ export type VariantFragmentFragment = {
     width?: number | null;
     height?: number | null;
   } | null;
-  priceV2: { __typename?: 'MoneyV2'; currencyCode: CurrencyCode; amount: any };
-  compareAtPriceV2?: {
+  price: { __typename?: 'MoneyV2'; currencyCode: CurrencyCode; amount: any };
+  compareAtPrice?: {
     __typename?: 'MoneyV2';
     currencyCode: CurrencyCode;
     amount: any;
@@ -467,9 +475,89 @@ export type VariantFragmentFragment = {
     name: string;
     value: string;
   }>;
+  sellingPlanAllocations?: {
+    __typename?: 'SellingPlanAllocationConnection';
+    edges: Array<{
+      __typename?: 'SellingPlanAllocationEdge';
+      node: {
+        __typename?: 'SellingPlanAllocation';
+        priceAdjustments: Array<{
+          __typename?: 'SellingPlanAllocationPriceAdjustment';
+          compareAtPrice: {
+            __typename?: 'MoneyV2';
+            currencyCode: CurrencyCode;
+            amount: any;
+          };
+          perDeliveryPrice: {
+            __typename?: 'MoneyV2';
+            currencyCode: CurrencyCode;
+            amount: any;
+          };
+          price: {
+            __typename?: 'MoneyV2';
+            currencyCode: CurrencyCode;
+            amount: any;
+          };
+          unitPrice?: {
+            __typename?: 'MoneyV2';
+            currencyCode: CurrencyCode;
+            amount: any;
+          } | null;
+        }>;
+        sellingPlan: {
+          __typename?: 'SellingPlan';
+          id: string;
+          description?: string | null;
+          name: string;
+          recurringDeliveries: boolean;
+          options: Array<{
+            __typename?: 'SellingPlanOption';
+            name?: string | null;
+            value?: string | null;
+          }>;
+          priceAdjustments: Array<{
+            __typename?: 'SellingPlanPriceAdjustment';
+            orderCount?: number | null;
+            adjustmentValue:
+              | {
+                  __typename?: 'SellingPlanFixedAmountPriceAdjustment';
+                  adjustmentAmount: {
+                    __typename?: 'MoneyV2';
+                    currencyCode: CurrencyCode;
+                    amount: any;
+                  };
+                }
+              | {
+                  __typename?: 'SellingPlanFixedPriceAdjustment';
+                  price: {
+                    __typename?: 'MoneyV2';
+                    currencyCode: CurrencyCode;
+                    amount: any;
+                  };
+                }
+              | {
+                  __typename?: 'SellingPlanPercentagePriceAdjustment';
+                  adjustmentPercentage: number;
+                };
+          }>;
+          checkoutCharge: {
+            __typename?: 'SellingPlanCheckoutCharge';
+            type: SellingPlanCheckoutChargeType;
+            value:
+              | {
+                  __typename?: 'MoneyV2';
+                  currencyCode: CurrencyCode;
+                  amount: any;
+                }
+              | { __typename?: 'SellingPlanCheckoutChargePercentageValue' };
+          };
+        };
+      };
+    }>;
+  };
 };
 
-export type SellingPlanFragmentFragment = {
+type SellingPlanFragmentFragment = {
   __typename?: 'SellingPlan';
   id: string;
   description?: string | null;
@@ -507,7 +595,7 @@ export type SellingPlanFragmentFragment = {
   }>;
 };
 
-export type SellingPlanGroupsFragmentFragment = {
+type SellingPlanGroupsFragmentFragment = {
   __typename?: 'SellingPlanGroup';
   appName?: string | null;
   name: string;
@@ -565,7 +653,7 @@ export type SellingPlanGroupsFragmentFragment = {
 // fields in order to use the product options functionality:
 // - id
 // - selectedOptions
-export type Variant = Omit<
+type Variant = Omit<
   Partial<VariantFragmentFragment>,
   'id' | 'selectedOptions' | 'metafields'
 > & {
@@ -573,28 +661,58 @@ export type Variant = Omit<
   selectedOptions: VariantFragmentFragment['selectedOptions'];
 };
 
-export type SelectedOptions = {
+type SelectedOptions = {
   [key: string]: string;
 };
 
-export type SelectVariantCallback = (variant: Variant) => void;
+type SelectVariantCallback = (variant: Variant) => void;
 
-export type SelectOptionCallback = (
+type SelectOptionCallback = (
   name: VariantFragmentFragment['selectedOptions'][0]['name'],
   value: VariantFragmentFragment['selectedOptions'][0]['value'],
 ) => void;
 
-export type SelectOptionsCallback = (options: SelectedOptions) => void;
+type SelectOptionsCallback = (options: SelectedOptions) => void;
 
-export type OptionsInStockCallback = (
+type OptionsInStockCallback = (
   name: VariantFragmentFragment['selectedOptions'][0]['name'],
   value: VariantFragmentFragment['selectedOptions'][0]['value'],
 ) => boolean;
 
-export interface OptionWithValues {
+interface OptionWithValues {
   name: VariantFragmentFragment['selectedOptions'][0]['name'];
   values: VariantFragmentFragment['selectedOptions'][0]['value'][];
 }
+
+type SellingPlanGroup = Omit<
+  Partial<SellingPlanGroupsFragmentFragment>,
+  'options'
+> & {
+  options: SellingPlanGroupsFragmentFragment['options'];
+};
+
+// SellingPlans can be partials but they _must_ have an id in order
+// to work with the product options functionality
+type SellingPlan = Omit<Partial<SellingPlanFragmentFragment>, 'id'> & {
+  id: SellingPlanFragmentFragment['id'];
+};
+
+// SellingPlanAllocations can be partial, but their sellingPlan _must_ have an id in order
+// to work with the product options functionality
+type SellingPlanAllocation = Omit<
+  Partial<
+    NonNullable<
+      VariantFragmentFragment['sellingPlanAllocations']
+    >['edges'][0]['node']
+  >,
+  'sellingPlan'
+> & {
+  sellingPlan: Omit<Partial<SellingPlanFragmentFragment>, 'id'> & {
+    id: SellingPlanFragmentFragment['id'];
+  };
+};
+
+export type SelectedSellingPlanCallback = (sellingPlan?: SellingPlan) => void;
 
 interface Product
   extends Pick<
@@ -627,17 +745,17 @@ interface Product
   setSelectedOptions: SelectOptionsCallback;
   /** A callback that returns a boolean indicating if the option is in stock. */
   isOptionInStock: OptionsInStockCallback;
-  // /** A callback to set the selected selling plan to the one passed as an argument. */
-  // setSelectedSellingPlan: SelectedSellingPlanCallback;
-  // /** The selected selling plan. */
-  // selectedSellingPlan?: SellingPlan;
-  // /** The selected selling plan allocation. */
-  // selectedSellingPlanAllocation?: SellingPlanAllocation;
-  // /** The selling plan groups. */
-  // sellingPlanGroups?: (Omit<SellingPlanGroup, 'sellingPlans'> & {
-  //   sellingPlans: SellingPlan[];
-  // })[];
-  // sellingPlanGroupsConnection?: GraphQLConnection<SellingPlanGroup>;
+  /** A callback to set the selected selling plan to the one passed as an argument. */
+  setSelectedSellingPlan: SelectedSellingPlanCallback;
+  /** The selected selling plan. */
+  selectedSellingPlan?: SellingPlan;
+  /** The selected selling plan allocation. */
+  selectedSellingPlanAllocation?: SellingPlanAllocation;
+  /** The selling plan groups. */
+  sellingPlanGroups?: (Omit<SellingPlanGroup, 'sellingPlans'> & {
+    sellingPlans: SellingPlan[];
+  })[];
+  sellingPlanGroupsConnection?: GraphQLConnection<SellingPlanGroup>;
 }
 
 interface RichTextStoryblok {

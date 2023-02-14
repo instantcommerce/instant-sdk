@@ -53,6 +53,8 @@ export const Price = createRemoteReactComponent<'Price'>('Price');
 export const Rating = createRemoteReactComponent<'Rating'>('Rating');
 export const VariantSelects =
   createRemoteReactComponent<'VariantSelects'>('VariantSelects');
+export const SellingPlans =
+  createRemoteReactComponent<'SellingPlans'>('SellingPlans');
 export const NotificationMessage =
   createRemoteReactComponent<'NotificationMessage'>('NotificationMessage');
 export const AddToCartSection = createRemoteReactComponent<
@@ -78,6 +80,7 @@ export const Pdp = {
   Price,
   Rating,
   VariantSelects,
+  SellingPlans,
   NotificationMessage,
   AddToCartSection,
   QuantityInput,
