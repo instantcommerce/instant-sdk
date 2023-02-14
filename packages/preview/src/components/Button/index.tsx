@@ -15,6 +15,8 @@ export interface ButtonProps extends ComponentPropsWithoutRef<'button'> {
   iconOnly?: boolean;
   className?: string;
   href?: string;
+  rel?: ComponentPropsWithoutRef<'a'>['rel'];
+  target?: ComponentPropsWithoutRef<'a'>['target'];
   to?: LinkProps['to'];
 }
 
@@ -33,13 +35,7 @@ const stylesByVariant = {
 
 export const Button = forwardRef(
   (
-    {
-      className,
-      variant = 'gray',
-      iconOnly,
-      children,
-      ...props
-    }: ComponentPropsWithoutRef<'a'> & ButtonProps,
+    { className, variant = 'gray', iconOnly, children, ...props }: ButtonProps,
     ref,
   ) => {
     const Component = props.href ? 'a' : props.to ? Link : 'button';

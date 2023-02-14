@@ -1,8 +1,9 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   ArrowCounterClockwise,
   ArrowRight,
   ArrowSquareOut,
+  CaretDown,
   Faders,
   Star,
   XCircle,
@@ -11,6 +12,7 @@ import { BlockType } from 'types/api';
 import { useBlocks, Button, useConfig, Select, useStore } from '..';
 import { useProductsQuery } from '../../lib';
 import { Logo } from './Logo';
+import { ProductsModal } from './ProductsModal';
 
 export const TopBar = () => {
   const { selectedBlock, blocksManifest, reloadPreview } = useBlocks();
@@ -26,6 +28,7 @@ export const TopBar = () => {
     setSelectedProduct,
   } = useConfig();
   const { store } = useStore();
+  const [isProductsModalOpen, setProductsModalOpen] = useState(false);
 
   const shouldShowProductSelect = !!(
     selectedBlock && blocksManifest?.[selectedBlock]?.type === BlockType.Page
@@ -53,15 +56,6 @@ export const TopBar = () => {
     {
       enabled: !!selectedStore && !!store && shouldShowProductSelect,
     },
-  );
-
-  const availableProducts = useMemo(
-    () =>
-      data?.products?.edges?.map(({ node }) => ({
-        label: node.title,
-        value: node.handle,
-      })) || [],
-    [data],
   );
 
   useEffect(() => {
@@ -132,20 +126,26 @@ export const TopBar = () => {
         <div className="flex gap-1.5 items-center">
           {shouldShowProductSelect && (
             <>
-              <Select
-                className="max-w-[140px] text-[13px] border-none shadow-none"
-                itemClassName="text-[13px]"
-                options={availableProducts}
-                value={selectedProduct?.handle}
-                onValueChange={(value) => {
-                  const product = data?.products?.edges?.find(
-                    ({ node }) => node.handle === value,
-                  );
-
-                  if (product) {
-                    setSelectedProduct(product.node);
-                  }
+              <ProductsModal
+                onProductSelect={(product) => {
+                  setSelectedProduct(product);
+                  setProductsModalOpen(false);
                 }}
+                open={isProductsModalOpen}
+                onOpenChange={(open) => {
+                  setProductsModalOpen(open);
+                }}
+                trigger={
+                  <button className="max-w-[140px] text-[13px] text-gray-600 border-none shadow-none font-medium flex items-center gap-2 p-2 border rounded w-full h-8 content-between">
+                    <span className="pointer-events-none text-ellipsis overflow-hidden whitespace-nowrap">
+                      {selectedProduct?.title}
+                    </span>
+
+                    <div className="transition-transform duration-200 w-3 ml-auto">
+                      <CaretDown size={16} />
+                    </div>
+                  </button>
+                }
               />
 
               <div className="w-[1px] bg-gray-200 h-[30px]" />

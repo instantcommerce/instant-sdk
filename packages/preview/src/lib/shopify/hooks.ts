@@ -6908,18 +6908,26 @@ export enum WeightUnit {
 }
 
 export type ProductsQueryVariables = Exact<{
-  first: Scalars['Int'];
+  first?: InputMaybe<Scalars['Int']>;
+  last?: InputMaybe<Scalars['Int']>;
   after?: InputMaybe<Scalars['String']>;
+  before?: InputMaybe<Scalars['String']>;
   query?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type ProductsQuery = { __typename?: 'QueryRoot', products: { __typename?: 'ProductConnection', edges: Array<{ __typename?: 'ProductEdge', cursor: string, node: { __typename?: 'Product', id: string, handle: string, title: string, images: { __typename?: 'ImageConnection', edges: Array<{ __typename?: 'ImageEdge', node: { __typename?: 'Image', id?: string | null, url: any } }> } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean } } };
+export type ProductsQuery = { __typename?: 'QueryRoot', products: { __typename?: 'ProductConnection', edges: Array<{ __typename?: 'ProductEdge', cursor: string, node: { __typename?: 'Product', id: string, handle: string, title: string, images: { __typename?: 'ImageConnection', edges: Array<{ __typename?: 'ImageEdge', node: { __typename?: 'Image', id?: string | null, url: any } }> } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage: boolean, hasPreviousPage: boolean, startCursor?: string | null, endCursor?: string | null } } };
 
 
 export const ProductsDocument = `
-    query products($first: Int!, $after: String, $query: String) {
-  products(first: $first, after: $after, query: $query) {
+    query products($first: Int, $last: Int, $after: String, $before: String, $query: String) {
+  products(
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+    query: $query
+  ) {
     edges {
       cursor
       node {
@@ -6939,6 +6947,8 @@ export const ProductsDocument = `
     pageInfo {
       hasNextPage
       hasPreviousPage
+      startCursor
+      endCursor
     }
   }
 }
@@ -6947,14 +6957,14 @@ export const useProductsQuery = <
       TData = ProductsQuery,
       TError = unknown
     >(
-      variables: ProductsQueryVariables,
+      variables?: ProductsQueryVariables,
       options?: UseQueryOptions<ProductsQuery, TError, TData>
     ) =>
     useQuery<ProductsQuery, TError, TData>(
-      ['products', variables],
+      variables === undefined ? ['products'] : ['products', variables],
       useShopifyFetcher<ProductsQuery, ProductsQueryVariables>(ProductsDocument).bind(null, variables),
       options
     );
 
-useProductsQuery.getKey = (variables: ProductsQueryVariables) => ['products', variables];
+useProductsQuery.getKey = (variables?: ProductsQueryVariables) => variables === undefined ? ['products'] : ['products', variables];
 ;
