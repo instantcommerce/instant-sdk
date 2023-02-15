@@ -22,7 +22,7 @@ const CustomPdp = () => {
               className="text-4xl font-bold mt-4 animate-bounce"
               style={{ color: customizer?.color || '#000' }}
             >
-              {product.selectedVariant?.priceV2?.amount}
+              {product.selectedVariant?.price?.amount}
             </div>
 
             <Pdp.Rating />

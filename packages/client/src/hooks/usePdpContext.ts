@@ -422,12 +422,12 @@ export type ProductProviderFragmentFragment = {
           width?: number | null;
           height?: number | null;
         } | null;
-        priceV2: {
+        price: {
           __typename?: 'MoneyV2';
           currencyCode: CurrencyCode;
           amount: any;
         };
-        compareAtPriceV2?: {
+        compareAtPrice?: {
           __typename?: 'MoneyV2';
           currencyCode: CurrencyCode;
           amount: any;

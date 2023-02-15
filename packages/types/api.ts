@@ -635,7 +635,6 @@ export type CartPage = {
   __typename?: 'CartPage';
   addToCartBehavior: AddToCartBehavior;
   cartButtonBehavior: CartButtonBehavior;
-  customBlockMetadata?: Maybe<CustomBlockMetadata>;
   hasFreeShippingBar: Scalars['Boolean'];
   hasPaymentIconsPage: Scalars['Boolean'];
   hasPaymentIconsSidebar: Scalars['Boolean'];
@@ -646,7 +645,6 @@ export type CartPage = {
 export type CartPageInput = {
   addToCartBehavior?: InputMaybe<AddToCartBehavior>;
   cartButtonBehavior?: InputMaybe<CartButtonBehavior>;
-  customBlockMetadata?: InputMaybe<CustomBlockMetadataInput>;
   hasFreeShippingBar?: InputMaybe<Scalars['Boolean']>;
   hasPaymentIconsPage?: InputMaybe<Scalars['Boolean']>;
   hasPaymentIconsSidebar?: InputMaybe<Scalars['Boolean']>;
@@ -1221,21 +1219,10 @@ export type CustomBlock = {
   sdkVersion?: Maybe<Scalars['Float']>;
 };
 
-export type CustomBlockMetadata = {
-  __typename?: 'CustomBlockMetadata';
-  /** Resolves to `null` if the `refId` on the `CustomBlockMetadata` property is not set. */
-  cssUrl?: Maybe<Scalars['String']>;
-  /** Resolves to `null` if the `refId` on the `CustomBlockMetadata` property is not set. */
-  jsUrl?: Maybe<Scalars['String']>;
+export type CustomBlockInput = {
   metadata: Scalars['Object'];
-  refId?: Maybe<Scalars['UUID']>;
-  /** Resolves to `null` if the `refId` on the `CustomBlockMetadata` property is not set. */
-  sdkVersion?: Maybe<Scalars['Float']>;
-};
-
-export type CustomBlockMetadataInput = {
-  metadata: Scalars['Object'];
-  refId?: InputMaybe<Scalars['UUID']>;
+  name?: InputMaybe<Scalars['String']>;
+  refId: Scalars['UUID'];
 };
 
 export type CustomerData = {
@@ -3474,7 +3461,7 @@ export enum ProductDetailGalleryLayoutMobile {
 export type ProductDetailPage = {
   __typename?: 'ProductDetailPage';
   additionalDetailsLayout: AdditionalDetailsLayout;
-  customBlockMetadata?: Maybe<CustomBlockMetadata>;
+  customBlock?: Maybe<CustomBlock>;
   galleryImageAspectRatioMobile: ProductDetailGalleryImageAspectRatio;
   galleryImageBorderRadiusDesktop: BorderRadius;
   galleryImageBorderRadiusMobile: BorderRadius;
@@ -3506,7 +3493,7 @@ export type ProductDetailPage = {
 
 export type ProductDetailPageInput = {
   additionalDetailsLayout?: InputMaybe<AdditionalDetailsLayout>;
-  customBlockMetadata?: InputMaybe<CustomBlockMetadataInput>;
+  customBlock?: InputMaybe<CustomBlockInput>;
   galleryImageAspectRatioMobile?: InputMaybe<ProductDetailGalleryImageAspectRatio>;
   galleryImageBorderRadiusDesktop?: InputMaybe<BorderRadius>;
   galleryImageBorderRadiusMobile?: InputMaybe<BorderRadius>;
