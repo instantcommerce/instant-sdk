@@ -50,33 +50,37 @@ export const Publish = ({
       ),
     );
 
-    const serverOutput = await build(
-      await getViteConfig(
-        'production',
-        {
-          logLevel: 'silent',
-          build: {
-            outDir,
-            emptyOutDir: false,
-            ssr: true,
-            target: 'es2022',
-            rollupOptions: {
-              output: {
-                format: 'es',
-              },
-            },
-          },
-          ssr: {
-            noExternal: true,
-            target: 'webworker',
-          },
-        },
-        config.current!.get(`blocks`),
-        entry,
-      ),
-    );
+    /** @todo enable when ssr implemented */
+    // const serverOutput = await build(
+    //   await getViteConfig(
+    //     'production',
+    //     {
+    //       logLevel: 'silent',
+    //       build: {
+    //         outDir,
+    //         emptyOutDir: false,
+    //         ssr: true,
+    //         target: 'es2022',
+    //         rollupOptions: {
+    //           output: {
+    //             format: 'es',
+    //           },
+    //         },
+    //       },
+    //       ssr: {
+    //         noExternal: true,
+    //         target: 'webworker',
+    //       },
+    //     },
+    //     config.current!.get(`blocks`),
+    //     entry,
+    //   ),
+    // );
 
-    if (!('output' in clientOutput) || !('output' in serverOutput)) {
+    if (
+      !('output' in clientOutput)
+      // || !('output' in serverOutput)
+    ) {
       throw new Error('No build output found');
     }
 

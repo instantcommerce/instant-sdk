@@ -22,7 +22,7 @@ interface DefineSectionParams {
   contentSchema?: DefineContentSchema;
 }
 
-type DefineComponentParams = Omit<DefineSectionParams, 'contentSchema'>;
+// type DefineComponentParams = Omit<DefineSectionParams, 'contentSchema'>;
 
 type DefinePageParams = Omit<DefineSectionParams, 'contentSchema'>;
 
@@ -73,21 +73,22 @@ export const defineSection = ({
 /** @deprecated Use `defineSection` instead */
 export const defineBlock = defineSection;
 
-export const defineComponent = ({
-  component,
-  preview: { decorators } = {},
-  customizerSchema,
-}: DefineComponentParams) => {
-  const type = BlockType.Component;
-  const subtype = BlockSubtype.CartSidebar;
+/** @todo enable when implemented */
+// export const defineComponent = ({
+//   component,
+//   preview: { decorators } = {},
+//   customizerSchema,
+// }: DefineComponentParams) => {
+//   const type = BlockType.Component;
+//   const subtype = BlockSubtype.CartSidebar;
 
-  return {
-    render: renderFunction(component, decorators, type, subtype),
-    customizerSchema,
-    type,
-    subtype,
-  };
-};
+//   return {
+//     render: renderFunction(component, decorators, type, subtype),
+//     customizerSchema,
+//     type,
+//     subtype,
+//   };
+// };
 
 export const definePage = ({
   component,
