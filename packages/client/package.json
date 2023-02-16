@@ -26,6 +26,10 @@
   "scripts": {
     "build": "tsup"
   },
+  "peerDependencies": {
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
   "dependencies": {
     "@remote-ui/react": "4.5.12",
     "graphql": "16.6.0",
