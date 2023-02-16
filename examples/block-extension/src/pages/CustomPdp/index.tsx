@@ -50,6 +50,7 @@ const CustomPdp = () => {
 };
 
 export default definePage({
+  type: 'pdp',
   component: CustomPdp,
   customizerSchema: {
     fields: {

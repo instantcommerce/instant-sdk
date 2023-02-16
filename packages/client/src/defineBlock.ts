@@ -24,7 +24,9 @@ interface DefineSectionParams {
 
 // type DefineComponentParams = Omit<DefineSectionParams, 'contentSchema'>;
 
-type DefinePageParams = Omit<DefineSectionParams, 'contentSchema'>;
+type DefinePageParams = Omit<DefineSectionParams, 'contentSchema'> & {
+  type: 'pdp';
+};
 
 const renderFunction =
   (
