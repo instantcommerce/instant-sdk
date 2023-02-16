@@ -12,16 +12,16 @@ export interface ExtractedApiError {
  */
 export const extractApiError = (
   error: unknown,
-  defaultMsg: string = "An unexpected error has occurred."
+  defaultMsg: string = 'An unexpected error has occurred.',
 ): ExtractedApiError => {
   let extracted: ExtractedApiError = { message: defaultMsg };
 
   if (error instanceof Error) {
-    if (typeof (error as unknown as any).response !== "undefined") {
+    if (typeof (error as unknown as any).response !== 'undefined') {
       if (
         Array.isArray((error as unknown as any)?.response?.errors) &&
         typeof (error as unknown as any).response.errors[0]?.message ===
-          "string"
+          'string'
       ) {
         extracted.message = (
           error as unknown as any
@@ -30,6 +30,8 @@ export const extractApiError = (
           (error as unknown as any).response.errors[0]?.extensions?.response
             ?.statusCode ?? (error as unknown as any)?.response?.status;
       }
+    } else {
+      extracted.message = error.message;
     }
   }
 
