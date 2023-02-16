@@ -2085,44 +2085,10 @@
   dependencies:
     "@babel/runtime" "^7.13.10"
 
-"@remote-ui/async-subscription@^2.1.13":
-  version "2.1.13"
-  resolved "https://registry.yarnpkg.com/@remote-ui/async-subscription/-/async-subscription-2.1.13.tgz#458ca03d407e2bd931ef2b5246a7c2b79f44a13d"
-  integrity sha512-Mc7iZ4nCIizdG/UWTW31HdtdmGpmjTah6Im+NJgwmmXZ8cnfFjxHFgpKc+kIhJTVKdmuN4KFHmNIXVSmeMTZdA==
-  dependencies:
-    "@remote-ui/rpc" "^1.3.4"
-
-"@remote-ui/core@^2.2.0", "@remote-ui/core@https://gitpkg.now.sh/instantcommerce/remote-ui/packages/core?ae1910c":
-  version "2.2.1"
-  resolved "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/core?ae1910c#aadc665a4da9f55b354d85def084b79434ec1dfc"
-  dependencies:
-    "@remote-ui/rpc" "^1.4.1"
-    "@remote-ui/types" "^1.1.2"
-
-"@remote-ui/react@4.5.12", "@remote-ui/react@5.0.0", "@remote-ui/react@https://gitpkg.now.sh/instantcommerce/remote-ui/packages/react?ae1910c":
-  version "5.0.0"
-  resolved "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/react?ae1910c#6b0bc956f98d87f3be12d284e13d13ecee5f1357"
-  dependencies:
-    "@remote-ui/async-subscription" "^2.1.13"
-    "@remote-ui/core" "^2.2.0"
-    "@remote-ui/rpc" "^1.4.0"
-    "@types/react" ">=17.0.0 <19.0.0"
-    "@types/react-reconciler" ">=0.26.0 <0.30.0"
-
-"@remote-ui/rpc@1.3.4", "@remote-ui/rpc@^1.2.5", "@remote-ui/rpc@^1.3.4":
+"@remote-ui/rpc@1.3.4":
   version "1.3.4"
   resolved "https://registry.yarnpkg.com/@remote-ui/rpc/-/rpc-1.3.4.tgz#99568362349c630c42c6b60d6a04a3b8c11e704e"
   integrity sha512-KwZ2egbGQqO+DjgwoZlQ4QedMZHeFuGY/2FiGUrqvyhp4bGheSLr5bm3jF23+2tQVywUHB2gDPqzUgR/47Lb2g==
-
-"@remote-ui/rpc@^1.4.0", "@remote-ui/rpc@^1.4.1":
-  version "1.4.1"
-  resolved "https://registry.yarnpkg.com/@remote-ui/rpc/-/rpc-1.4.1.tgz#c9a5b69819710c7e35392272c56df6e76322356f"
-  integrity sha512-YLjZqAeTolxLPvH59jO1W5/A1M0uK8IDtbfnrU8LXEaUPn9kmE7w5z2Isa+Do5m+YjTCn4y5bNHBsUTTsmhO0w==
-
-"@remote-ui/types@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@remote-ui/types/-/types-1.1.2.tgz#ae9219a56bb4bb6ff5aabfacb29a1e71adbd97d4"
-  integrity sha512-F2u6McqvHj2c89FHeozQ0O8qbqhOFMMNYR2HqF33mHCMNTEXzUVheCj7laNO1/dGNXwcJHpoWIBNwfChbEfVyA==
 
 "@repeaterjs/repeater@3.0.4":
   version "3.0.4"
@@ -2222,13 +2188,6 @@
     into-stream "^6.0.0"
     lodash "^4.17.4"
     read-pkg-up "^7.0.0"
-
-"@shopify/web-worker@5.0.1":
-  version "5.0.1"
-  resolved "https://registry.yarnpkg.com/@shopify/web-worker/-/web-worker-5.0.1.tgz#54b377fae5522b405e004c4971b3924a7b361295"
-  integrity sha512-fGNcUkzqA9h2dD/3/zBd2YEPCXePN9Mmy53alb6DgpUq8nEgEE1yxj9+PfDi7RsUM+T36d8/QXgReOZ4NvlxuA==
-  dependencies:
-    "@remote-ui/rpc" "^1.2.5"
 
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
@@ -2651,14 +2610,7 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react-reconciler@>=0.26.0 <0.30.0":
-  version "0.28.2"
-  resolved "https://registry.yarnpkg.com/@types/react-reconciler/-/react-reconciler-0.28.2.tgz#f16b0e8cc4748af70ca975eaaace0d79582c71fa"
-  integrity sha512-8tu6lHzEgYPlfDf/J6GOQdIc+gs+S2yAqlby3zTsB3SP2svlqTYe5fwZNtZyfactP74ShooP2vvi1BOp9ZemWw==
-  dependencies:
-    "@types/react" "*"
-
-"@types/react@*", "@types/react@18.0.21", "@types/react@18.0.22", "@types/react@18.0.25", "@types/react@18.0.5", "@types/react@>=17.0.0 <19.0.0":
+"@types/react@*", "@types/react@18.0.21", "@types/react@18.0.22", "@types/react@18.0.25", "@types/react@18.0.5":
   version "18.0.25"
   resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.25.tgz#8b1dcd7e56fe7315535a4af25435e0bb55c8ae44"
   integrity sha512-xD6c0KDT4m7n9uD4ZHi02lzskaiqcBxf4zi+tXZY98a04wvc0hi/TcCPC2FOESZi51Nd7tlUeOJY8RofL799/g==

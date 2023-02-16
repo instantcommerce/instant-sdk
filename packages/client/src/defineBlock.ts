@@ -1,5 +1,4 @@
 import { createElement, ReactElement, ReactNode } from 'react';
-import { render as remoteRender, RemoteRoot } from '@remote-ui/react';
 
 /** This relative import forces types from this package to be included in this bundle */
 import { BlockSubtype, BlockType } from '../../types/api';
@@ -9,18 +8,10 @@ import {
 } from '../../types/schemas';
 
 import { BlockProvider } from './BlockProvider';
-import { BlockContextValue } from './BlockProvider/context';
-
-export type RenderCallback = (
-  element: RemoteRoot,
-  blockProps: BlockContextValue,
-) => void;
-
-export type RenderElement = Parameters<typeof remoteRender>[0];
 
 interface DefineSectionParams {
   /** React component rendered by the block */
-  component: () => RenderElement | ReactElement;
+  component: () => ReactElement;
   preview?: {
     /** Wrap the block in one or more decorators for previewing */
     decorators?: Array<(component: ReactElement) => ReactNode>;
@@ -44,7 +35,9 @@ const renderFunction =
   ) =>
   (blockProps: any) => {
     const renderedComponent =
-      typeof component === 'function' ? createElement(component) : component;
+      typeof component === 'function'
+        ? createElement(component as any)
+        : component;
 
     const result =
       decorators?.reduce((total, decorator) => {
