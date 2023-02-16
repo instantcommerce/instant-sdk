@@ -31,12 +31,13 @@
     "react-dom": "18.2.0"
   },
   "dependencies": {
-    "@remote-ui/react": "4.5.12",
+    "@remote-ui/react": "5.0.0",
     "graphql": "16.6.0",
     "graphql-tag": "2.12.6",
     "graphql-request": "5.0.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-reconciler": "0.29.0",
     "storyblok-rich-text-react-renderer": "2.6.1",
     "tsconfig": "*",
     "types": "*"

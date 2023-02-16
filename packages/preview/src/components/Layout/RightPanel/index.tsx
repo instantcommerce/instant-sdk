@@ -40,7 +40,9 @@ const tabs = [
 export const RightPanel = () => {
   const { selectedBlock, blocksManifest, setPreviewValue, previewValues } =
     useBlocks();
-  const [addFieldModalOpen, setAddFieldModalOpen] = useState(false);
+  const [addFieldModalOpen, setAddFieldModalOpen] = useState<
+    Extract<BlockContentSchema['fields'][number], { type: 'subschema' }> | false
+  >(false);
   const [subschema, setSubschema] = useState<string | null>(null);
 
   const { rightPanelVisible } = useConfig();
@@ -296,7 +298,7 @@ export const RightPanel = () => {
                     if (field.allowed.length === 1) {
                       addPreviewItem(field.name, field.allowed[0]);
                     } else {
-                      setAddFieldModalOpen(true);
+                      setAddFieldModalOpen(field);
                     }
                   }}
                 >
@@ -459,23 +461,39 @@ export const RightPanel = () => {
   return (
     <>
       <Modal
-        open={addFieldModalOpen}
+        open={!!addFieldModalOpen}
         title="Insert element"
-        onOpenChange={setAddFieldModalOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setAddFieldModalOpen(false);
+          }
+        }}
       >
-        {/* {subschemaOptions?.map((field, i) => (
-          <Button
-            key={`${field.name}-${i}`}
-            onClick={() => {
-              addPreviewItem(field);
-              setAddFieldModalOpen(false);
-            }}
-            variant="unstyled"
-            className="p-3 text-sm text-gray-700 rounded border border-gray-300 shadow-sm h-auto font-medium hover:text-primary-700 hover:bg-primary-100 hover:border-primary-500 transition-colors"
-          >
-            {field.name}
-          </Button>
-        ))} */}
+        {!!addFieldModalOpen && (
+          <>
+            {!!addFieldModalOpen?.allowed?.length ? (
+              addFieldModalOpen.allowed.map((allowed, i) => (
+                <Button
+                  key={`${allowed}-${i}`}
+                  onClick={() => {
+                    if (addFieldModalOpen) {
+                      addPreviewItem(addFieldModalOpen.name, allowed);
+                    }
+
+                    setAddFieldModalOpen(false);
+                  }}
+                  variant="unstyled"
+                  className="p-3 text-sm text-gray-700 rounded border border-gray-300 shadow-sm h-auto font-medium hover:text-primary-700 hover:bg-primary-100 hover:border-primary-500 transition-colors"
+                >
+                  {allowed.charAt(0).toUpperCase()}
+                  {allowed.slice(1)}
+                </Button>
+              ))
+            ) : (
+              <p>Add allowed subschema(s) in the field</p>
+            )}
+          </>
+        )}
       </Modal>
 
       <aside

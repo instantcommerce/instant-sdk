@@ -1,6 +1,6 @@
 {
   "name": "@instantcommerce/cli",
-  "version": "0.0.1",
+  "version": "1.1.1",
   "author": "Instant Commerce B.V.",
   "license": "MIT",
   "bin": {

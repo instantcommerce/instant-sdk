@@ -22,6 +22,7 @@ export const useApiSdk = () => {
   const sdk = useMemo(() => {
     const graphqlClient = new GraphQLClient(`${API_URL}/graphql`, {
       headers: {
+        'x-instant-client': 'CLI',
         ...(accessToken ? { 'x-instant-access-token': accessToken } : {}),
         ...(organization ? { 'x-instant-organization': organization } : {}),
         ...(storeId ? { 'x-instant-store-id': storeId } : {}),
