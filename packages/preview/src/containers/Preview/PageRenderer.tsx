@@ -3,6 +3,8 @@ import { ErrorMessage } from './ErrorMessage';
 
 import './style.css';
 
+const TRUSTED_ORIGIN = 'instantcommerce.app';
+
 let pinger: NodeJS.Timeout | null = null;
 let loadingTimeout: NodeJS.Timeout | null = null;
 
@@ -36,8 +38,7 @@ export const PageRenderer = ({
 
   const handleMessage = (event: any) => {
     const urlIsTrusted =
-      event.origin.includes(import.meta.env.VITE_ADMIN_DOMAIN) &&
-      event.isTrusted;
+      event.origin.includes(TRUSTED_ORIGIN) && event.isTrusted;
 
     const isMessageAllowed = import.meta.env.DEV || urlIsTrusted;
 
