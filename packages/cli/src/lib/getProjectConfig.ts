@@ -17,6 +17,11 @@ export const getProjectConfig = (path: string) =>
           type: 'object',
           properties: {
             id: { type: 'string' },
+            type: {
+              type: 'string',
+              enum: ['component', 'section', 'page'],
+              default: 'section',
+            },
           },
         },
       },

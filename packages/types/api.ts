@@ -10,6 +10,7 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
+  Any: any;
   ConnectionCursor: any;
   DateTime: any;
   Object: any;
@@ -255,6 +256,8 @@ export type Block = {
   description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
   name: Scalars['String'];
+  subtype: BlockSubtype;
+  type: BlockType;
   updatedAt: Scalars['DateTime'];
   version?: Maybe<BlockVersion>;
   /** Does not support pagination currently. */
@@ -269,6 +272,7 @@ export type BlockVersionArgs = {
 export type BlockAggregateGroupBy = {
   __typename?: 'BlockAggregateGroupBy';
   createdAt?: Maybe<Scalars['DateTime']>;
+  type?: Maybe<BlockType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
@@ -283,6 +287,7 @@ export type BlockConnection = {
 export type BlockCountAggregate = {
   __typename?: 'BlockCountAggregate';
   createdAt?: Maybe<Scalars['Int']>;
+  type?: Maybe<Scalars['Int']>;
   updatedAt?: Maybe<Scalars['Int']>;
 };
 
@@ -292,6 +297,8 @@ export type BlockDeleteResponse = {
   description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['UUID']>;
   name?: Maybe<Scalars['String']>;
+  subtype?: Maybe<BlockSubtype>;
+  type?: Maybe<BlockType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
@@ -307,18 +314,21 @@ export type BlockFilter = {
   and?: InputMaybe<Array<BlockFilter>>;
   createdAt?: InputMaybe<DateFieldComparison>;
   or?: InputMaybe<Array<BlockFilter>>;
+  type?: InputMaybe<BlockTypeFilterComparison>;
   updatedAt?: InputMaybe<DateFieldComparison>;
 };
 
 export type BlockMaxAggregate = {
   __typename?: 'BlockMaxAggregate';
   createdAt?: Maybe<Scalars['DateTime']>;
+  type?: Maybe<BlockType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type BlockMinAggregate = {
   __typename?: 'BlockMinAggregate';
   createdAt?: Maybe<Scalars['DateTime']>;
+  type?: Maybe<BlockType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
@@ -330,7 +340,16 @@ export type BlockSort = {
 
 export enum BlockSortFields {
   CreatedAt = 'createdAt',
+  Type = 'type',
   UpdatedAt = 'updatedAt'
+}
+
+/** Block subtype. */
+export enum BlockSubtype {
+  All = 'ALL',
+  CartSidebar = 'CART_SIDEBAR',
+  None = 'NONE',
+  Pdp = 'PDP'
 }
 
 /** Block theme settings. */
@@ -342,10 +361,33 @@ export enum BlockTheme {
   PrimaryLight = 'PRIMARY_LIGHT'
 }
 
+export enum BlockType {
+  Component = 'COMPONENT',
+  Page = 'PAGE',
+  Section = 'SECTION'
+}
+
+export type BlockTypeFilterComparison = {
+  eq?: InputMaybe<BlockType>;
+  gt?: InputMaybe<BlockType>;
+  gte?: InputMaybe<BlockType>;
+  iLike?: InputMaybe<BlockType>;
+  in?: InputMaybe<Array<BlockType>>;
+  is?: InputMaybe<Scalars['Boolean']>;
+  isNot?: InputMaybe<Scalars['Boolean']>;
+  like?: InputMaybe<BlockType>;
+  lt?: InputMaybe<BlockType>;
+  lte?: InputMaybe<BlockType>;
+  neq?: InputMaybe<BlockType>;
+  notILike?: InputMaybe<BlockType>;
+  notIn?: InputMaybe<Array<BlockType>>;
+  notLike?: InputMaybe<BlockType>;
+};
+
 export type BlockVersion = {
   __typename?: 'BlockVersion';
-  contentSchema: ContentSchema;
-  contentSchemaHash: Scalars['String'];
+  contentSchema?: Maybe<ContentSchema>;
+  contentSchemaHash?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
   cssHash?: Maybe<Scalars['String']>;
   cssUrl?: Maybe<Scalars['String']>;
@@ -354,6 +396,7 @@ export type BlockVersion = {
   id: Scalars['UUID'];
   jsHash: Scalars['String'];
   jsUrl: Scalars['String'];
+  sdkVersion: Scalars['Float'];
   tag: Scalars['Float'];
   updatedAt: Scalars['DateTime'];
 };
@@ -592,6 +635,7 @@ export type CartPage = {
   __typename?: 'CartPage';
   addToCartBehavior: AddToCartBehavior;
   cartButtonBehavior: CartButtonBehavior;
+  hasFreeShippingBar: Scalars['Boolean'];
   hasPaymentIconsPage: Scalars['Boolean'];
   hasPaymentIconsSidebar: Scalars['Boolean'];
   hasProductSuggestionsModal: Scalars['Boolean'];
@@ -601,6 +645,7 @@ export type CartPage = {
 export type CartPageInput = {
   addToCartBehavior?: InputMaybe<AddToCartBehavior>;
   cartButtonBehavior?: InputMaybe<CartButtonBehavior>;
+  hasFreeShippingBar?: InputMaybe<Scalars['Boolean']>;
   hasPaymentIconsPage?: InputMaybe<Scalars['Boolean']>;
   hasPaymentIconsSidebar?: InputMaybe<Scalars['Boolean']>;
   hasProductSuggestionsModal?: InputMaybe<Scalars['Boolean']>;
@@ -883,7 +928,7 @@ export type ContentSchemaDateField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
   withTime: Scalars['Boolean'];
 };
 
@@ -896,7 +941,7 @@ export type ContentSchemaImageField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type ContentSchemaInput = {
@@ -913,7 +958,7 @@ export type ContentSchemaLinkField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type ContentSchemaRichTextField = {
@@ -923,7 +968,7 @@ export type ContentSchemaRichTextField = {
   isTranslatable: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
   toolbar: Array<Scalars['String']>;
 };
 
@@ -935,7 +980,7 @@ export type ContentSchemaSelectField = {
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   options: Array<SelectOption>;
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type ContentSchemaSubschemaField = {
@@ -947,7 +992,7 @@ export type ContentSchemaSubschemaField = {
   label?: Maybe<Scalars['String']>;
   max?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type ContentSchemaTextField = {
@@ -958,7 +1003,7 @@ export type ContentSchemaTextField = {
   label?: Maybe<Scalars['String']>;
   maxLength?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type ContentSubschema = {
@@ -1022,6 +1067,8 @@ export type CreateAssetInput = {
 
 export type CreateAuth0UserInput = {
   email: Scalars['String'];
+  /** Whether the user is an external partner of the organization. E.g.: Freelancer */
+  isExternal?: InputMaybe<Scalars['Boolean']>;
   /** Auth0 role ids. */
   roles: Array<Scalars['String']>;
 };
@@ -1029,6 +1076,8 @@ export type CreateAuth0UserInput = {
 export type CreateBlockInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
+  subtype: BlockSubtype;
+  type: BlockType;
 };
 
 export type CreateIntegrationInput = {
@@ -1082,6 +1131,11 @@ export type CreateOneRedirectInput = {
   redirect: CreateRedirectInput;
 };
 
+export type CreateOneShippingZoneInput = {
+  /** The record to create */
+  shippingZone: ShippingZoneInput;
+};
+
 export type CreateOneSnippetInput = {
   /** The record to create */
   snippet: CreateSnippetInput;
@@ -1127,7 +1181,7 @@ export type CreateSnippetInput = {
 };
 
 export type CreateStoreInput = {
-  contactEmail?: InputMaybe<Scalars['String']>;
+  contactEmail: Scalars['String'];
   name: Scalars['String'];
   slug: Scalars['String'];
 };
@@ -1156,11 +1210,19 @@ export type CursorPaging = {
 export type CustomBlock = {
   __typename?: 'CustomBlock';
   cssUrl?: Maybe<Scalars['String']>;
+  hashId: Scalars['String'];
   id: Scalars['UUID'];
   jsUrl?: Maybe<Scalars['String']>;
   metadata: Scalars['Object'];
   name: Scalars['String'];
-  refId: Scalars['String'];
+  refId: Scalars['UUID'];
+  sdkVersion?: Maybe<Scalars['Float']>;
+};
+
+export type CustomBlockInput = {
+  metadata: Scalars['Object'];
+  name?: InputMaybe<Scalars['String']>;
+  refId: Scalars['UUID'];
 };
 
 export type CustomerData = {
@@ -1199,7 +1261,7 @@ export type CustomizerSchemaColorField = {
   isRequired: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type CustomizerSchemaField = CustomizerSchemaColorField | CustomizerSchemaNumberField | CustomizerSchemaSelectField | CustomizerSchemaTextField | CustomizerSchemaToggleField;
@@ -1218,7 +1280,7 @@ export type CustomizerSchemaNumberField = {
   max?: Maybe<Scalars['Float']>;
   min?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type CustomizerSchemaSelectField = {
@@ -1228,7 +1290,7 @@ export type CustomizerSchemaSelectField = {
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
   options: Array<SelectOption>;
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type CustomizerSchemaTextField = {
@@ -1238,7 +1300,7 @@ export type CustomizerSchemaTextField = {
   label?: Maybe<Scalars['String']>;
   maxLength?: Maybe<Scalars['Float']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type CustomizerSchemaToggleField = {
@@ -1247,7 +1309,7 @@ export type CustomizerSchemaToggleField = {
   isRequired: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
-  preview?: Maybe<Scalars['Object']>;
+  preview?: Maybe<Scalars['Any']>;
 };
 
 export type DateFieldComparison = {
@@ -1273,11 +1335,6 @@ export type DateFieldComparisonBetween = {
 export type DeleteManyAssetsInput = {
   /** Filter to find records to delete */
   filter: AssetDeleteFilter;
-};
-
-export type DeleteManyIntegrationsInput = {
-  /** Filter to find records to delete */
-  filter: IntegrationDeleteFilter;
 };
 
 export type DeleteManyResponse = {
@@ -1336,12 +1393,12 @@ export type DeleteOneRedirectInput = {
   id: Scalars['ID'];
 };
 
-export type DeleteOneSnippetInput = {
+export type DeleteOneShippingZoneInput = {
   /** The id of the record to delete. */
   id: Scalars['ID'];
 };
 
-export type DeleteOneStoreInput = {
+export type DeleteOneSnippetInput = {
   /** The id of the record to delete. */
   id: Scalars['ID'];
 };
@@ -1454,6 +1511,20 @@ export enum DomainSortFields {
   IsPrimary = 'isPrimary',
   UpdatedAt = 'updatedAt'
 }
+
+export type DuplicateStoreImportOptionsInput = {
+  importLanguages: Scalars['Boolean'];
+  importProductOptions: Scalars['Boolean'];
+  importSnippets: Scalars['Boolean'];
+};
+
+export type DuplicateStoreInput = {
+  contactEmail: Scalars['String'];
+  importOptions: DuplicateStoreImportOptionsInput;
+  name: Scalars['String'];
+  slug: Scalars['String'];
+  storeId: Scalars['UUID'];
+};
 
 export type EmailBannerBlock = {
   __typename?: 'EmailBannerBlock';
@@ -2095,7 +2166,6 @@ export type Integration = {
   createdAt: Scalars['DateTime'];
   errors: Array<ValidationMessage>;
   id: Scalars['UUID'];
-  isActive: Scalars['Boolean'];
   metadata: IntegrationMetadata;
   type: IntegrationType;
   updatedAt: Scalars['DateTime'];
@@ -2106,7 +2176,6 @@ export type Integration = {
 export type IntegrationAggregateGroupBy = {
   __typename?: 'IntegrationAggregateGroupBy';
   createdAt?: Maybe<Scalars['DateTime']>;
-  isActive?: Maybe<Scalars['Boolean']>;
   type?: Maybe<IntegrationType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -2122,18 +2191,8 @@ export type IntegrationConnection = {
 export type IntegrationCountAggregate = {
   __typename?: 'IntegrationCountAggregate';
   createdAt?: Maybe<Scalars['Int']>;
-  isActive?: Maybe<Scalars['Int']>;
   type?: Maybe<Scalars['Int']>;
   updatedAt?: Maybe<Scalars['Int']>;
-};
-
-export type IntegrationDeleteFilter = {
-  and?: InputMaybe<Array<IntegrationDeleteFilter>>;
-  createdAt?: InputMaybe<DateFieldComparison>;
-  isActive?: InputMaybe<BooleanFieldComparison>;
-  or?: InputMaybe<Array<IntegrationDeleteFilter>>;
-  type?: InputMaybe<IntegrationTypeFilterComparison>;
-  updatedAt?: InputMaybe<DateFieldComparison>;
 };
 
 export type IntegrationDeleteResponse = {
@@ -2141,7 +2200,6 @@ export type IntegrationDeleteResponse = {
   createdAt?: Maybe<Scalars['DateTime']>;
   errors?: Maybe<Array<ValidationMessage>>;
   id?: Maybe<Scalars['UUID']>;
-  isActive?: Maybe<Scalars['Boolean']>;
   metadata?: Maybe<IntegrationMetadata>;
   type?: Maybe<IntegrationType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
@@ -2160,7 +2218,6 @@ export type IntegrationEdge = {
 export type IntegrationFilter = {
   and?: InputMaybe<Array<IntegrationFilter>>;
   createdAt?: InputMaybe<DateFieldComparison>;
-  isActive?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<IntegrationFilter>>;
   type?: InputMaybe<IntegrationTypeFilterComparison>;
   updatedAt?: InputMaybe<DateFieldComparison>;
@@ -2173,7 +2230,7 @@ export type IntegrationMaxAggregate = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
-export type IntegrationMetadata = AlgoliaMetadata | AppmateMetadata | CookiebotMetadata | FasletMetadata | GoogleTagManagerMetadata | GorgiasMetadata | GrowaveMetadata | JudgeMeMetadata | KiwiSizingMetadata | KlaviyoMetadata | MailchimpMetadata | ShopifyMetadata | StampedMetadata | StoremapperMetadata | StoryblokMetadata | TrustpilotMetadata | YotpoMetadata;
+export type IntegrationMetadata = AlgoliaMetadata | AppmateMetadata | CookiebotMetadata | FasletMetadata | GoogleTagManagerMetadata | GorgiasMetadata | GrowaveMetadata | JudgeMeMetadata | KiwiSizingMetadata | KlaviyoMetadata | MailchimpMetadata | MetaMetadata | RechargeMetadata | ShopifyMetadata | SkioMetadata | StampedMetadata | StoremapperMetadata | StoryblokMetadata | TrustpilotMetadata | YotpoMetadata;
 
 export type IntegrationMinAggregate = {
   __typename?: 'IntegrationMinAggregate';
@@ -2190,7 +2247,6 @@ export type IntegrationSort = {
 
 export enum IntegrationSortFields {
   CreatedAt = 'createdAt',
-  IsActive = 'isActive',
   Type = 'type',
   UpdatedAt = 'updatedAt'
 }
@@ -2208,7 +2264,10 @@ export enum IntegrationType {
   KiwiSizing = 'KIWI_SIZING',
   Klaviyo = 'KLAVIYO',
   Mailchimp = 'MAILCHIMP',
+  Meta = 'META',
+  Recharge = 'RECHARGE',
   Shopify = 'SHOPIFY',
+  Skio = 'SKIO',
   Stamped = 'STAMPED',
   Storemapper = 'STOREMAPPER',
   Storyblok = 'STORYBLOK',
@@ -2231,15 +2290,6 @@ export type IntegrationTypeFilterComparison = {
   notILike?: InputMaybe<IntegrationType>;
   notIn?: InputMaybe<Array<IntegrationType>>;
   notLike?: InputMaybe<IntegrationType>;
-};
-
-export type IntegrationUpdateFilter = {
-  and?: InputMaybe<Array<IntegrationUpdateFilter>>;
-  createdAt?: InputMaybe<DateFieldComparison>;
-  isActive?: InputMaybe<BooleanFieldComparison>;
-  or?: InputMaybe<Array<IntegrationUpdateFilter>>;
-  type?: InputMaybe<IntegrationTypeFilterComparison>;
-  updatedAt?: InputMaybe<DateFieldComparison>;
 };
 
 export type JudgeMeMetadata = {
@@ -2429,6 +2479,16 @@ export type MailchimpMetadata = {
   listId?: Maybe<Scalars['String']>;
 };
 
+export type MetaMetadata = {
+  __typename?: 'MetaMetadata';
+  pixelId?: Maybe<Scalars['String']>;
+};
+
+export type MetaPublicMetadata = {
+  __typename?: 'MetaPublicMetadata';
+  pixelId?: Maybe<Scalars['String']>;
+};
+
 export type MultiColumnRichTextBlock = {
   __typename?: 'MultiColumnRichTextBlock';
   backgroundColor?: Maybe<Scalars['String']>;
@@ -2468,6 +2528,7 @@ export type Mutation = {
   createOneOrganization: Organization;
   createOneProductForm: ProductForm;
   createOneRedirect: Redirect;
+  createOneShippingZone: ShippingZone;
   createOneSnippet: Snippet;
   createOneStore: Store;
   /** Fetch story from Storyblok and if not present create one. */
@@ -2477,7 +2538,6 @@ export type Mutation = {
   createUser: Scalars['Boolean'];
   deleteInvitation: Scalars['Boolean'];
   deleteManyAssets: DeleteManyResponse;
-  deleteManyIntegrations: DeleteManyResponse;
   deleteOneAsset: AssetDeleteResponse;
   deleteOneBlock: BlockDeleteResponse;
   deleteOneDomain: DomainDeleteResponse;
@@ -2488,9 +2548,10 @@ export type Mutation = {
   deleteOneProductColor: ProductColorDeleteResponse;
   deleteOneProductForm: ProductFormDeleteResponse;
   deleteOneRedirect: RedirectDeleteResponse;
+  deleteOneShippingZone: ShippingZoneDeleteResponse;
   deleteOneSnippet: SnippetDeleteResponse;
-  deleteOneStore: StoreDeleteResponse;
   deleteUser: Scalars['Boolean'];
+  duplicateStore: Store;
   /** Fetch product colors from shopify. */
   fetchProductColors: Scalars['Boolean'];
   importRedirects: ImportRedirectsPayload;
@@ -2516,17 +2577,16 @@ export type Mutation = {
   updateCustomerData: CustomerData;
   /** Updates the metadata of an integration. */
   updateIntegrationMetadata: Integration;
-  updateManyIntegrations: UpdateManyResponse;
   /** Updates the member roles within the current organization. */
   updateMemberRoles: Array<Role>;
   updateOneBlock: Block;
   updateOneGeolocationRedirect: GeolocationRedirect;
-  updateOneIntegration: Integration;
   updateOneLanguage: Language;
   updateOneOrganization: Organization;
   updateOneProductColor: ProductColor;
   updateOneProductForm: ProductForm;
   updateOneRedirect: Redirect;
+  updateOneShippingZone: ShippingZone;
   updateOneSnippet: Snippet;
   updateOneStore: Store;
   updateOrganizationChecklist: Scalars['Boolean'];
@@ -2611,6 +2671,11 @@ export type MutationCreateOneRedirectArgs = {
 };
 
 
+export type MutationCreateOneShippingZoneArgs = {
+  input: CreateOneShippingZoneInput;
+};
+
+
 export type MutationCreateOneSnippetArgs = {
   input: CreateOneSnippetInput;
 };
@@ -2643,11 +2708,6 @@ export type MutationDeleteInvitationArgs = {
 
 export type MutationDeleteManyAssetsArgs = {
   input: DeleteManyAssetsInput;
-};
-
-
-export type MutationDeleteManyIntegrationsArgs = {
-  input: DeleteManyIntegrationsInput;
 };
 
 
@@ -2701,18 +2761,23 @@ export type MutationDeleteOneRedirectArgs = {
 };
 
 
+export type MutationDeleteOneShippingZoneArgs = {
+  input: DeleteOneShippingZoneInput;
+};
+
+
 export type MutationDeleteOneSnippetArgs = {
   input: DeleteOneSnippetInput;
 };
 
 
-export type MutationDeleteOneStoreArgs = {
-  input: DeleteOneStoreInput;
+export type MutationDeleteUserArgs = {
+  id: Scalars['String'];
 };
 
 
-export type MutationDeleteUserArgs = {
-  id: Scalars['String'];
+export type MutationDuplicateStoreArgs = {
+  input: DuplicateStoreInput;
 };
 
 
@@ -2777,11 +2842,6 @@ export type MutationUpdateIntegrationMetadataArgs = {
 };
 
 
-export type MutationUpdateManyIntegrationsArgs = {
-  input: UpdateManyIntegrationsInput;
-};
-
-
 export type MutationUpdateMemberRolesArgs = {
   input: UpdateAuth0MemberRolesInput;
 };
@@ -2794,11 +2854,6 @@ export type MutationUpdateOneBlockArgs = {
 
 export type MutationUpdateOneGeolocationRedirectArgs = {
   input: UpdateOneGeolocationRedirectInput;
-};
-
-
-export type MutationUpdateOneIntegrationArgs = {
-  input: UpdateOneIntegrationInput;
 };
 
 
@@ -2824,6 +2879,11 @@ export type MutationUpdateOneProductFormArgs = {
 
 export type MutationUpdateOneRedirectArgs = {
   input: UpdateOneRedirectInput;
+};
+
+
+export type MutationUpdateOneShippingZoneArgs = {
+  input: UpdateOneShippingZoneInput;
 };
 
 
@@ -2885,6 +2945,7 @@ export enum NavigationAlignment {
 
 export type NavigationComponent = {
   __typename?: 'NavigationComponent';
+  accountIcon: Scalars['Boolean'];
   alignment: NavigationAlignment;
   countrySelect: Scalars['Boolean'];
   /** Show search, account, and cart items as text. */
@@ -2904,6 +2965,7 @@ export type NavigationComponent = {
 };
 
 export type NavigationComponentInput = {
+  accountIcon?: InputMaybe<Scalars['Boolean']>;
   alignment?: InputMaybe<NavigationAlignment>;
   countrySelect?: InputMaybe<Scalars['Boolean']>;
   /** Show search, account, and cart items as text. */
@@ -3399,6 +3461,7 @@ export enum ProductDetailGalleryLayoutMobile {
 export type ProductDetailPage = {
   __typename?: 'ProductDetailPage';
   additionalDetailsLayout: AdditionalDetailsLayout;
+  customBlock?: Maybe<CustomBlock>;
   galleryImageAspectRatioMobile: ProductDetailGalleryImageAspectRatio;
   galleryImageBorderRadiusDesktop: BorderRadius;
   galleryImageBorderRadiusMobile: BorderRadius;
@@ -3414,6 +3477,7 @@ export type ProductDetailPage = {
   hasQuantitySelect: Scalars['Boolean'];
   hasStickyAddToCartBarDesktop: Scalars['Boolean'];
   hasStickyAddToCartBarMobile: Scalars['Boolean'];
+  isPersonalizationFormOpenByDefault: Scalars['Boolean'];
   /** The color swatches size is only applicable when color swatches are enabled. */
   productColorOptionsSize: ColorOptionsSize;
   productColorOptionsStyle?: Maybe<ColorOptionsStyle>;
@@ -3429,6 +3493,7 @@ export type ProductDetailPage = {
 
 export type ProductDetailPageInput = {
   additionalDetailsLayout?: InputMaybe<AdditionalDetailsLayout>;
+  customBlock?: InputMaybe<CustomBlockInput>;
   galleryImageAspectRatioMobile?: InputMaybe<ProductDetailGalleryImageAspectRatio>;
   galleryImageBorderRadiusDesktop?: InputMaybe<BorderRadius>;
   galleryImageBorderRadiusMobile?: InputMaybe<BorderRadius>;
@@ -3443,6 +3508,7 @@ export type ProductDetailPageInput = {
   hasQuantitySelect?: InputMaybe<Scalars['Boolean']>;
   hasStickyAddToCartBarDesktop?: InputMaybe<Scalars['Boolean']>;
   hasStickyAddToCartBarMobile?: InputMaybe<Scalars['Boolean']>;
+  isPersonalizationFormOpenByDefault?: InputMaybe<Scalars['Boolean']>;
   /** The color swatches size is only applicable when color swatches are enabled. */
   productColorOptionsSize?: InputMaybe<ColorOptionsSize>;
   productColorOptionsStyle?: InputMaybe<ColorOptionsStyle>;
@@ -3802,10 +3868,12 @@ export type PublicIntegrationMetadata = {
   gorgias?: Maybe<GorgiasPublicMetadata>;
   kiwiSizing?: Maybe<KiwiSizingPublicMetadata>;
   klaviyo?: Maybe<KlaviyoPublicMetadata>;
+  meta?: Maybe<MetaPublicMetadata>;
   review?: Maybe<PublicReviewIntegrationMetadata>;
   shopify?: Maybe<ShopifyPublicMetadata>;
   storemapper?: Maybe<StoremapperPublicMetadata>;
   storyblok?: Maybe<StoryblokPublicMetadata>;
+  subscriptions?: Maybe<IntegrationType>;
   wishlist?: Maybe<IntegrationType>;
 };
 
@@ -3860,6 +3928,16 @@ export type PublicReviewIntegrationMetadata = {
   provider: IntegrationType;
 };
 
+export type PublicShippingZone = {
+  __typename?: 'PublicShippingZone';
+  /** Values are two-letter country codes (ISO 3166-1 alpha-2) */
+  countries: Array<Scalars['String']>;
+  /** Shipping rate estimation in cents. Set `null` to not display, set `0` to display as free. */
+  estimatedShippingRate?: Maybe<Scalars['Float']>;
+  /** Free shipping threshold in cents. Set to `null` to disable. */
+  freeShippingThreshold?: Maybe<Scalars['Float']>;
+};
+
 export type PublicSnippet = {
   __typename?: 'PublicSnippet';
   /** Indicates if the script should bypass cookie integrations. Only relevant for JS snippets. */
@@ -3888,6 +3966,7 @@ export type PublicStore = {
   redirectTrafficToPrimaryDomain: Scalars['Boolean'];
   /** @deprecated Redirect logic should be handled server-side by redirectByUrl query */
   redirects: Array<PublicRedirect>;
+  shippingZones: Array<PublicShippingZone>;
   slug: Scalars['String'];
   snippets: Array<PublicSnippet>;
   storefront: Storefront;
@@ -3896,10 +3975,11 @@ export type PublicStore = {
 export type PublishBlockVersionInput = {
   /** ID of the block */
   blockId: Scalars['String'];
-  contentSchema: ContentSchemaInput;
+  contentSchema?: InputMaybe<ContentSchemaInput>;
   css?: InputMaybe<Scalars['Upload']>;
   customizerSchema: CustomizerSchemaInput;
   js: Scalars['Upload'];
+  sdkVersion: Scalars['Float'];
 };
 
 export type Query = {
@@ -3950,6 +4030,8 @@ export type Query = {
   redirectByUrl?: Maybe<PublicRedirect>;
   redirects: RedirectConnection;
   reviews: ReviewResponse;
+  shippingZone?: Maybe<ShippingZone>;
+  shippingZones: ShippingZoneConnection;
   shopifyBulkOperation?: Maybe<ShopifyBulkOperation>;
   shopifyBulkOperations: ShopifyBulkOperationConnection;
   /** Fetches collections from Shopify. */
@@ -4134,6 +4216,18 @@ export type QueryReviewsArgs = {
 };
 
 
+export type QueryShippingZoneArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryShippingZonesArgs = {
+  filter?: InputMaybe<ShippingZoneFilter>;
+  paging?: InputMaybe<CursorPaging>;
+  sorting?: InputMaybe<Array<ShippingZoneSort>>;
+};
+
+
 export type QueryShopifyBulkOperationArgs = {
   id: Scalars['ID'];
 };
@@ -4225,6 +4319,11 @@ export type QuoteBlock = {
   subtextColor?: Maybe<Scalars['String']>;
   textSize: FontSize;
   theme: BlockTheme;
+};
+
+export type RechargeMetadata = {
+  __typename?: 'RechargeMetadata';
+  _void: Scalars['Boolean'];
 };
 
 export type Redirect = {
@@ -4472,6 +4571,110 @@ export type SelectOptionInput = {
   value: Scalars['String'];
 };
 
+export type ShippingZone = {
+  __typename?: 'ShippingZone';
+  /** Values are two-letter country codes (ISO 3166-1 alpha-2) */
+  countries: Array<Scalars['String']>;
+  createdAt: Scalars['DateTime'];
+  /** Shipping rate estimation in cents. Set `null` to not display, set `0` to display as free. */
+  estimatedShippingRate?: Maybe<Scalars['Float']>;
+  /** Free shipping threshold in cents. Set to `null` to disable. */
+  freeShippingThreshold?: Maybe<Scalars['Float']>;
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  status: ShippingZoneStatus;
+  updatedAt: Scalars['DateTime'];
+};
+
+export type ShippingZoneAggregateGroupBy = {
+  __typename?: 'ShippingZoneAggregateGroupBy';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ShippingZoneConnection = {
+  __typename?: 'ShippingZoneConnection';
+  /** Array of edges. */
+  edges: Array<ShippingZoneEdge>;
+  /** Paging information */
+  pageInfo: PageInfo;
+};
+
+export type ShippingZoneCountAggregate = {
+  __typename?: 'ShippingZoneCountAggregate';
+  createdAt?: Maybe<Scalars['Int']>;
+  updatedAt?: Maybe<Scalars['Int']>;
+};
+
+export type ShippingZoneDeleteResponse = {
+  __typename?: 'ShippingZoneDeleteResponse';
+  /** Values are two-letter country codes (ISO 3166-1 alpha-2) */
+  countries?: Maybe<Array<Scalars['String']>>;
+  createdAt?: Maybe<Scalars['DateTime']>;
+  /** Shipping rate estimation in cents. Set `null` to not display, set `0` to display as free. */
+  estimatedShippingRate?: Maybe<Scalars['Float']>;
+  /** Free shipping threshold in cents. Set to `null` to disable. */
+  freeShippingThreshold?: Maybe<Scalars['Float']>;
+  id?: Maybe<Scalars['UUID']>;
+  name?: Maybe<Scalars['String']>;
+  status?: Maybe<ShippingZoneStatus>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ShippingZoneEdge = {
+  __typename?: 'ShippingZoneEdge';
+  /** Cursor for this node. */
+  cursor: Scalars['ConnectionCursor'];
+  /** The node containing the ShippingZone */
+  node: ShippingZone;
+};
+
+export type ShippingZoneFilter = {
+  and?: InputMaybe<Array<ShippingZoneFilter>>;
+  createdAt?: InputMaybe<DateFieldComparison>;
+  or?: InputMaybe<Array<ShippingZoneFilter>>;
+  updatedAt?: InputMaybe<DateFieldComparison>;
+};
+
+export type ShippingZoneInput = {
+  /** Values are two-letter country codes (ISO 3166-1 alpha-2) */
+  countries?: InputMaybe<Array<Scalars['String']>>;
+  /** Shipping rate estimation in cents. Set `null` to not display, set `0` to display as free. */
+  estimatedShippingRate?: InputMaybe<Scalars['Float']>;
+  /** Free shipping threshold in cents. Set to `null` to disable. */
+  freeShippingThreshold?: InputMaybe<Scalars['Float']>;
+  name: Scalars['String'];
+  status: ShippingZoneStatus;
+};
+
+export type ShippingZoneMaxAggregate = {
+  __typename?: 'ShippingZoneMaxAggregate';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ShippingZoneMinAggregate = {
+  __typename?: 'ShippingZoneMinAggregate';
+  createdAt?: Maybe<Scalars['DateTime']>;
+  updatedAt?: Maybe<Scalars['DateTime']>;
+};
+
+export type ShippingZoneSort = {
+  direction: SortDirection;
+  field: ShippingZoneSortFields;
+  nulls?: InputMaybe<SortNulls>;
+};
+
+export enum ShippingZoneSortFields {
+  CreatedAt = 'createdAt',
+  UpdatedAt = 'updatedAt'
+}
+
+export enum ShippingZoneStatus {
+  Active = 'ACTIVE',
+  Inactive = 'INACTIVE'
+}
+
 export type ShopifyBulkOperation = {
   __typename?: 'ShopifyBulkOperation';
   createdAt: Scalars['DateTime'];
@@ -4591,6 +4794,7 @@ export type ShopifyMetadata = {
   delegateAccessToken?: Maybe<Scalars['String']>;
   shopId?: Maybe<Scalars['String']>;
   storefrontAccessToken?: Maybe<Scalars['String']>;
+  useSubscriptions?: Maybe<Scalars['Boolean']>;
 };
 
 export type ShopifyPageInfo = {
@@ -4663,6 +4867,7 @@ export type ShopifyPublicMetadata = {
   __typename?: 'ShopifyPublicMetadata';
   shopId?: Maybe<Scalars['String']>;
   storefrontAccessToken?: Maybe<Scalars['String']>;
+  useSubscriptions?: Maybe<Scalars['Boolean']>;
 };
 
 export type ShopifyTransformInput = {
@@ -4676,6 +4881,11 @@ export type ShopifyTransformInput = {
   preferredContentType: Scalars['String'];
   /** Image size multiplier for high-resolution retina displays. Must be within 1..3. */
   scale?: InputMaybe<Scalars['Float']>;
+};
+
+export type SkioMetadata = {
+  __typename?: 'SkioMetadata';
+  _void: Scalars['Boolean'];
 };
 
 export type Snippet = {
@@ -4912,25 +5122,6 @@ export type StoreCountAggregate = {
   name?: Maybe<Scalars['Int']>;
   slug?: Maybe<Scalars['Int']>;
   updatedAt?: Maybe<Scalars['Int']>;
-};
-
-export type StoreDeleteResponse = {
-  __typename?: 'StoreDeleteResponse';
-  contactEmail?: Maybe<Scalars['String']>;
-  createdAt?: Maybe<Scalars['DateTime']>;
-  estimatedVatPercentage?: Maybe<Scalars['Float']>;
-  hasUnpublishedStorefrontChanges?: Maybe<Scalars['Boolean']>;
-  id?: Maybe<Scalars['UUID']>;
-  name?: Maybe<Scalars['String']>;
-  /** Represents the name of the option for colors in Shopify. */
-  productColorOptionName?: Maybe<Scalars['String']>;
-  productColorOptionNameTranslations?: Maybe<Array<LocalizedValue>>;
-  /** Represents the name of the option used for the multi product variants. */
-  productGroupOptionName?: Maybe<Scalars['String']>;
-  productGroupOptionNameTranslations?: Maybe<Array<LocalizedValue>>;
-  redirectTrafficToPrimaryDomain?: Maybe<Scalars['Boolean']>;
-  slug?: Maybe<Scalars['String']>;
-  updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
 export type StoreEdge = {
@@ -5408,10 +5599,6 @@ export type UpdateBlockInput = {
   name: Scalars['String'];
 };
 
-export type UpdateIntegrationInput = {
-  isActive: Scalars['Boolean'];
-};
-
 export type UpdateIntegrationMetadataInput = {
   id: Scalars['UUID'];
   metadata: Scalars['Object'];
@@ -5422,19 +5609,6 @@ export type UpdateLanguageInput = {
   localizedName?: InputMaybe<Scalars['String']>;
   name?: InputMaybe<Scalars['String']>;
   status?: InputMaybe<LanguageStatus>;
-};
-
-export type UpdateManyIntegrationsInput = {
-  /** Filter used to find fields to update */
-  filter: IntegrationUpdateFilter;
-  /** The update to apply to all records found using the filter */
-  update: UpdateIntegrationInput;
-};
-
-export type UpdateManyResponse = {
-  __typename?: 'UpdateManyResponse';
-  /** The number of records updated. */
-  updatedCount: Scalars['Int'];
 };
 
 export type UpdateOneBlockInput = {
@@ -5449,13 +5623,6 @@ export type UpdateOneGeolocationRedirectInput = {
   id: Scalars['ID'];
   /** The update to apply. */
   update: GeolocationRedirectInput;
-};
-
-export type UpdateOneIntegrationInput = {
-  /** The id of the record to update */
-  id: Scalars['ID'];
-  /** The update to apply. */
-  update: UpdateIntegrationInput;
 };
 
 export type UpdateOneLanguageInput = {
@@ -5491,6 +5658,13 @@ export type UpdateOneRedirectInput = {
   id: Scalars['ID'];
   /** The update to apply. */
   update: UpdateRedirectInput;
+};
+
+export type UpdateOneShippingZoneInput = {
+  /** The id of the record to update */
+  id: Scalars['ID'];
+  /** The update to apply. */
+  update: ShippingZoneInput;
 };
 
 export type UpdateOneSnippetInput = {

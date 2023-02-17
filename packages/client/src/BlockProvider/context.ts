@@ -1,4 +1,5 @@
-import { createContext } from 'react';
+import { createContext, ReactNode } from 'react';
+import { BlockSubtype, BlockType } from '../../../types/api';
 
 export interface BlockState {
   content?: any;
@@ -119,8 +120,12 @@ export interface Instant {
 }
 
 export type BlockContextValue = BlockState & {
+  components?: Record<string, ReactNode>;
   instantObject: Instant;
   store: any;
+  pageContext?: any;
+  type: BlockType;
+  subtype?: BlockSubtype;
 };
 
 export const BlockContext = createContext<BlockContextValue | null>(null);

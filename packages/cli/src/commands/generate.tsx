@@ -2,12 +2,13 @@ import { existsSync, mkdirSync, writeFileSync } from 'fs';
 import React, { FC, useEffect, useState } from 'react';
 import { render, Text } from 'ink';
 import { CommandModule } from 'yargs';
-import { blockTemplate } from '~/templates';
+import { pageTemplate, sectionTemplate } from '~/templates';
 
-export const Generate: FC<{ schematic: string; name: string }> = ({
-  schematic,
-  name,
-}) => {
+export const Generate: FC<{
+  schematic: string;
+  name: string;
+  type?: string;
+}> = ({ schematic, name, type }) => {
   const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string>();
 
@@ -16,12 +17,27 @@ export const Generate: FC<{ schematic: string; name: string }> = ({
 
     switch (schematic) {
       case 'block':
-        template = blockTemplate;
+      case 'section':
+        template = sectionTemplate;
         break;
+      // case 'component':
+      //   template = componentTemplate;
+      //   break;
+      case 'page': {
+        if (type !== 'pdp') {
+          setError(
+            `Invalid type "${type}", use one of the following values: "pdp"`,
+          );
+          return;
+        }
+
+        template = pageTemplate;
+        break;
+      }
 
       default:
         setError(
-          `Invalid schematic "${schematic}", use one of the following values: "block"`,
+          `Invalid schematic "${schematic}", use one of the following values: "section", "page"`,
         );
         return;
     }
@@ -66,12 +82,19 @@ export const Generate: FC<{ schematic: string; name: string }> = ({
 
 export const generate: CommandModule = {
   command: 'generate <schematic> <name>',
+  builder: {
+    type: {
+      alias: 't',
+      type: 'string',
+    },
+  },
   describe: 'Generate new Instant element',
   handler: (argv) => {
     render(
       <Generate
         schematic={argv['schematic'] as string}
         name={argv['name'] as string}
+        type={argv['type'] as string | undefined}
       />,
     );
   },

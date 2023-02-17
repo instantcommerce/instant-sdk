@@ -1,5 +1,5 @@
 import { HTMLProps, ReactNode } from 'react';
-import { createRemoteReactComponent } from '@remote-ui/react';
+import { createRemoteReactComponent } from './createRemoteReactComponent';
 
 export interface LinkProps extends HTMLProps<HTMLAnchorElement> {
   children: ReactNode;

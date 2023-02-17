@@ -5,14 +5,15 @@ import { Box, render, Static, Text, useApp, useInput, useStdout } from 'ink';
 import { CommandModule } from 'yargs';
 import { dirname, config as userConfig } from '~/config';
 import { useApiSdk } from '~/lib/api';
-import { getBlockFiles } from '~/lib/getBlockFiles';
+import { BlockSubtype, BlockType } from '~/lib/api/sdk';
+import { BlockFiles, getBlockFiles } from '~/lib/getBlockFiles';
 import { getProjectConfig } from '~/lib/getProjectConfig';
 
 const AskDeploy = ({
   blocks,
   onDeploy,
 }: {
-  blocks: string[];
+  blocks: BlockFiles;
   onDeploy(): void;
 }) => {
   const { exit } = useApp();
@@ -28,7 +29,7 @@ const AskDeploy = ({
   return (
     <Text>
       Set up blocks? [y/n]
-      <Text dimColor> {blocks.join(', ')}</Text>
+      <Text dimColor> {blocks.map(({ name }) => name).join(', ')}</Text>
     </Text>
   );
 };
@@ -43,7 +44,7 @@ export const Add = ({
   const { write } = useStdout();
 
   const [doDeploy, setDoDeploy] = useState(false);
-  const [blocks, setBlocks] = useState<Array<string> | null>(null);
+  const [blocks, setBlocks] = useState<BlockFiles | null>(null);
   const [isDone, setDone] = useState<boolean>(false);
   const [error, setError] = useState<string>();
   const [createdBlocks, setCreatedBlocks] = useState<
@@ -58,12 +59,26 @@ export const Add = ({
       return;
     }
 
-    for (const blockName of blocks) {
+    for (const block of blocks) {
       try {
         const createdBlock = await apiSdk
           .createOneBlock(
-            { input: { block: { name: blockName } } },
-            // @ts-ignore
+            {
+              input: {
+                block: {
+                  name: block.name,
+                  type: block.type,
+                  subtype:
+                    /** @todo get subtype from code */
+                    block.type === BlockType.Component
+                      ? BlockSubtype.CartSidebar
+                      : block.type === BlockType.Page
+                      ? BlockSubtype.Pdp
+                      : BlockSubtype.All,
+                },
+              },
+            },
+            // @ts-expect-error
             {
               'x-instant-organization': config.current!.get('organization')!,
               'x-instant-store-id': undefined,
@@ -71,7 +86,7 @@ export const Add = ({
           )
           .then((res) => res.createOneBlock);
 
-        config.current!.set(`blocks.${blockName}`, {
+        config.current!.set(`blocks.${block.name}`, {
           id: createdBlock.id,
         });
 
@@ -81,7 +96,7 @@ export const Add = ({
         ]);
       } catch (err: any) {
         setError(
-          `Error setting up block "${blockName}" (${err?.toString?.()})`,
+          `Error setting up block "${block.name}" (${err?.toString?.()})`,
         );
         return;
       }
@@ -125,7 +140,7 @@ export const Add = ({
 
     config.current = getProjectConfig('./');
 
-    const blockNames = getBlockFiles().filter((blockName) => {
+    const blockFiles = getBlockFiles().filter(({ name: blockName }) => {
       if (providedBlockNames && !providedBlockNames.includes(blockName)) {
         return false;
       }
@@ -140,14 +155,14 @@ export const Add = ({
 
     if (providedBlockNames) {
       for (const providedBlockName of providedBlockNames) {
-        if (!blockNames.includes(providedBlockName)) {
+        if (!blockFiles.find(({ name }) => name === providedBlockName)) {
           setError(`Block not found: "${providedBlockName}"`);
           break;
         }
       }
     }
 
-    setBlocks(blockNames);
+    setBlocks(blockFiles);
   }, []);
 
   if (error) {

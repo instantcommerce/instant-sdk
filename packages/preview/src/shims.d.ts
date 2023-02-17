@@ -3,11 +3,9 @@ declare interface Window {
   __INSTANT_BLOCK_SERVER__: string;
   __INSTANT_BLOCKS_MANIFEST__: Record<
     string,
-    {
-      name: string;
-      contentSchema?: any;
-      customizationSchema?: any;
-    }
+    | import('./components/BlocksProvider/context').BlockSection
+    | import('./components/BlocksProvider/context').BlockPage
+    | import('./components/BlocksProvider/context').BlockComponent
   >;
   __INSTANT_STORES__?: Array<{
     id: string;

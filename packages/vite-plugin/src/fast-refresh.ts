@@ -47,7 +47,10 @@ if (import.meta.hot) {
   self.$RefreshSig$ = prevRefreshSig;
 
   import.meta.hot.on('worker-reload', (data) => {
-    self.reload(data.timestamp);
+    try {
+      self.reload(data);
+    } catch (e) {
+    }
   });
 
   __ACCEPT__

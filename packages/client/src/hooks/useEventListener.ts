@@ -6,16 +6,12 @@ type InstantEventType =
   | 'loadPage'
   | 'updateCartLine';
 
-interface InstantEvent
-  extends Omit<
-    Event,
-    'preventDefault' | 'stopPropagation' | 'stopImmediatePropagation'
-  > {}
+interface InstantEvent extends Event {}
 
 export const useEventListener = (
   event: InstantEventType,
   listener: (ev: InstantEvent) => any,
-  options?: AddEventListenerOptions & { preventDefault?: boolean },
+  options?: AddEventListenerOptions,
 ) => {
   const savedListener = useRef<EventListener>(listener);
   const cleanup = useRef(() => {});
@@ -34,18 +30,10 @@ export const useEventListener = (
       1,
     )}`;
 
-    (self as any).addInstantEventListener(
-      eventName,
-      savedListener.current,
-      options,
-    );
+    document.addEventListener(eventName, savedListener.current, options);
 
     cleanup.current = () => {
-      (self as any).removeInstantEventListener(
-        eventName,
-        savedListener.current,
-        options,
-      );
+      document.removeEventListener(eventName, savedListener.current, options);
     };
 
     return cleanup.current;

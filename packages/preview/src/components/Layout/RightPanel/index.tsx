@@ -4,6 +4,7 @@ import humanizeString from 'humanize-string';
 import get from 'lodash/get';
 import { Faders, Image, WarningCircle, Trash, Plus } from 'phosphor-react';
 import { twJoin } from 'tailwind-merge';
+import { BlockType } from 'types/api';
 import {
   Button,
   StatusMessage,
@@ -502,7 +503,13 @@ export const RightPanel = () => {
         )}
       >
         <Tabs
-          tabs={tabs}
+          tabs={
+            /** Only show content schema fields for sections */
+            selectedBlock &&
+            blocksManifest?.[selectedBlock]?.type === BlockType.Section
+              ? tabs
+              : [tabs[0]]
+          }
           content={{
             contentSchema,
             customizerSchema,

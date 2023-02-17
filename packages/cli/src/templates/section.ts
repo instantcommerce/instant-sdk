@@ -1,6 +1,6 @@
-export const blockTemplate = (
+export const sectionTemplate = (
   name: string,
-) => `import { defineBlock, useBlockState } from "@instantcommerce/sdk";
+) => `import { defineSection, useBlockState } from "@instantcommerce/sdk";
 
 const ${name} = () => {
   const { content, customizer } = useBlockState();
@@ -14,7 +14,7 @@ const ${name} = () => {
   );
 };
 
-export default defineBlock({
+export default defineSection({
   component: ${name},
   customizerSchema: {
     fields: {
