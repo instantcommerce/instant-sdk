@@ -4,10 +4,11 @@ import { render, Text } from 'ink';
 import { CommandModule } from 'yargs';
 import { pageTemplate, sectionTemplate } from '~/templates';
 
-export const Generate: FC<{ schematic: string; name: string }> = ({
-  schematic,
-  name,
-}) => {
+export const Generate: FC<{
+  schematic: string;
+  name: string;
+  type?: string;
+}> = ({ schematic, name, type }) => {
   const [success, setSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string>();
 
@@ -22,9 +23,17 @@ export const Generate: FC<{ schematic: string; name: string }> = ({
       // case 'component':
       //   template = componentTemplate;
       //   break;
-      case 'page':
+      case 'page': {
+        if (type !== 'pdp') {
+          setError(
+            `Invalid type "${type}", use one of the following values: "pdp"`,
+          );
+          return;
+        }
+
         template = pageTemplate;
         break;
+      }
 
       default:
         setError(
@@ -73,12 +82,19 @@ export const Generate: FC<{ schematic: string; name: string }> = ({
 
 export const generate: CommandModule = {
   command: 'generate <schematic> <name>',
+  builder: {
+    type: {
+      alias: 't',
+      type: 'string',
+    },
+  },
   describe: 'Generate new Instant element',
   handler: (argv) => {
     render(
       <Generate
         schematic={argv['schematic'] as string}
         name={argv['name'] as string}
+        type={argv['type'] as string | undefined}
       />,
     );
   },
