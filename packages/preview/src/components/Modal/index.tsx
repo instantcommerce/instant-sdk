@@ -4,7 +4,7 @@ import { X } from 'phosphor-react';
 import { twMerge } from 'tailwind-merge';
 import { Button } from '../Button';
 
-interface ModalProps extends Dialog.DialogProps {
+export interface ModalProps extends Dialog.DialogProps {
   trigger?: ReactNode;
   title?: string;
   className?: string;

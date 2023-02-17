@@ -24,11 +24,4 @@ export default defineConfig({
   legacy: {
     buildSsrCjsExternalHeuristics: true,
   },
-  optimizeDeps: {
-    include: [
-      '@remote-ui/core',
-      '@remote-ui/react',
-      '@shopify/web-worker/worker',
-    ],
-  },
 });

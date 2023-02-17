@@ -37,6 +37,9 @@ const PublicStoreFragmentFragmentDoc = gql`
     organization {
       slug
     }
+    primaryDomain {
+      url
+    }
     snippets {
       id
       isPrioritized

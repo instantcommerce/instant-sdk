@@ -14,6 +14,7 @@ export * from './RichText';
 export * from './Select';
 export * from './Slider';
 export * from './StatusMessage';
+export * from './StoreProvider';
 export * from './Tabs';
 export * from './Toggle';
 export * from './ToggleGroup';

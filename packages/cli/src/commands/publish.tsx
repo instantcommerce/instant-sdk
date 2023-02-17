@@ -1,15 +1,14 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import { createReadStream, existsSync } from 'fs';
 import path from 'path';
-import { fileURLToPath } from 'url';
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, render, Static, Text } from 'ink';
 import { build } from 'vite';
 import { CommandModule } from 'yargs';
 import { dirname } from '~/config';
 import { extractApiError, useApiSdk } from '~/lib/api';
-import { BlockFragmentFragment } from '~/lib/api/sdk';
-import { getBlockFiles } from '~/lib/getBlockFiles';
+import { BlockFragmentFragment, BlockType } from '~/lib/api/sdk';
+import { BlockFiles, getBlockFiles } from '~/lib/getBlockFiles';
 import { getBlockNameFromPath } from '~/lib/getBlockNameFromPath';
 import { getProjectConfig } from '~/lib/getProjectConfig';
 import { getViteConfig } from '~/lib/getViteConfig';
@@ -23,7 +22,7 @@ export const Publish = ({
 }) => {
   const apiSdk = useApiSdk();
 
-  const [blocks, setBlocks] = useState<Array<string> | null>(null);
+  const [blocks, setBlocks] = useState<BlockFiles | null>(null);
   const [isDone, setDone] = useState<boolean>(false);
   const [buildSuccess, setBuildSuccess] = useState<boolean>(false);
   const [error, setError] = useState<string>();
@@ -33,14 +32,16 @@ export const Publish = ({
 
   const config = useRef<ReturnType<typeof getProjectConfig>>();
 
-  const buildBlocks = async (entry: string) => {
-    const output = await build(
+  const buildBlocks = async (entry: BlockFiles[number]) => {
+    const outDir = `dist/${entry.type.toLowerCase()}s/${entry.name}`;
+
+    const clientOutput = await build(
       await getViteConfig(
         'production',
         {
           logLevel: 'silent',
           build: {
-            outDir: `dist/blocks/${entry}`,
+            outDir,
             manifest: true,
           },
         },
@@ -49,11 +50,41 @@ export const Publish = ({
       ),
     );
 
-    if (!('output' in output)) {
+    /** @todo enable when ssr implemented */
+    // const serverOutput = await build(
+    //   await getViteConfig(
+    //     'production',
+    //     {
+    //       logLevel: 'silent',
+    //       build: {
+    //         outDir,
+    //         emptyOutDir: false,
+    //         ssr: true,
+    //         target: 'es2022',
+    //         rollupOptions: {
+    //           output: {
+    //             format: 'es',
+    //           },
+    //         },
+    //       },
+    //       ssr: {
+    //         noExternal: true,
+    //         target: 'webworker',
+    //       },
+    //     },
+    //     config.current!.get(`blocks`),
+    //     entry,
+    //   ),
+    // );
+
+    if (
+      !('output' in clientOutput)
+      // || !('output' in serverOutput)
+    ) {
       throw new Error('No build output found');
     }
 
-    return output.output;
+    return [entry.type, outDir, clientOutput.output] as const;
   };
 
   const buildAndPublish = async () => {
@@ -73,7 +104,7 @@ export const Publish = ({
     setBuildSuccess(true);
 
     for (let i = 0; i < buildOutputs.length; i += 1) {
-      const buildOutput = buildOutputs[i]!;
+      const [blockType, outDir, buildOutput] = buildOutputs[i]!;
       let manifest;
 
       try {
@@ -99,7 +130,7 @@ export const Publish = ({
           const blockName = getBlockNameFromPath(entry.src);
           let blockIdToUpdate: string;
 
-          if (!blocks?.includes(blockName)) {
+          if (!blocks?.find(({ name }) => name === blockName)) {
             continue;
           }
 
@@ -112,24 +143,24 @@ export const Publish = ({
                 )?.source,
               ),
             );
-            const contentSchema = parseContentSchema(
-              JSON.parse(
-                buildOutput.find(
-                  ({ fileName }) => fileName === 'contentSchema.json',
-                  // @ts-ignore
-                )?.source,
-              ),
-              blockName,
-            );
+
+            const contentSchemaSource = buildOutput.find(
+              ({ fileName }) => fileName === 'contentSchema.json',
+              // @ts-ignore
+            )?.source;
+            const contentSchema = contentSchemaSource
+              ? parseContentSchema(JSON.parse(contentSchemaSource), blockName)
+              : undefined;
+
             const blockFile = createReadStream(
-              path.join(dirname, 'dist/blocks', blockName, entry.file),
+              path.join(dirname, outDir, entry.file),
             );
             let cssFile;
 
             if (entry.css?.length) {
               /** There should be at most 1 CSS file because of bundling */
               cssFile = createReadStream(
-                path.join(dirname, 'dist/blocks', blockName, entry.css[0]),
+                path.join(dirname, outDir, entry.css[0]),
               );
             }
 
@@ -143,9 +174,11 @@ export const Publish = ({
               {
                 input: {
                   blockId: blockIdToUpdate,
+                  sdkVersion: 2,
                   css: cssFile,
                   js: blockFile,
-                  contentSchema,
+                  contentSchema:
+                    blockType === BlockType.Section ? contentSchema : undefined,
                   customizerSchema,
                 },
               },
@@ -211,7 +244,7 @@ export const Publish = ({
       return;
     }
 
-    const blockNames = getBlockFiles().filter((blockName) => {
+    const blockFiles = getBlockFiles().filter(({ name: blockName }) => {
       if (providedBlockNames && !providedBlockNames.includes(blockName)) {
         return false;
       }
@@ -232,14 +265,14 @@ export const Publish = ({
 
     if (providedBlockNames) {
       for (const providedBlockName of providedBlockNames) {
-        if (!blockNames.includes(providedBlockName)) {
+        if (!blockFiles.find(({ name }) => name === providedBlockName)) {
           setError(`Block not found: "${providedBlockName}"`);
           break;
         }
       }
     }
 
-    setBlocks(blockNames);
+    setBlocks(blockFiles);
   }, []);
 
   if (error) {

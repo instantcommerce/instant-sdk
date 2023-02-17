@@ -1,4 +1,4 @@
-import { defineBlock, useBlockState } from '@instantcommerce/sdk';
+import { defineSection, useBlockState } from '@instantcommerce/sdk';
 import './index.css';
 
 const Hero = () => {
@@ -11,7 +11,7 @@ const Hero = () => {
   );
 };
 
-const HeroBlock = defineBlock({
+const HeroBlock = defineSection({
   component: Hero,
   customizerSchema: {
     fields: {

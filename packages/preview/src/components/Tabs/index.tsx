@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import * as TabsPrimitive from '@radix-ui/react-tabs';
 import { twJoin, twMerge } from 'tailwind-merge';
 
@@ -12,8 +13,18 @@ interface TabsProps extends TabsPrimitive.TabsProps {
 }
 
 export const Tabs = ({ tabs, content, className, ...props }: TabsProps) => {
+  const [value, setValue] = useState(tabs?.[0]?.value);
+
   return (
-    <TabsPrimitive.Root defaultValue={tabs?.[0]?.value} {...props}>
+    <TabsPrimitive.Root
+      value={
+        tabs?.find((tab) => tab?.value === value) ? value : tabs?.[0]?.value
+      }
+      onValueChange={(v) => {
+        setValue(v);
+      }}
+      {...props}
+    >
       <TabsPrimitive.List
         className={twMerge('relative flex w-full gap-6 px-3', className)}
       >

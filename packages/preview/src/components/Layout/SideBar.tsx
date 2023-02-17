@@ -1,5 +1,6 @@
 import { ButtonHTMLAttributes, useMemo } from 'react';
 import { twJoin, twMerge } from 'tailwind-merge';
+import { BlockType } from 'types/api';
 import { useBlocks } from '../BlocksProvider';
 import { Button } from '../Button';
 import { useConfig } from '../ConfigProvider';
@@ -55,9 +56,25 @@ export const SideBar = ({ className }: { className?: string }) => {
         ?.filter((key) => !bookmarks?.includes(blocksManifest[key]?.name))
         ?.map((key) => ({
           name: blocksManifest[key]?.name,
+          type: blocksManifest[key]?.type,
           url: key,
         })),
     [blocksManifest, bookmarks],
+  );
+
+  const sections = useMemo(
+    () => blocks?.filter((block) => block?.type === BlockType.Section),
+    [blocks],
+  );
+
+  const pages = useMemo(
+    () => blocks?.filter((block) => block?.type === BlockType.Page),
+    [blocks],
+  );
+
+  const components = useMemo(
+    () => blocks?.filter((block) => block?.type === BlockType.Component),
+    [blocks],
   );
 
   const bookmarkItems = useMemo(
@@ -81,7 +98,7 @@ export const SideBar = ({ className }: { className?: string }) => {
         className,
       )}
     >
-      <nav>
+      <nav className="flex flex-col gap-y-3">
         {!!bookmarkItems?.length && (
           <SidebarSection
             title="Bookmarks"
@@ -90,10 +107,26 @@ export const SideBar = ({ className }: { className?: string }) => {
           />
         )}
 
-        {!!blocks?.length && (
+        {!!sections?.length && (
           <SidebarSection
-            title="Blocks"
-            items={blocks}
+            title="Sections"
+            items={sections}
+            selectedItem={selectedItem}
+          />
+        )}
+
+        {!!pages?.length && (
+          <SidebarSection
+            title="Pages"
+            items={pages}
+            selectedItem={selectedItem}
+          />
+        )}
+
+        {!!components?.length && (
+          <SidebarSection
+            title="Components"
+            items={components}
             selectedItem={selectedItem}
           />
         )}

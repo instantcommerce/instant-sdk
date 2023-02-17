@@ -1,4 +1,5 @@
 import { createContext, MutableRefObject } from 'react';
+import { BlockType, BlockSubtype } from 'types/api';
 import { DefineContentSchema, DefineCustomizerSchema } from 'types/schemas';
 
 export type SchemaTypes = 'customizer' | 'content';
@@ -27,16 +28,30 @@ export type BlockCustomizerSchema = Omit<DefineCustomizerSchema, 'fields'> & {
   fields: (ValueOf<DefineCustomizerSchema['fields']> & { name: string })[];
 };
 
+type BlockBase = {
+  name: string;
+  path?: string;
+  contentSchema?: BlockContentSchema;
+  customizerSchema?: BlockCustomizerSchema;
+};
+
+export type BlockSection = BlockBase & {
+  type: BlockType.Section;
+  // subtype: BlockSubtype.All;
+};
+
+export type BlockPage = BlockBase & {
+  type: BlockType.Page;
+  // subtype: BlockSubtype.Pdp;
+};
+
+export type BlockComponent = BlockBase & {
+  type: BlockType.Component;
+  // subtype: BlockSubtype.CartSidebar;
+};
+
 export interface BlocksContextValue {
-  blocksManifest: Record<
-    string,
-    {
-      name: string;
-      path?: string;
-      contentSchema?: BlockContentSchema;
-      customizerSchema?: BlockCustomizerSchema;
-    }
-  >;
+  blocksManifest: Record<string, BlockSection | BlockPage | BlockComponent>;
   previewRef: MutableRefObject<HTMLIFrameElement | null>;
   reloadPreview(): void;
   selectedBlock: string | null;

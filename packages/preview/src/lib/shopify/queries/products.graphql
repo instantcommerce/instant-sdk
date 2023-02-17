@@ -1,0 +1,38 @@
+query products(
+  $first: Int
+  $last: Int
+  $after: String
+  $before: String
+  $query: String
+) {
+  products(
+    first: $first
+    last: $last
+    after: $after
+    before: $before
+    query: $query
+  ) {
+    edges {
+      cursor
+      node {
+        id
+        handle
+        title
+        images(first: 1) {
+          edges {
+            node {
+              id
+              url
+            }
+          }
+        }
+      }
+    }
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  }
+}

@@ -25,9 +25,6 @@
   },
   "resolutions": {
     "@instantcommerce/postcss-plugin-sdk": "link:./../../packages/postcss-plugin",
-    "@instantcommerce/vite-plugin-sdk": "link:./../../packages/vite-plugin",
-    "@remote-ui/core": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/core?build-react-18",
-    "@remote-ui/react": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/react?build-react-18",
-    "react-reconciler": "0.29.0"
+    "@instantcommerce/vite-plugin-sdk": "link:./../../packages/vite-plugin"
   }
 }

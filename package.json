@@ -10,7 +10,7 @@
   "scripts": {
     "build": "turbo run build",
     "build:cli": "turbo run build --filter=@instantcommerce/cli",
-    "codegen": "graphql-codegen -r dotenv/config",
+    "codegen": "graphql-codegen -r dotenv/config && graphql-codegen -r dotenv/config --project preview-shopify",
     "commit": "npx git-emoji-cli",
     "dev": "concurrently \"npm run dev:cli dev\" \"npm run dev:preview\"",
     "dev:cli": "turbo run dev --filter=@instantcommerce/cli && FORCE_DIR=./../../../examples/block-extension packages/cli/dist/cli.js",
@@ -70,9 +70,7 @@
   },
   "resolutions": {
     "@types/react": "18.0.25",
-    "@types/react-dom": "18.0.5",
-    "@remote-ui/core": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/core?ae1910c",
-    "@remote-ui/react": "https://gitpkg.now.sh/instantcommerce/remote-ui/packages/react?ae1910c",
+    "@types/react-dom": "18.0.10",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   }

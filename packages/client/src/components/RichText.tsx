@@ -1,5 +1,4 @@
 import { HTMLProps } from 'react';
-import { createRemoteReactComponent } from '@remote-ui/react';
 import {
   RenderOptions,
   NODE_HEADING,
@@ -20,6 +19,7 @@ import {
   MARK_LINK,
   MARK_STYLED,
 } from 'storyblok-rich-text-react-renderer';
+import { createRemoteReactComponent } from './createRemoteReactComponent';
 
 export {
   NODE_HEADING,

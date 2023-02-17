@@ -22,3 +22,24 @@ projects:
               - typescript-graphql-request
             config:
               useTypeImports: true
+
+  preview-shopify:
+    schema:
+      - https://${CODEGEN_SHOPIFY_SHOP_ORIGIN}/api/2023-01/graphql.json:
+          headers:
+            X-Shopify-Storefront-Access-Token: ${CODEGEN_SHOPIFY_STOREFRONT_ACCESS_TOKEN}
+    documents: "./packages/preview/src/lib/shopify/**/*.graphql"
+    extensions:
+      codegen:
+        generates:
+          ./packages/preview/src/lib/shopify/hooks.ts:
+            plugins:
+              - typescript
+              - typescript-operations
+              - typescript-react-query
+            config:
+              exposeQueryKeys: true
+              exposeFetcher: true
+              fetcher:
+                func: "./fetcher#useShopifyFetcher"
+                isReactHook: true
