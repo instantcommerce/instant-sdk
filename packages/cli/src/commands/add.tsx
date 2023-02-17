@@ -88,6 +88,7 @@ export const Add = ({
 
         config.current!.set(`blocks.${block.name}`, {
           id: createdBlock.id,
+          type: block.type,
         });
 
         setCreatedBlocks((previous) => [
