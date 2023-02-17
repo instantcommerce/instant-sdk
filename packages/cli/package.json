@@ -26,7 +26,7 @@
     "dist"
   ],
   "dependencies": {
-    "@instantcommerce/vite-plugin-sdk": "*",
+    "@instantcommerce/vite-plugin-sdk": "beta",
     "@vitejs/plugin-react": "2.1.0",
     "arr-rotate": "1.0.0",
     "axios": "1.1.3",

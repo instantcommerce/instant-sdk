@@ -8,7 +8,7 @@
     "publish": "instant publish"
   },
   "dependencies": {
-    "@instantcommerce/sdk": "*",
+    "@instantcommerce/sdk": "beta",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },

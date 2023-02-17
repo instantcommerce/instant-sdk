@@ -29,7 +29,7 @@
   },
   "dependencies": {
     "@babel/core": "7.20.5",
-    "@instantcommerce/postcss-plugin-sdk": "*",
+    "@instantcommerce/postcss-plugin-sdk": "beta",
     "glob": "8.0.3",
     "hashids": "2.2.10",
     "react-refresh": "^0.14.0"
