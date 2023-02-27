@@ -1,7 +1,7 @@
 projects:
   default:
     schema:
-      - http://localhost:4000/graphql
+      - http://127.0.0.1:4000/graphql
     documents: "./packages/cli/src/lib/api/**/*.graphql"
     extensions:
       codegen:

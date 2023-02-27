@@ -50,37 +50,33 @@ export const Publish = ({
       ),
     );
 
-    /** @todo enable when ssr implemented */
-    // const serverOutput = await build(
-    //   await getViteConfig(
-    //     'production',
-    //     {
-    //       logLevel: 'silent',
-    //       build: {
-    //         outDir,
-    //         emptyOutDir: false,
-    //         ssr: true,
-    //         target: 'es2022',
-    //         rollupOptions: {
-    //           output: {
-    //             format: 'es',
-    //           },
-    //         },
-    //       },
-    //       ssr: {
-    //         noExternal: true,
-    //         target: 'webworker',
-    //       },
-    //     },
-    //     config.current!.get(`blocks`),
-    //     entry,
-    //   ),
-    // );
+    const serverOutput = await build(
+      await getViteConfig(
+        'production',
+        {
+          logLevel: 'silent',
+          build: {
+            outDir,
+            emptyOutDir: false,
+            ssr: true,
+            target: 'es2022',
+            rollupOptions: {
+              output: {
+                format: 'es',
+              },
+            },
+          },
+          ssr: {
+            noExternal: true,
+            target: 'webworker',
+          },
+        },
+        config.current!.get(`blocks`),
+        entry,
+      ),
+    );
 
-    if (
-      !('output' in clientOutput)
-      // || !('output' in serverOutput)
-    ) {
+    if (!('output' in clientOutput) || !('output' in serverOutput)) {
       throw new Error('No build output found');
     }
 
@@ -152,9 +148,13 @@ export const Publish = ({
               ? parseContentSchema(JSON.parse(contentSchemaSource), blockName)
               : undefined;
 
-            const blockFile = createReadStream(
+            const jsFile = createReadStream(
               path.join(dirname, outDir, entry.file),
             );
+            const jsServerFilePath = path.join(dirname, outDir, 'server.js');
+            const jsServerFile = existsSync(jsServerFilePath)
+              ? createReadStream(jsServerFilePath)
+              : undefined;
             let cssFile;
 
             if (entry.css?.length) {
@@ -176,7 +176,8 @@ export const Publish = ({
                   blockId: blockIdToUpdate,
                   sdkVersion: 2,
                   css: cssFile,
-                  js: blockFile,
+                  js: jsFile,
+                  jsServer: jsServerFile,
                   contentSchema:
                     blockType === BlockType.Section ? contentSchema : undefined,
                   customizerSchema,
