@@ -62,7 +62,7 @@ export const Publish = ({
             target: 'es2022',
             rollupOptions: {
               output: {
-                format: 'es',
+                format: 'cjs',
               },
             },
           },

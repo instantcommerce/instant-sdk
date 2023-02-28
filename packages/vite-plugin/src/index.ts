@@ -372,6 +372,15 @@ export default function vitePluginInstantSdk({
                       }
                     }
                   }
+
+                  if (isSsr) {
+                    /** @todo generate nice entry for ssr */
+                    //             path.insertBefore(t.variableDeclaration("const", [t.variableDeclarator("check", )]))
+                    // path.replaceWith(transform("((...args) => Test.render(...args))([blockProps])", {ast:true}).ast.program.body[0])
+                    // path.replaceWith()
+                    /** Make a different entrypoint available for rendering */
+                    // path.replaceWith(babel.transform(`((...args) => ${}.render(...args))([blockProps])`, {ast:true}).ast.program.body[0])
+                  }
                 },
               },
             });
