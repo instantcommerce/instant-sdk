@@ -18,7 +18,7 @@ const cssLangRE = new RegExp(cssLangs);
 
 const SCHEMA_NAMES = ['customizerSchema', 'contentSchema'];
 
-const viteClientId = 'node_modules/vite/dist/client/client.mjs';
+// const viteClientId = 'node_modules/vite/dist/client/client.mjs';
 const preamblePath = 'virtual:vite-plugin-instant-sdk/preamble';
 const blocksManifestPath = 'virtual:vite-plugin-instant-sdk/blocks-manifest';
 
@@ -310,6 +310,9 @@ export default function vitePluginInstantSdk({
                  * only 1 defineBlock per file.
                  */
                 ExportDefaultDeclaration(path) {
+                  const definedBlockId =
+                    path.scope.generateUidIdentifier('definedBlock');
+                  let definedPath: any;
                   let defineBlock = path.node.declaration;
 
                   if (
@@ -320,6 +323,7 @@ export default function vitePluginInstantSdk({
 
                     if (declaration) {
                       defineBlock = declaration.path.node.init;
+                      definedPath = declaration.path.parentPath;
                     }
                   }
 
@@ -371,15 +375,44 @@ export default function vitePluginInstantSdk({
                           );
                       }
                     }
-                  }
 
-                  if (isSsr) {
-                    /** @todo generate nice entry for ssr */
-                    //             path.insertBefore(t.variableDeclaration("const", [t.variableDeclarator("check", )]))
-                    // path.replaceWith(transform("((...args) => Test.render(...args))([blockProps])", {ast:true}).ast.program.body[0])
-                    // path.replaceWith()
-                    /** Make a different entrypoint available for rendering */
-                    // path.replaceWith(babel.transform(`((...args) => ${}.render(...args))([blockProps])`, {ast:true}).ast.program.body[0])
+                    if (isSsr) {
+                      /** Assign defineBlock to _definedBlock */
+                      path.insertBefore(
+                        t.variableDeclaration('const', [
+                          t.variableDeclarator(definedBlockId, defineBlock),
+                        ]),
+                      );
+
+                      /** Remove because we don't need it twice */
+                      if (definedPath) {
+                        definedPath.remove();
+                      }
+
+                      /**
+                       * Replace default export with entry point that uses
+                       * __instant_renderArguments to pass props to the definedBlock
+                       * Result looks like:
+                       * ((...args) => _definedBlock.render(...args))([__instant_renderArguments]);
+                       */
+                      path.replaceWith(
+                        t.expressionStatement(
+                          t.callExpression(
+                            t.arrowFunctionExpression(
+                              [t.restElement(t.identifier('args'))],
+                              t.callExpression(
+                                t.memberExpression(
+                                  definedBlockId,
+                                  t.identifier('render'),
+                                ),
+                                [t.spreadElement(t.identifier('args'))],
+                              ),
+                            ),
+                            [t.identifier('__instant_renderArguments')],
+                          ),
+                        ),
+                      );
+                    }
                   }
                 },
               },
