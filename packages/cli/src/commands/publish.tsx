@@ -50,9 +50,31 @@ export const Publish = ({
       ),
     );
 
+    const NODE_BUILT_INS = [
+      'crypto',
+      'util',
+      'buffer',
+      'stream',
+      'net',
+      'http',
+      'https',
+      'url',
+      'fs',
+      'path',
+      'perf_hooks',
+      'zlib',
+      'tty',
+      'os',
+      'vm',
+      'module',
+      'async_hooks',
+    ];
+
+    const external = [...NODE_BUILT_INS, 'react', 'react-dom'];
+
     const serverOutput = await build(
       await getViteConfig(
-        'production',
+        'ssr',
         {
           logLevel: 'silent',
           build: {
@@ -64,11 +86,13 @@ export const Publish = ({
               output: {
                 format: 'cjs',
               },
+              external,
             },
           },
           ssr: {
-            noExternal: true,
-            target: 'webworker',
+            noExternal: new RegExp(`(?!(${external.join('|')}))`),
+            target: 'node',
+            format: 'cjs',
           },
         },
         config.current!.get(`blocks`),

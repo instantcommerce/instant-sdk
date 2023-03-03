@@ -123,6 +123,7 @@ export default function vitePluginInstantSdk({
           config.build = {
             ...config.build,
             rollupOptions: {
+              ...(config.build?.rollupOptions || {}),
               input: {
                 [entry.name]: fileURLToPath(
                   new URL(entry.path, import.meta.url),
@@ -138,6 +139,10 @@ export default function vitePluginInstantSdk({
             },
             manifest: !isSsr,
           };
+
+          if (isSsr && config.resolve?.dedupe) {
+            delete config.resolve.dedupe;
+          }
         }
       },
       configResolved(config) {
@@ -393,22 +398,33 @@ export default function vitePluginInstantSdk({
                        * Replace default export with entry point that uses
                        * __instant_renderArguments to pass props to the definedBlock
                        * Result looks like:
-                       * ((...args) => _definedBlock.render(...args))([__instant_renderArguments]);
+                       * module.exports = ((...args) => _definedBlock.render(...args))([__instant_renderArguments]);
                        */
                       path.replaceWith(
                         t.expressionStatement(
-                          t.callExpression(
-                            t.arrowFunctionExpression(
-                              [t.restElement(t.identifier('args'))],
-                              t.callExpression(
-                                t.memberExpression(
-                                  definedBlockId,
-                                  t.identifier('render'),
-                                ),
-                                [t.spreadElement(t.identifier('args'))],
-                              ),
+                          t.assignmentExpression(
+                            '=',
+                            t.memberExpression(
+                              t.identifier('module'),
+                              t.identifier('exports'),
                             ),
-                            [t.identifier('__instant_renderArguments')],
+                            t.callExpression(
+                              t.arrowFunctionExpression(
+                                [t.restElement(t.identifier('args'))],
+                                t.callExpression(
+                                  t.memberExpression(
+                                    definedBlockId,
+                                    t.identifier('render'),
+                                  ),
+                                  [t.spreadElement(t.identifier('args'))],
+                                ),
+                              ),
+                              [
+                                t.spreadElement(
+                                  t.identifier('__instant_renderArguments'),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       );

@@ -20,7 +20,9 @@ export const getViteConfig = async (
         react({
           fastRefresh: false,
           /** @todo investigate */
-          jsxRuntime: mode === 'development' ? 'classic' : 'automatic',
+          jsxRuntime: ['development', 'ssr'].includes(mode)
+            ? 'classic'
+            : 'automatic',
         }),
         ...(mode === 'development'
           ? [
