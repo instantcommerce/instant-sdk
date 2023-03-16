@@ -28,6 +28,6 @@ npm install -g @instantcommerce/cli
 
 Read our [Getting Started guide](https://docs.instantcommerce.io/) to get up and running.
 
-## Instant SDK Examples
+## Instant SDK examples
 
 The [instant-sdk-examples](https://github.com/instantcommerce/instant-sdk-examples) project contains a collection of helpful blocks and components built with the Instant SDK.
