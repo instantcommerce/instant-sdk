@@ -330,7 +330,7 @@ export const RightPanel = () => {
         previousField?.groupName !== field.groupName)
     ) {
       return (
-        <div className="text-sm w-full border-b border-gray-200 text-gray-700 pb-2 font-medium">
+        <div className="text-sm w-full border-b border-gray-100 text-gray-700 pb-2 font-medium">
           {field.groupName}
         </div>
       );
