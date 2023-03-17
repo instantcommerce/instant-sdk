@@ -314,6 +314,29 @@ export const RightPanel = () => {
     }
   };
 
+  const renderGroupName = (
+    field:
+      | BlockContentSchema['fields'][number]
+      | BlockCustomizerSchema['fields'][number],
+    previousField:
+      | BlockContentSchema['fields'][number]
+      | BlockCustomizerSchema['fields'][number],
+  ) => {
+    if (
+      !('groupName' in field && field.groupName) ||
+      ('groupName' in previousField &&
+        previousField?.groupName === field.groupName)
+    ) {
+      return null;
+    }
+
+    return (
+      <div className="text-sm w-full border-b border-gray-200 text-gray-700 pb-2 font-medium">
+        {field.groupName}
+      </div>
+    );
+  };
+
   const renderSchema = ({
     type,
     emptyMessage,
@@ -371,26 +394,35 @@ export const RightPanel = () => {
                 </div>
 
                 <div className="bg-white rounded-lg border border-gray-300 p-2 flex flex-col gap-4">
-                  {currentSubschema?.fields.map((f: any) => {
-                    return (
-                      <Fragment key={f.name}>
-                        {renderField(
-                          'content',
-                          {
-                            ...f,
-                            name: [subschema, 'value', f.name].join('.'),
-                            preview: subschemaPreviewValue.value?.[f.name],
-                          },
-                          2,
-                        )}
-                      </Fragment>
-                    );
-                  })}
+                  {currentSubschema?.fields.map(
+                    (f: any, index: number, array: any[]) => {
+                      return (
+                        <Fragment key={f.name}>
+                          {renderGroupName(
+                            f,
+                            index > 0 ? array[index - 1] : null,
+                          )}
+                          {renderField(
+                            'content',
+                            {
+                              ...f,
+                              name: [subschema, 'value', f.name].join('.'),
+                              preview: subschemaPreviewValue.value?.[f.name],
+                            },
+                            2,
+                          )}
+                        </Fragment>
+                      );
+                    },
+                  )}
                 </div>
               </div>
             ) : (
-              schema?.fields?.map((field) => (
-                <Fragment key={field.name}>{renderField(type, field)}</Fragment>
+              schema?.fields?.map((field: any, index: number, array: any[]) => (
+                <Fragment key={field.name}>
+                  {renderGroupName(field, index > 0 ? array[index - 1] : null)}
+                  {renderField(type, field)}
+                </Fragment>
               ))
             );
         } else {
