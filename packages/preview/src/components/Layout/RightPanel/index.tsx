@@ -323,18 +323,20 @@ export const RightPanel = () => {
       | BlockCustomizerSchema['fields'][number],
   ) => {
     if (
-      !('groupName' in field && field.groupName) ||
-      ('groupName' in previousField &&
-        previousField?.groupName === field.groupName)
+      (!previousField && 'groupName' in field && field.groupName) ||
+      (previousField &&
+        'groupName' in previousField &&
+        'groupName' in field &&
+        previousField?.groupName !== field.groupName)
     ) {
-      return null;
+      return (
+        <div className="text-sm w-full border-b border-gray-200 text-gray-700 pb-2 font-medium">
+          {field.groupName}
+        </div>
+      );
     }
 
-    return (
-      <div className="text-sm w-full border-b border-gray-200 text-gray-700 pb-2 font-medium">
-        {field.groupName}
-      </div>
-    );
+    return null;
   };
 
   const renderSchema = ({
@@ -379,8 +381,8 @@ export const RightPanel = () => {
           const currentSubschema =
             subschemas?.[subschemaPreviewValue.subschema];
 
-          content =
-            type === 'content' && subschema && currentSubschema ? (
+          if (type === 'content' && subschema && currentSubschema) {
+            content = (
               <div className="text-xs">
                 <BreadCrumbs
                   blockName={blocksManifest?.[selectedBlock]?.name}
@@ -398,10 +400,6 @@ export const RightPanel = () => {
                     (f: any, index: number, array: any[]) => {
                       return (
                         <Fragment key={f.name}>
-                          {renderGroupName(
-                            f,
-                            index > 0 ? array[index - 1] : null,
-                          )}
                           {renderField(
                             'content',
                             {
@@ -417,14 +415,29 @@ export const RightPanel = () => {
                   )}
                 </div>
               </div>
-            ) : (
-              schema?.fields?.map((field: any, index: number, array: any[]) => (
+            );
+          } else if (type === 'customizer') {
+            const customizerSchema = schema as BlockCustomizerSchema;
+            const groupedFields = customizerSchema.fields.filter(
+              (field: any) => field.groupName,
+            );
+            const ungroupedFields = customizerSchema?.fields
+              ?.filter((field) => !field.groupName)
+              .map((field) => ({ groupName: 'Miscellaneous', ...field }));
+
+            content = [...groupedFields, ...ungroupedFields].map(
+              (field: any, index: number, array: any[]) => (
                 <Fragment key={field.name}>
                   {renderGroupName(field, index > 0 ? array[index - 1] : null)}
                   {renderField(type, field)}
                 </Fragment>
-              ))
+              ),
             );
+          } else {
+            content = schema.fields.map((field: any) => (
+              <Fragment key={field.name}>{renderField(type, field)}</Fragment>
+            ));
+          }
         } else {
           content = (
             <StatusMessage
