@@ -217,7 +217,7 @@ export default function vitePluginInstantSdk({
                   (
                     await import('@instantcommerce/postcss-plugin-sdk')
                   ).default as any
-                )(getBlockNameFromPath(id)) as any,
+                )('CustomBlock') as any,
               ])
               .process(
                 `${

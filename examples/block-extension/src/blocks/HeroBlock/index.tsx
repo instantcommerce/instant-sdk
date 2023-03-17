@@ -1,5 +1,5 @@
 import { defineSection, useBlockState } from '@instantcommerce/sdk';
-import './index.css';
+import '../../styles/global.css';
 
 const Hero = () => {
   const { content } = useBlockState();

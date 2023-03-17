@@ -10,7 +10,7 @@ import { PageRenderer } from './PageRenderer';
 import { previewSchema } from './previewSchema';
 
 const BLOCK_SERVER = import.meta.env.DEV
-  ? 'http://127.0.0.1:5173'
+  ? 'http://localhost:5173'
   : window.__INSTANT_BLOCK_SERVER__;
 
 const getBlockScript = (url: string) =>
@@ -134,11 +134,6 @@ const useLoadBlock = (blockPath?: string | null) => {
   return block;
 };
 
-const getBlockNameFromPath = (blockPath: string) => {
-  const parts = blockPath.split('/');
-  return parts.length - 2 >= 0 ? parts[parts.length - 2] : '';
-};
-
 const Renderer = ({ store }: { store: any }) => {
   const [blockPath, setBlockPath] = useState(
     new URLSearchParams(window.location.search).get('block'),
@@ -214,7 +209,7 @@ const Renderer = ({ store }: { store: any }) => {
     return null;
   }
 
-  const blockClassName = getBlockNameFromPath(blockPath || '');
+  const blockClassName = 'CustomBlock';
 
   if (block.type === BlockType.Page) {
     const blockUrl = getBlockScript(`${BLOCK_SERVER}/${blockPath}`);
