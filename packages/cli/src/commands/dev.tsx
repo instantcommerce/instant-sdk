@@ -1,5 +1,6 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
 import { exec } from 'child_process';
+import dns from 'dns';
 import http from 'http';
 import path from 'path';
 import { parse } from 'url';
@@ -15,6 +16,9 @@ import { CommandModule } from 'yargs';
 import { dirname } from '~/config';
 import { extractApiError, useApiSdk } from '~/lib/api';
 import { getViteConfig } from '~/lib/getViteConfig';
+
+/** Prefer localhost to 127.0.0.1 */
+dns.setDefaultResultOrder('verbatim');
 
 const BLOCKS_MANIFEST =
   '@id/__x00__virtual:vite-plugin-instant-sdk/blocks-manifest';
@@ -151,9 +155,11 @@ export const Dev: FC = () => {
     const address = server.address();
 
     return address && typeof address !== 'string'
-      ? `http://${address.address !== '::' ? address.address : '127.0.0.1'}:${
-          address.port
-        }`
+      ? `http://${
+          ['::', '::1', '127.0.0.1'].includes(address.address)
+            ? 'localhost'
+            : address.address
+        }:${address.port}`
       : '';
   };
 

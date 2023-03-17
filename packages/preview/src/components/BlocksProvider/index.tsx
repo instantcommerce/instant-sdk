@@ -43,7 +43,7 @@ export const BlocksProvider = ({ children }: { children: ReactNode }) => {
   const previewRef = useRef<HTMLIFrameElement | null>(null);
 
   const [blocksManifest, setBlocksManifest] = useState(
-    window.__INSTANT_BLOCKS_MANIFEST__,
+    window.__INSTANT_BLOCKS_MANIFEST__ || {},
   );
   const [selectedBlock, setSelectedBlock] = useState<string | null>(
     (blocksManifest
