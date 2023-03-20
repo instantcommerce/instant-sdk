@@ -25,6 +25,10 @@ import {
 } from '../../BlocksProvider/context';
 import { BreadCrumbs } from './Breadcrumbs';
 
+type CustomizerSchemaField =
+  | BlockContentSchema['fields'][number]
+  | BlockCustomizerSchema['fields'][number];
+
 const tabs = [
   {
     title: 'Customizer',
@@ -125,9 +129,7 @@ export const RightPanel = () => {
 
   const renderField = (
     schema: SchemaTypes,
-    field:
-      | BlockContentSchema['fields'][number]
-      | BlockCustomizerSchema['fields'][number],
+    field: CustomizerSchemaField,
     layer: number = 1,
   ) => {
     const fieldPath = field.name.split('.');
@@ -315,15 +317,11 @@ export const RightPanel = () => {
   };
 
   const renderGroupName = (
-    field:
-      | BlockContentSchema['fields'][number]
-      | BlockCustomizerSchema['fields'][number],
-    previousField:
-      | BlockContentSchema['fields'][number]
-      | BlockCustomizerSchema['fields'][number],
+    field: CustomizerSchemaField,
+    previousField: CustomizerSchemaField,
   ) => {
     if (
-      (!previousField && 'groupName' in field && field.groupName) ||
+      (!previousField && 'groupName' in field && !!field.groupName) ||
       (previousField &&
         'groupName' in previousField &&
         'groupName' in field &&
@@ -396,23 +394,19 @@ export const RightPanel = () => {
                 </div>
 
                 <div className="bg-white rounded-lg border border-gray-300 p-2 flex flex-col gap-4">
-                  {currentSubschema?.fields.map(
-                    (f: any, index: number, array: any[]) => {
-                      return (
-                        <Fragment key={f.name}>
-                          {renderField(
-                            'content',
-                            {
-                              ...f,
-                              name: [subschema, 'value', f.name].join('.'),
-                              preview: subschemaPreviewValue.value?.[f.name],
-                            },
-                            2,
-                          )}
-                        </Fragment>
-                      );
-                    },
-                  )}
+                  {currentSubschema?.fields.map((f: any) => (
+                    <Fragment key={f.name}>
+                      {renderField(
+                        'content',
+                        {
+                          ...f,
+                          name: [subschema, 'value', f.name].join('.'),
+                          preview: subschemaPreviewValue.value?.[f.name],
+                        },
+                        2,
+                      )}
+                    </Fragment>
+                  ))}
                 </div>
               </div>
             );
