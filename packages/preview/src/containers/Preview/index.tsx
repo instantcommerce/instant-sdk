@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import * as React from 'react';
-import ReactDOM from 'react-dom/client';
+import * as ReactDOM from 'react-dom';
+import ReactDOMClient from 'react-dom/client';
 import { HelmetProvider } from 'react-helmet-async';
 
 import { getStore } from '../../lib/getStore';
@@ -8,6 +9,10 @@ import { BlockRenderer } from './BlockRenderer';
 import { Head } from './Head';
 
 window.React = React;
+window.ReactDOM = {
+  ...ReactDOM,
+  ...ReactDOMClient,
+};
 
 const Preview = () => {
   const [error, setError] = useState('');
@@ -63,4 +68,4 @@ const Preview = () => {
   );
 };
 
-ReactDOM.createRoot(document.getElementById('root')!).render(<Preview />);
+ReactDOMClient.createRoot(document.getElementById('root')!).render(<Preview />);
