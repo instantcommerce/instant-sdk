@@ -1,4 +1,5 @@
 import Conf from 'conf';
+import { BlockType } from './api/sdk';
 
 interface ProjectConfigData {
   organization?: string;
@@ -19,8 +20,8 @@ export const getProjectConfig = (path: string) =>
             id: { type: 'string' },
             type: {
               type: 'string',
-              enum: ['component', 'section', 'page'],
-              default: 'section',
+              enum: [BlockType.Component, BlockType.Page, BlockType.Section],
+              default: BlockType.Section,
             },
           },
         },
