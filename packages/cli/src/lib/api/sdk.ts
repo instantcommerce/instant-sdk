@@ -31,6 +31,12 @@ export enum AddToCartBehavior {
   Sidebar = 'SIDEBAR'
 }
 
+/** Add to cart button position. */
+export enum AddToCartButtonPosition {
+  BelowCard = 'BELOW_CARD',
+  BottomRightImage = 'BOTTOM_RIGHT_IMAGE'
+}
+
 export type AddToWishlistInput = {
   /** Required in Appmate integration. */
   listId?: InputMaybe<Scalars['String']>;
@@ -59,6 +65,7 @@ export type AlgoliaMetadata = {
   applicationId?: Maybe<Scalars['String']>;
   indexes?: Maybe<Array<AlgoliaIndex>>;
   searchApiKey?: Maybe<Scalars['String']>;
+  useInsights?: Maybe<Scalars['Boolean']>;
 };
 
 export type AlgoliaPublicMetadata = {
@@ -66,6 +73,7 @@ export type AlgoliaPublicMetadata = {
   applicationId?: Maybe<Scalars['String']>;
   indexes?: Maybe<Array<AlgoliaIndex>>;
   searchApiKey?: Maybe<Scalars['String']>;
+  useInsights?: Maybe<Scalars['Boolean']>;
 };
 
 export type AppmateMetadata = {
@@ -258,7 +266,12 @@ export type Block = {
   createdAt: Scalars['DateTime'];
   description?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
+  imageFilePath?: Maybe<Scalars['String']>;
+  imageUrl?: Maybe<Scalars['String']>;
   name: Scalars['String'];
+  status: BlockStatus;
+  /** Returns the stores that use the block in their draft or published storefront. */
+  storeUsage: Array<BlockStoreUsage>;
   subtype: BlockSubtype;
   type: BlockType;
   updatedAt: Scalars['DateTime'];
@@ -275,6 +288,7 @@ export type BlockVersionArgs = {
 export type BlockAggregateGroupBy = {
   __typename?: 'BlockAggregateGroupBy';
   createdAt?: Maybe<Scalars['DateTime']>;
+  status?: Maybe<BlockStatus>;
   type?: Maybe<BlockType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -290,8 +304,27 @@ export type BlockConnection = {
 export type BlockCountAggregate = {
   __typename?: 'BlockCountAggregate';
   createdAt?: Maybe<Scalars['Int']>;
+  status?: Maybe<Scalars['Int']>;
   type?: Maybe<Scalars['Int']>;
   updatedAt?: Maybe<Scalars['Int']>;
+};
+
+export type BlockData = {
+  __typename?: 'BlockData';
+  cssUrl?: Maybe<Scalars['String']>;
+  hashId: Scalars['String'];
+  imageUrl?: Maybe<Scalars['String']>;
+  jsUrl?: Maybe<Scalars['String']>;
+  metadata: Scalars['Object'];
+  name?: Maybe<Scalars['String']>;
+  refId: Scalars['UUID'];
+  sdkVersion?: Maybe<Scalars['Float']>;
+  status?: Maybe<BlockStatus>;
+};
+
+export type BlockDataInput = {
+  metadata: Scalars['Object'];
+  refId: Scalars['UUID'];
 };
 
 export type BlockDeleteResponse = {
@@ -299,7 +332,9 @@ export type BlockDeleteResponse = {
   createdAt?: Maybe<Scalars['DateTime']>;
   description?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['UUID']>;
+  imageFilePath?: Maybe<Scalars['String']>;
   name?: Maybe<Scalars['String']>;
+  status?: Maybe<BlockStatus>;
   subtype?: Maybe<BlockSubtype>;
   type?: Maybe<BlockType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
@@ -317,6 +352,7 @@ export type BlockFilter = {
   and?: InputMaybe<Array<BlockFilter>>;
   createdAt?: InputMaybe<DateFieldComparison>;
   or?: InputMaybe<Array<BlockFilter>>;
+  status?: InputMaybe<BlockStatusFilterComparison>;
   type?: InputMaybe<BlockTypeFilterComparison>;
   updatedAt?: InputMaybe<DateFieldComparison>;
 };
@@ -324,6 +360,7 @@ export type BlockFilter = {
 export type BlockMaxAggregate = {
   __typename?: 'BlockMaxAggregate';
   createdAt?: Maybe<Scalars['DateTime']>;
+  status?: Maybe<BlockStatus>;
   type?: Maybe<BlockType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -331,6 +368,7 @@ export type BlockMaxAggregate = {
 export type BlockMinAggregate = {
   __typename?: 'BlockMinAggregate';
   createdAt?: Maybe<Scalars['DateTime']>;
+  status?: Maybe<BlockStatus>;
   type?: Maybe<BlockType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -343,9 +381,40 @@ export type BlockSort = {
 
 export enum BlockSortFields {
   CreatedAt = 'createdAt',
+  Status = 'status',
   Type = 'type',
   UpdatedAt = 'updatedAt'
 }
+
+/** Block status. */
+export enum BlockStatus {
+  Active = 'ACTIVE',
+  Archived = 'ARCHIVED'
+}
+
+export type BlockStatusFilterComparison = {
+  eq?: InputMaybe<BlockStatus>;
+  gt?: InputMaybe<BlockStatus>;
+  gte?: InputMaybe<BlockStatus>;
+  iLike?: InputMaybe<BlockStatus>;
+  in?: InputMaybe<Array<BlockStatus>>;
+  is?: InputMaybe<Scalars['Boolean']>;
+  isNot?: InputMaybe<Scalars['Boolean']>;
+  like?: InputMaybe<BlockStatus>;
+  lt?: InputMaybe<BlockStatus>;
+  lte?: InputMaybe<BlockStatus>;
+  neq?: InputMaybe<BlockStatus>;
+  notILike?: InputMaybe<BlockStatus>;
+  notIn?: InputMaybe<Array<BlockStatus>>;
+  notLike?: InputMaybe<BlockStatus>;
+};
+
+export type BlockStoreUsage = {
+  __typename?: 'BlockStoreUsage';
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  slug: Scalars['String'];
+};
 
 /** Block subtype. */
 export enum BlockSubtype {
@@ -392,11 +461,13 @@ export type BlockVersion = {
   contentSchema?: Maybe<ContentSchema>;
   contentSchemaHash?: Maybe<Scalars['String']>;
   createdAt: Scalars['DateTime'];
+  cssFilePath?: Maybe<Scalars['String']>;
   cssHash?: Maybe<Scalars['String']>;
   cssUrl?: Maybe<Scalars['String']>;
-  customizerSchema: CustomizerSchema;
-  customizerSchemaHash: Scalars['String'];
+  customizerSchema?: Maybe<CustomizerSchema>;
+  customizerSchemaHash?: Maybe<Scalars['String']>;
   id: Scalars['UUID'];
+  jsFilePath: Scalars['String'];
   jsHash: Scalars['String'];
   jsUrl: Scalars['String'];
   sdkVersion: Scalars['Float'];
@@ -765,6 +836,11 @@ export enum ChecklistStep {
   SetupRedirects = 'SETUP_REDIRECTS'
 }
 
+export type CheckoutSessionPayload = {
+  __typename?: 'CheckoutSessionPayload';
+  url: Scalars['String'];
+};
+
 export type CodeEmbedBlock = {
   __typename?: 'CodeEmbedBlock';
   backgroundColor?: Maybe<Scalars['String']>;
@@ -1079,8 +1155,14 @@ export type CreateAuth0UserInput = {
 export type CreateBlockInput = {
   description?: InputMaybe<Scalars['String']>;
   name: Scalars['String'];
-  subtype: BlockSubtype;
-  type: BlockType;
+  status?: InputMaybe<BlockStatus>;
+  subtype?: InputMaybe<BlockSubtype>;
+  type?: InputMaybe<BlockType>;
+};
+
+export type CreateCheckoutSessionInput = {
+  interval: SubscriptionInterval;
+  plan: SubscriptionPlan;
 };
 
 export type CreateIntegrationInput = {
@@ -1153,11 +1235,23 @@ export type CreateOrFetchStoryInput = {
   story: StoryblokStoryInput;
 };
 
+export type CreateOrUpdateEnterpriseSubscriptionInput = {
+  maxStorefronts: Scalars['Float'];
+  priceId: Scalars['String'];
+};
+
+export type CreateOrUpdateEnterpriseSubscriptionPayload = {
+  __typename?: 'CreateOrUpdateEnterpriseSubscriptionPayload';
+  id: Scalars['String'];
+  maxStorefronts: Scalars['Float'];
+};
+
 export type CreateOrganizationInput = {
   email: Scalars['String'];
   maxStores?: InputMaybe<Scalars['Int']>;
   name: Scalars['String'];
   slug: Scalars['String'];
+  trialPeriodEndsAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type CreateProductFormInput = {
@@ -1189,16 +1283,6 @@ export type CreateStoreInput = {
   slug: Scalars['String'];
 };
 
-export type CreateSubscriptionInput = {
-  storefrontAmount: Scalars['Float'];
-};
-
-export type CreateSubscriptionPayload = {
-  __typename?: 'CreateSubscriptionPayload';
-  id: Scalars['String'];
-  storefrontAmount: Scalars['Float'];
-};
-
 export type CursorPaging = {
   /** Paginate after opaque cursor */
   after?: InputMaybe<Scalars['ConnectionCursor']>;
@@ -1212,20 +1296,21 @@ export type CursorPaging = {
 
 export type CustomBlock = {
   __typename?: 'CustomBlock';
+  blockData?: Maybe<BlockData>;
+  /** @deprecated Moved to `blockData` */
   cssUrl?: Maybe<Scalars['String']>;
+  /** @deprecated Moved to `blockData` */
   hashId: Scalars['String'];
   id: Scalars['UUID'];
+  /** @deprecated Moved to `blockData` */
   jsUrl?: Maybe<Scalars['String']>;
+  /** @deprecated Moved to `blockData` */
   metadata: Scalars['Object'];
   name: Scalars['String'];
+  /** @deprecated Moved to `blockData` */
   refId: Scalars['UUID'];
+  /** @deprecated Moved to `blockData` */
   sdkVersion?: Maybe<Scalars['Float']>;
-};
-
-export type CustomBlockInput = {
-  metadata: Scalars['Object'];
-  name?: InputMaybe<Scalars['String']>;
-  refId: Scalars['UUID'];
 };
 
 export type CustomerData = {
@@ -1261,6 +1346,7 @@ export type CustomizerSchema = {
 export type CustomizerSchemaColorField = {
   __typename?: 'CustomizerSchemaColorField';
   description?: Maybe<Scalars['String']>;
+  groupName?: Maybe<Scalars['String']>;
   isRequired: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
@@ -1278,6 +1364,7 @@ export type CustomizerSchemaNumberField = {
   description?: Maybe<Scalars['String']>;
   /** Allowed number of digits after the decimal point. */
   fractionDigits: Scalars['Float'];
+  groupName?: Maybe<Scalars['String']>;
   isRequired: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   max?: Maybe<Scalars['Float']>;
@@ -1289,6 +1376,7 @@ export type CustomizerSchemaNumberField = {
 export type CustomizerSchemaSelectField = {
   __typename?: 'CustomizerSchemaSelectField';
   description?: Maybe<Scalars['String']>;
+  groupName?: Maybe<Scalars['String']>;
   isRequired: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
@@ -1299,6 +1387,7 @@ export type CustomizerSchemaSelectField = {
 export type CustomizerSchemaTextField = {
   __typename?: 'CustomizerSchemaTextField';
   description?: Maybe<Scalars['String']>;
+  groupName?: Maybe<Scalars['String']>;
   isRequired: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   maxLength?: Maybe<Scalars['Float']>;
@@ -1309,6 +1398,7 @@ export type CustomizerSchemaTextField = {
 export type CustomizerSchemaToggleField = {
   __typename?: 'CustomizerSchemaToggleField';
   description?: Maybe<Scalars['String']>;
+  groupName?: Maybe<Scalars['String']>;
   isRequired: Scalars['Boolean'];
   label?: Maybe<Scalars['String']>;
   name: Scalars['String'];
@@ -1991,7 +2081,6 @@ export enum HeroSize {
 
 export type HeroSliderBlock = {
   __typename?: 'HeroSliderBlock';
-  /** You can turn autoplay on or off by toggling. The value is defined in seconds. */
   autoplayTrigger?: Maybe<Scalars['Float']>;
   backgroundColor?: Maybe<Scalars['String']>;
   containerWidth: ContainerWidth;
@@ -2164,6 +2253,32 @@ export type InputComponentInput = {
   borderRadius?: InputMaybe<BorderRadius>;
 };
 
+export type InsightChangeSet = {
+  __typename?: 'InsightChangeSet';
+  changePercentage: Scalars['Float'];
+  current: Scalars['Float'];
+};
+
+export type InsightFilter = {
+  rangeEnd: Scalars['String'];
+  rangeStart: Scalars['String'];
+};
+
+export type InsightKeyValueChangeSet = {
+  __typename?: 'InsightKeyValueChangeSet';
+  changePercentage: Scalars['Float'];
+  key: Scalars['String'];
+  value: Scalars['Float'];
+};
+
+export type InsightQuickInsightsChangeSet = {
+  __typename?: 'InsightQuickInsightsChangeSet';
+  conversionRate: InsightChangeSet;
+  emailSignups: InsightChangeSet;
+  orders: InsightChangeSet;
+  sales: InsightChangeSet;
+};
+
 export type Integration = {
   __typename?: 'Integration';
   createdAt: Scalars['DateTime'];
@@ -2233,7 +2348,7 @@ export type IntegrationMaxAggregate = {
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
 
-export type IntegrationMetadata = AlgoliaMetadata | AppmateMetadata | CookiebotMetadata | FasletMetadata | GoogleTagManagerMetadata | GorgiasMetadata | GrowaveMetadata | JudgeMeMetadata | KiwiSizingMetadata | KlaviyoMetadata | MailchimpMetadata | MetaMetadata | RechargeMetadata | ShopifyMetadata | SkioMetadata | StampedMetadata | StoremapperMetadata | StoryblokMetadata | TrustpilotMetadata | YotpoMetadata;
+export type IntegrationMetadata = AlgoliaMetadata | AppmateMetadata | CookiebotMetadata | FasletMetadata | GoogleTagManagerMetadata | GorgiasMetadata | GrowaveMetadata | JudgeMeMetadata | KiwiSizingMetadata | KlaviyoMetadata | LoyaltyLionMetadata | MailchimpMetadata | MetaMetadata | RechargeMetadata | ShopifyMetadata | SkioMetadata | SmileMetadata | StampedMetadata | StoremapperMetadata | StoryblokMetadata | TrustpilotMetadata | YotpoMetadata;
 
 export type IntegrationMinAggregate = {
   __typename?: 'IntegrationMinAggregate';
@@ -2266,11 +2381,13 @@ export enum IntegrationType {
   JudgeMe = 'JUDGE_ME',
   KiwiSizing = 'KIWI_SIZING',
   Klaviyo = 'KLAVIYO',
+  LoyaltyLion = 'LOYALTY_LION',
   Mailchimp = 'MAILCHIMP',
   Meta = 'META',
   Recharge = 'RECHARGE',
   Shopify = 'SHOPIFY',
   Skio = 'SKIO',
+  Smile = 'SMILE',
   Stamped = 'STAMPED',
   Storemapper = 'STOREMAPPER',
   Storyblok = 'STORYBLOK',
@@ -2315,6 +2432,7 @@ export type KlaviyoMetadata = {
   __typename?: 'KlaviyoMetadata';
   enableBackInStockFlow?: Maybe<Scalars['Boolean']>;
   enableBackInStockMarketingOptIn?: Maybe<Scalars['Boolean']>;
+  enableOnsiteTracking?: Maybe<Scalars['Boolean']>;
   listId?: Maybe<Scalars['String']>;
   privateKey?: Maybe<Scalars['String']>;
   publicKey?: Maybe<Scalars['String']>;
@@ -2324,6 +2442,7 @@ export type KlaviyoPublicMetadata = {
   __typename?: 'KlaviyoPublicMetadata';
   enableBackInStockFlow?: Maybe<Scalars['Boolean']>;
   enableBackInStockMarketingOptIn?: Maybe<Scalars['Boolean']>;
+  enableOnsiteTracking?: Maybe<Scalars['Boolean']>;
   publicKey?: Maybe<Scalars['String']>;
 };
 
@@ -2474,6 +2593,44 @@ export type LocalizedValueInput = {
   value: Scalars['String'];
 };
 
+export type LoyaltyCustomerToken = {
+  __typename?: 'LoyaltyCustomerToken';
+  /** Token generated in server-side used to authenticate the customer at client side */
+  authToken: Scalars['String'];
+  /** Date used to create the token on server-side which is then be used by client side to authenticate the customer */
+  date?: Maybe<Scalars['String']>;
+};
+
+export type LoyaltyLionBlock = {
+  __typename?: 'LoyaltyLionBlock';
+  backgroundColor?: Maybe<Scalars['String']>;
+  containerWidth: ContainerWidth;
+  dividerColor?: Maybe<Scalars['String']>;
+  hasDivider: Scalars['Boolean'];
+  headerAlignment: TextAlignment;
+  headerPretitleColor?: Maybe<Scalars['String']>;
+  headerSize: FontSize;
+  headerSubtitleColor?: Maybe<Scalars['String']>;
+  headerTitleColor?: Maybe<Scalars['String']>;
+  id: Scalars['UUID'];
+  name: Scalars['String'];
+  theme: BlockTheme;
+  widgetType: LoyaltyLionWidgetType;
+};
+
+export type LoyaltyLionMetadata = {
+  __typename?: 'LoyaltyLionMetadata';
+  programName?: Maybe<Scalars['String']>;
+  secret?: Maybe<Scalars['String']>;
+  token?: Maybe<Scalars['String']>;
+};
+
+/** Loyalty lion widget type. */
+export enum LoyaltyLionWidgetType {
+  RewardsList = 'REWARDS_LIST',
+  RulesList = 'RULES_LIST'
+}
+
 export type MailchimpMetadata = {
   __typename?: 'MailchimpMetadata';
   apiKey?: Maybe<Scalars['String']>;
@@ -2516,11 +2673,19 @@ export type MultiColumnRichTextBlock = {
 export type Mutation = {
   __typename?: 'Mutation';
   addToWishlist: Scalars['Boolean'];
+  /** Force update all CSS snippets to be bundled again. */
+  bundleCssSnippets: Scalars['Boolean'];
+  /** Force update all CSS snippets of all stores to be bundled again. */
+  bundleCssSnippetsGlobal: Scalars['Boolean'];
   changePassword: Scalars['Boolean'];
   contactStore: Scalars['Boolean'];
   createAsset: Asset;
+  /** Create a redirect url to Stripe to set up payment methods. */
+  createCheckout: CheckoutSessionPayload;
   /** Creates a redirect url to the Stripe customer portal. */
   createCustomerPortalRedirect: CustomerPortalSessionPayload;
+  /** Create an enterprise subscription in Stripe. */
+  createEnterpriseSubscription: CreateOrUpdateEnterpriseSubscriptionPayload;
   createManyIntegrations: Array<Integration>;
   createOneBlock: Block;
   createOneDomain: Domain;
@@ -2536,8 +2701,6 @@ export type Mutation = {
   createOneStore: Store;
   /** Fetch story from Storyblok and if not present create one. */
   createOrFetchStory: StoryblokStory;
-  /** Create a subscription in Stripe. */
-  createSubscription: CreateSubscriptionPayload;
   createUser: Scalars['Boolean'];
   deleteInvitation: Scalars['Boolean'];
   deleteManyAssets: DeleteManyResponse;
@@ -2555,6 +2718,7 @@ export type Mutation = {
   deleteOneSnippet: SnippetDeleteResponse;
   deleteUser: Scalars['Boolean'];
   duplicateStore: Store;
+  extendTrialPeriod: Scalars['Boolean'];
   /** Fetch product colors from shopify. */
   fetchProductColors: Scalars['Boolean'];
   importRedirects: ImportRedirectsPayload;
@@ -2572,12 +2736,16 @@ export type Mutation = {
   setDefaultLanguage: Scalars['Boolean'];
   /** Set the primary domain for the current store. */
   setPrimaryDomain: Scalars['Boolean'];
+  /** Create a free trial flow */
+  startFreeTrial: Organization;
   /** Subscribe to back in stock. */
   subscribeToBackInStock: Scalars['Boolean'];
   /** Subscribe to a newsletter. */
   subscribeToNewsletter: Scalars['Boolean'];
   undoVoteReview: Scalars['Boolean'];
   updateCustomerData: CustomerData;
+  /** Update an enterprise subscription in Stripe. */
+  updateEnterpriseSubscription: CreateOrUpdateEnterpriseSubscriptionPayload;
   /** Updates the metadata of an integration. */
   updateIntegrationMetadata: Integration;
   /** Updates the member roles within the current organization. */
@@ -2593,14 +2761,12 @@ export type Mutation = {
   updateOneSnippet: Snippet;
   updateOneStore: Store;
   updateOrganizationChecklist: Scalars['Boolean'];
-  /** Create a redirect url to Stripe to set up payment methods. */
-  updatePaymentMethod: UpdatePaymentPayload;
   /** Updates the current user profile in Auth0. */
   updateProfile: User;
   updateStoreChecklist: Scalars['Boolean'];
   /** Updates draft storefront config of the current store. */
   updateStorefrontConfig: Storefront;
-  /** Upgrade the amount of storefronts in a subscription in Stripe. */
+  /** Upgrade the subscription in Stripe. */
   updateSubscription: UpdateSubscriptionPayload;
   /** Verify domain records. */
   verifyOneDomain: Domain;
@@ -2626,6 +2792,16 @@ export type MutationContactStoreArgs = {
 
 export type MutationCreateAssetArgs = {
   input: CreateAssetInput;
+};
+
+
+export type MutationCreateCheckoutArgs = {
+  input: CreateCheckoutSessionInput;
+};
+
+
+export type MutationCreateEnterpriseSubscriptionArgs = {
+  input: CreateOrUpdateEnterpriseSubscriptionInput;
 };
 
 
@@ -2691,11 +2867,6 @@ export type MutationCreateOneStoreArgs = {
 
 export type MutationCreateOrFetchStoryArgs = {
   input: CreateOrFetchStoryInput;
-};
-
-
-export type MutationCreateSubscriptionArgs = {
-  input: CreateSubscriptionInput;
 };
 
 
@@ -2784,6 +2955,11 @@ export type MutationDuplicateStoreArgs = {
 };
 
 
+export type MutationExtendTrialPeriodArgs = {
+  increaseByDays: Scalars['Float'];
+};
+
+
 export type MutationImportRedirectsArgs = {
   input: ImportRedirectsInput;
 };
@@ -2820,6 +2996,11 @@ export type MutationSetPrimaryDomainArgs = {
 };
 
 
+export type MutationStartFreeTrialArgs = {
+  input: StartFreeTrialInput;
+};
+
+
 export type MutationSubscribeToBackInStockArgs = {
   input: SubscribeBackInStockInput;
 };
@@ -2837,6 +3018,11 @@ export type MutationUndoVoteReviewArgs = {
 
 export type MutationUpdateCustomerDataArgs = {
   input: CustomerDataInput;
+};
+
+
+export type MutationUpdateEnterpriseSubscriptionArgs = {
+  input: CreateOrUpdateEnterpriseSubscriptionInput;
 };
 
 
@@ -3011,8 +3197,10 @@ export type Organization = {
   __typename?: 'Organization';
   createdAt: Scalars['DateTime'];
   id: Scalars['UUID'];
+  isPaymentCompleted: Scalars['Boolean'];
   maxStores: Scalars['Float'];
   name: Scalars['String'];
+  numberOfTrialDaysLeft?: Maybe<Scalars['Float']>;
   slug: Scalars['String'];
   /** Stripe subscription ID. */
   stripeSubscriptionId?: Maybe<Scalars['String']>;
@@ -3059,8 +3247,10 @@ export type OrganizationDeleteResponse = {
   __typename?: 'OrganizationDeleteResponse';
   createdAt?: Maybe<Scalars['DateTime']>;
   id?: Maybe<Scalars['UUID']>;
+  isPaymentCompleted?: Maybe<Scalars['Boolean']>;
   maxStores?: Maybe<Scalars['Float']>;
   name?: Maybe<Scalars['String']>;
+  numberOfTrialDaysLeft?: Maybe<Scalars['Float']>;
   slug?: Maybe<Scalars['String']>;
   updatedAt?: Maybe<Scalars['DateTime']>;
 };
@@ -3194,11 +3384,15 @@ export type PaymentIconAsset = {
 
 export type PaymentIconsComponent = {
   __typename?: 'PaymentIconsComponent';
+  /** Show "+[x] more" icon if more than 6 payment icons have been selected. */
+  isTruncated: Scalars['Boolean'];
   selectedIcons: Array<PaymentIcon>;
   selectedIconsUrls: Array<PaymentIconAsset>;
 };
 
 export type PaymentIconsInput = {
+  /** Show "+[x] more" icon if more than 6 payment icons have been selected. */
+  isTruncated?: InputMaybe<Scalars['Boolean']>;
   selectedIcons?: InputMaybe<Array<PaymentIcon>>;
 };
 
@@ -3234,8 +3428,6 @@ export type PricingDetails = {
   __typename?: 'PricingDetails';
   /** Values are bound to an organization and in Euro cents. */
   basePrice: Scalars['Float'];
-  /** Values are bound to an organization and in Euro cents. */
-  pricePerAdditionalStore: Scalars['Float'];
 };
 
 export type ProductBadgeComponent = {
@@ -3273,9 +3465,15 @@ export enum ProductBadgePosition {
 
 export type ProductCardComponent = {
   __typename?: 'ProductCardComponent';
+  addToCartButtonPosition?: Maybe<AddToCartButtonPosition>;
+  addToCartButtonType?: Maybe<ButtonType>;
   contentAlignment: TextAlignment;
   description: ProductDescription;
   descriptionColor?: Maybe<Scalars['String']>;
+  /** Show button on desktop. */
+  hasAddToCartButtonDesktop: Scalars['Boolean'];
+  /** Show button on mobile. */
+  hasAddToCartButtonMobile: Scalars['Boolean'];
   /** Show product rating. */
   hasRating: Scalars['Boolean'];
   hoverEffect: ProductHoverEffect;
@@ -3289,17 +3487,23 @@ export type ProductCardComponent = {
   pretitleColor?: Maybe<Scalars['String']>;
   priceColor?: Maybe<Scalars['String']>;
   productBadgePosition: ProductBadgePosition;
-  /** The color swatches size is only applicable when color swatches are enabled. */
   productColorOptionsSize: ColorOptionsSize;
+  /** Swatch shape */
   productColorOptionsStyle?: Maybe<ColorOptionsStyle>;
   textSize: FontSize;
   titleColor?: Maybe<Scalars['String']>;
 };
 
 export type ProductCardComponentInput = {
+  addToCartButtonPosition?: InputMaybe<AddToCartButtonPosition>;
+  addToCartButtonType?: InputMaybe<ButtonType>;
   contentAlignment?: InputMaybe<TextAlignment>;
   description?: InputMaybe<ProductDescription>;
   descriptionColor?: InputMaybe<Scalars['String']>;
+  /** Show button on desktop. */
+  hasAddToCartButtonDesktop?: InputMaybe<Scalars['Boolean']>;
+  /** Show button on mobile. */
+  hasAddToCartButtonMobile?: InputMaybe<Scalars['Boolean']>;
   /** Show product rating. */
   hasRating?: InputMaybe<Scalars['Boolean']>;
   hoverEffect?: InputMaybe<ProductHoverEffect>;
@@ -3313,8 +3517,8 @@ export type ProductCardComponentInput = {
   pretitleColor?: InputMaybe<Scalars['String']>;
   priceColor?: InputMaybe<Scalars['String']>;
   productBadgePosition?: InputMaybe<ProductBadgePosition>;
-  /** The color swatches size is only applicable when color swatches are enabled. */
   productColorOptionsSize?: InputMaybe<ColorOptionsSize>;
+  /** Swatch shape */
   productColorOptionsStyle?: InputMaybe<ColorOptionsStyle>;
   textSize?: InputMaybe<FontSize>;
   titleColor?: InputMaybe<Scalars['String']>;
@@ -3464,7 +3668,8 @@ export enum ProductDetailGalleryLayoutMobile {
 export type ProductDetailPage = {
   __typename?: 'ProductDetailPage';
   additionalDetailsLayout: AdditionalDetailsLayout;
-  customBlock?: Maybe<CustomBlock>;
+  autoplayProductVideo: Scalars['Boolean'];
+  blockData?: Maybe<BlockData>;
   galleryImageAspectRatioMobile: ProductDetailGalleryImageAspectRatio;
   galleryImageBorderRadiusDesktop: BorderRadius;
   galleryImageBorderRadiusMobile: BorderRadius;
@@ -3496,7 +3701,8 @@ export type ProductDetailPage = {
 
 export type ProductDetailPageInput = {
   additionalDetailsLayout?: InputMaybe<AdditionalDetailsLayout>;
-  customBlock?: InputMaybe<CustomBlockInput>;
+  autoplayProductVideo?: InputMaybe<Scalars['Boolean']>;
+  blockData?: InputMaybe<BlockDataInput>;
   galleryImageAspectRatioMobile?: InputMaybe<ProductDetailGalleryImageAspectRatio>;
   galleryImageBorderRadiusDesktop?: InputMaybe<BorderRadius>;
   galleryImageBorderRadiusMobile?: InputMaybe<BorderRadius>;
@@ -3871,6 +4077,7 @@ export type PublicIntegrationMetadata = {
   gorgias?: Maybe<GorgiasPublicMetadata>;
   kiwiSizing?: Maybe<KiwiSizingPublicMetadata>;
   klaviyo?: Maybe<KlaviyoPublicMetadata>;
+  loyalty?: Maybe<PublicLoyaltyIntegrationMetadata>;
   meta?: Maybe<MetaPublicMetadata>;
   review?: Maybe<PublicReviewIntegrationMetadata>;
   shopify?: Maybe<ShopifyPublicMetadata>;
@@ -3886,6 +4093,13 @@ export type PublicLanguage = {
   locale: Scalars['String'];
   /** Name to display in the storefront language selector. */
   localizedName: Scalars['String'];
+};
+
+export type PublicLoyaltyIntegrationMetadata = {
+  __typename?: 'PublicLoyaltyIntegrationMetadata';
+  programName?: Maybe<Scalars['String']>;
+  provider: IntegrationType;
+  token: Scalars['String'];
 };
 
 export type PublicOrganization = {
@@ -3949,7 +4163,7 @@ export type PublicSnippet = {
   /** Whether the script should be loaded prioritized even if that has performance impacts. Only relevant for JS snippets. */
   isPrioritized?: Maybe<Scalars['Boolean']>;
   type: SnippetType;
-  url: Scalars['String'];
+  url?: Maybe<Scalars['String']>;
 };
 
 export type PublicStore = {
@@ -3971,8 +4185,11 @@ export type PublicStore = {
   redirects: Array<PublicRedirect>;
   shippingZones: Array<PublicShippingZone>;
   slug: Scalars['String'];
+  /** Url of the bundled css file. Only contains published snippets. */
+  snippetCssBundleUrl?: Maybe<Scalars['String']>;
   snippets: Array<PublicSnippet>;
   storefront: Storefront;
+  useCountrySpecificUrls: Scalars['Boolean'];
 };
 
 export type PublishBlockVersionInput = {
@@ -3980,9 +4197,9 @@ export type PublishBlockVersionInput = {
   blockId: Scalars['String'];
   contentSchema?: InputMaybe<ContentSchemaInput>;
   css?: InputMaybe<Scalars['Upload']>;
-  customizerSchema: CustomizerSchemaInput;
+  customizerSchema?: InputMaybe<CustomizerSchemaInput>;
   js: Scalars['Upload'];
-  sdkVersion: Scalars['Float'];
+  sdkVersion?: InputMaybe<Scalars['Float']>;
 };
 
 export type Query = {
@@ -4010,6 +4227,10 @@ export type Query = {
   geolocationRedirects: GeolocationRedirectConnection;
   /** Fetches the storefront config schema. */
   getConfigSchemas: Scalars['Object'];
+  getLoyaltyCustomerToken: LoyaltyCustomerToken;
+  insightQuickInsights: InsightQuickInsightsChangeSet;
+  insightTopProducts: Array<InsightKeyValueChangeSet>;
+  insightTopSearches: Array<InsightKeyValueChangeSet>;
   integration?: Maybe<Integration>;
   /** Fetches the integration metadata schemas. */
   integrationMetadataSchemas: Scalars['Object'];
@@ -4020,6 +4241,7 @@ export type Query = {
   listUsers: Auth0ListUsersResponse;
   me: User;
   organization?: Maybe<Organization>;
+  organizationAvailability: Scalars['Boolean'];
   organizations: OrganizationConnection;
   /** Fetch a draft store by it's connected domain (without caching). */
   previewStoreByHostname: PublicStore;
@@ -4117,6 +4339,26 @@ export type QueryGeolocationRedirectsArgs = {
 };
 
 
+export type QueryGetLoyaltyCustomerTokenArgs = {
+  customerAccessToken: Scalars['String'];
+};
+
+
+export type QueryInsightQuickInsightsArgs = {
+  input: InsightFilter;
+};
+
+
+export type QueryInsightTopProductsArgs = {
+  input: InsightFilter;
+};
+
+
+export type QueryInsightTopSearchesArgs = {
+  input: InsightFilter;
+};
+
+
 export type QueryIntegrationArgs = {
   id: Scalars['ID'];
 };
@@ -4153,6 +4395,11 @@ export type QueryListUsersArgs = {
 
 export type QueryOrganizationArgs = {
   id: Scalars['ID'];
+};
+
+
+export type QueryOrganizationAvailabilityArgs = {
+  name: Scalars['String'];
 };
 
 
@@ -4794,7 +5041,9 @@ export type ShopifyImage = {
 export type ShopifyMetadata = {
   __typename?: 'ShopifyMetadata';
   apiPassword?: Maybe<Scalars['String']>;
-  delegateAccessToken?: Maybe<Scalars['String']>;
+  /** Secret key to be used for incoming Shopify webhook calls */
+  apiSecretKey?: Maybe<Scalars['String']>;
+  enableInsights?: Maybe<Scalars['Boolean']>;
   shopId?: Maybe<Scalars['String']>;
   storefrontAccessToken?: Maybe<Scalars['String']>;
   useSubscriptions?: Maybe<Scalars['Boolean']>;
@@ -4891,12 +5140,18 @@ export type SkioMetadata = {
   _void: Scalars['Boolean'];
 };
 
+export type SmileMetadata = {
+  __typename?: 'SmileMetadata';
+  programName?: Maybe<Scalars['String']>;
+};
+
 export type Snippet = {
   __typename?: 'Snippet';
   /** Indicates if the script should bypass cookie integrations. Only relevant for JS snippets. */
   bypassCookieIntegration?: Maybe<Scalars['Boolean']>;
   code: Scalars['String'];
   createdAt: Scalars['DateTime'];
+  filePath: Scalars['String'];
   id: Scalars['UUID'];
   /** Whether the script should be loaded prioritized even if that has performance impacts. Only relevant for JS snippets. */
   isPrioritized?: Maybe<Scalars['Boolean']>;
@@ -4904,7 +5159,6 @@ export type Snippet = {
   status: SnippetStatus;
   type: SnippetType;
   updatedAt: Scalars['DateTime'];
-  url: Scalars['String'];
 };
 
 export type SnippetAggregateGroupBy = {
@@ -4932,6 +5186,7 @@ export type SnippetDeleteResponse = {
   /** Indicates if the script should bypass cookie integrations. Only relevant for JS snippets. */
   bypassCookieIntegration?: Maybe<Scalars['Boolean']>;
   createdAt?: Maybe<Scalars['DateTime']>;
+  filePath?: Maybe<Scalars['String']>;
   id?: Maybe<Scalars['UUID']>;
   /** Whether the script should be loaded prioritized even if that has performance impacts. Only relevant for JS snippets. */
   isPrioritized?: Maybe<Scalars['Boolean']>;
@@ -4939,7 +5194,6 @@ export type SnippetDeleteResponse = {
   status?: Maybe<SnippetStatus>;
   type?: Maybe<SnippetType>;
   updatedAt?: Maybe<Scalars['DateTime']>;
-  url?: Maybe<Scalars['String']>;
 };
 
 export type SnippetEdge = {
@@ -5053,6 +5307,15 @@ export type StampedMetadata = {
   storeHash?: Maybe<Scalars['String']>;
 };
 
+export type StartFreeTrialInput = {
+  email: Scalars['String'];
+  howDidYouFindUs?: InputMaybe<Array<Scalars['String']>>;
+  isMarketingCommsAccepted?: InputMaybe<Scalars['Boolean']>;
+  name: Scalars['String'];
+  usingPlatformFor: Scalars['String'];
+  yourRole: Scalars['String'];
+};
+
 export type StatisticsBlock = {
   __typename?: 'StatisticsBlock';
   backgroundColor?: Maybe<Scalars['String']>;
@@ -5101,6 +5364,7 @@ export type Store = {
   /** Last 50 archived storefronts. */
   storefrontHistory: Array<Storefront>;
   updatedAt: Scalars['DateTime'];
+  useCountrySpecificUrls: Scalars['Boolean'];
 };
 
 export type StoreAggregateGroupBy = {
@@ -5236,7 +5500,7 @@ export type Storefront = {
   updatedAt: Scalars['DateTime'];
 };
 
-export type StorefrontBlock = BlockquoteBlock | BlogCardsColumnsBlock | BlogCardsDefaultBlock | BlogHeaderBlock | BlogSliderBlock | CardBlock | CategoryBlock | CategorySliderBlock | CodeEmbedBlock | ContactDetailsBlock | ContactFormBlock | ContactFormImageBlock | CustomBlock | EmailBannerBlock | EmailBannerImageBlock | FaqBlock | HeaderBlock | HeroBlock | HeroSliderBlock | HeroVideoBlock | ImageDualBlock | ImageSingleBlock | ImageTripleBlock | ListBlock | MultiColumnRichTextBlock | ProductSliderBlock | QuoteBlock | RichTextBlock | SocialGalleryBlock | SocialProofBlock | StatisticsBlock | StoreLocatorBlock | StoremapperBlock | TableBlock | TextImageBlock | UspsBlock | VideoBlock;
+export type StorefrontBlock = BlockquoteBlock | BlogCardsColumnsBlock | BlogCardsDefaultBlock | BlogHeaderBlock | BlogSliderBlock | CardBlock | CategoryBlock | CategorySliderBlock | CodeEmbedBlock | ContactDetailsBlock | ContactFormBlock | ContactFormImageBlock | CustomBlock | EmailBannerBlock | EmailBannerImageBlock | FaqBlock | HeaderBlock | HeroBlock | HeroSliderBlock | HeroVideoBlock | ImageDualBlock | ImageSingleBlock | ImageTripleBlock | ListBlock | LoyaltyLionBlock | MultiColumnRichTextBlock | ProductSliderBlock | QuoteBlock | RichTextBlock | SocialGalleryBlock | SocialProofBlock | StatisticsBlock | StoreLocatorBlock | StoremapperBlock | TableBlock | TextImageBlock | UspsBlock | VideoBlock;
 
 export type StorefrontComponents = {
   __typename?: 'StorefrontComponents';
@@ -5411,9 +5675,25 @@ export type SubscribeNewsletterInput = {
 
 export type SubscriptionDetails = {
   __typename?: 'SubscriptionDetails';
+  interval?: Maybe<SubscriptionInterval>;
+  maxStorefronts?: Maybe<Scalars['Float']>;
+  plan?: Maybe<SubscriptionPlan>;
   pricing?: Maybe<PricingDetails>;
-  storefrontAmount?: Maybe<Scalars['Float']>;
 };
+
+/** Subscription interval. */
+export enum SubscriptionInterval {
+  Month = 'MONTH',
+  Year = 'YEAR'
+}
+
+/** Subscription plan. */
+export enum SubscriptionPlan {
+  Business = 'BUSINESS',
+  Enterprise = 'ENTERPRISE',
+  Legacy = 'LEGACY',
+  Team = 'TEAM'
+}
 
 export type TableBlock = {
   __typename?: 'TableBlock';
@@ -5599,7 +5879,9 @@ export type UpdateAuth0ProfileInput = {
 
 export type UpdateBlockInput = {
   description?: InputMaybe<Scalars['String']>;
+  image?: InputMaybe<Scalars['Upload']>;
   name: Scalars['String'];
+  status?: InputMaybe<BlockStatus>;
 };
 
 export type UpdateIntegrationMetadataInput = {
@@ -5615,9 +5897,7 @@ export type UpdateLanguageInput = {
 };
 
 export type UpdateOneBlockInput = {
-  /** The id of the record to update */
   id: Scalars['ID'];
-  /** The update to apply. */
   update: UpdateBlockInput;
 };
 
@@ -5671,9 +5951,7 @@ export type UpdateOneShippingZoneInput = {
 };
 
 export type UpdateOneSnippetInput = {
-  /** The id of the record to update */
   id: Scalars['ID'];
-  /** The update to apply. */
   update: UpdateSnippetInput;
 };
 
@@ -5694,11 +5972,7 @@ export type UpdateOrganizationInput = {
   maxStores?: InputMaybe<Scalars['Int']>;
   name: Scalars['String'];
   slug: Scalars['String'];
-};
-
-export type UpdatePaymentPayload = {
-  __typename?: 'UpdatePaymentPayload';
-  url: Scalars['String'];
+  trialPeriodEndsAt?: InputMaybe<Scalars['DateTime']>;
 };
 
 export type UpdateProductColorInput = {
@@ -5746,6 +6020,7 @@ export type UpdateStoreInput = {
   productGroupOptionNameTranslations?: InputMaybe<Array<LocalizedValueInput>>;
   redirectTrafficToPrimaryDomain?: InputMaybe<Scalars['Boolean']>;
   slug?: InputMaybe<Scalars['String']>;
+  useCountrySpecificUrls?: InputMaybe<Scalars['Boolean']>;
 };
 
 export type UpdateStorefrontConfigInput = {
@@ -5756,7 +6031,8 @@ export type UpdateStorefrontConfigInput = {
 };
 
 export type UpdateSubscriptionInput = {
-  storefrontAmount: Scalars['Float'];
+  interval: SubscriptionInterval;
+  plan: SubscriptionPlan;
 };
 
 export type UpdateSubscriptionPayload = {
